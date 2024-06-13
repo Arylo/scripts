@@ -4,18 +4,18 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "./etc/build.sh"
+    "build": "ts-node ./etc/build.ts"
   },
   "keywords": [],
-  "author": "",
+  "author": "Arylo Yeung <arylo.open@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "@js-sh/js-sh": "^0.1.1",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.4.5"
+    "@js-sh/js-sh": "^0.1.1"
   },
   "devDependencies": {
     "cross-env": "^7.0.3",
-    "esbuild": "^0.21.5"
+    "esbuild": "^0.21.5",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.5"
   }
 }

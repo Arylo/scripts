@@ -1,4 +1,5 @@
-import { mv, cd, ls } from '@js-sh/js-sh'
+import { cd, ls } from '@js-sh/js-sh'
+import { moveFiles } from './utils/moveFiles'
 
 const ROOT_PATH_KEY = 'MV_VIDEO_ROOT_PATH'
 const TARGET_PATH_KEY = 'MV_VIDEO_TARGET_PATH'
@@ -17,17 +18,6 @@ const checkVariables = () => {
   if (hasLostVariable) process.exit(1)
 }
 
-const moveFiles = (targetPath: string) => {
-
-  const pendingFilepaths = [...ls('./**/*.mp4'), ...ls('./**/*.mkv')]
-
-  if (pendingFilepaths.length === 0) return false
-
-  console.log(pendingFilepaths)
-
-  pendingFilepaths.forEach(p => mv(p, targetPath))
-}
-
 checkVariables()
 
 const {
@@ -37,6 +27,6 @@ const {
 
 cd(rootPath as string)
 
-moveFiles(targetPath as string)
+moveFiles(['./**/*.mp4', './**/*.mkv'], targetPath as string)
 
 console.log(ls('./**/*.bt.xltd'))
