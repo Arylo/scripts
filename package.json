@@ -4,15 +4,18 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "./etc/build.sh"
   },
   "keywords": [],
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@js-sh/js-sh": "^0.1.1"
+    "@js-sh/js-sh": "^0.1.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.5"
   },
   "devDependencies": {
-    "cross-env": "^7.0.3"
+    "cross-env": "^7.0.3",
+    "esbuild": "^0.21.5"
   }
 }
