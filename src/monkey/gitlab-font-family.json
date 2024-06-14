@@ -1,0 +1,13 @@
+{
+  "name": "Add Font Family",
+  "version": "0.1.0",
+  "author": "You",
+  "include": [
+    "/^https:\/\/git.[^\/]+\/.*\/-\/blob\/.*/",
+    "/^https:\/\/git.[^\/]+\/.*\/-\/commit\/.*/",
+    "/^https:\/\/git.[^\/]+\/.*\/-\/merge_requests\/\\d+\\b/",
+    "/^https:\/\/git.[^\/]+\/.*\/-\/merge_requests\/\\d+\/diffs\\b/"
+  ],
+  "run-at": "document-end",
+  "grant": "none"
+}

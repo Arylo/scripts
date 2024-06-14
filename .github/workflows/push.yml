@@ -23,4 +23,9 @@ jobs:
         with:
           folder: dist/qinglong
           branch: qinglong
+      - name: Deploy Qinglong
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: dist/monkey
+          branch: monkey
 

@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "ts-node ./etc/build.ts"
+    "build": "concurrently npm:build:*",
+    "build:qinglong": "ts-node ./etc/build/qinglong.ts",
+    "build:monkey": "ts-node ./etc/build/monkey.ts"
   },
   "keywords": [],
   "author": "Arylo Yeung <arylo.open@gmail.com>",
@@ -13,6 +15,7 @@
     "@js-sh/js-sh": "^0.1.1"
   },
   "devDependencies": {
+    "concurrently": "^8.2.2",
     "cross-env": "^7.0.3",
     "esbuild": "^0.21.5",
     "ts-node": "^10.9.2",

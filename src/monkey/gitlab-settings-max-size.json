@@ -1,0 +1,7 @@
+{
+  "name": "Max Size CI/CD Setting Page for Gitlab",
+  "version": "0.1.0",
+  "include": "/^https:\/\/git.[^\/]+\/.*\/-\/settings\/ci_cd$/",
+  "run-at": "document-end",
+  "grant": "none"
+}
