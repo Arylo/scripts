@@ -1,9 +1,8 @@
 name: Code Push
 
 on:
-  push:
-    branches:
-      - master
+  - push
+  - pull_request
 
 jobs:
   main:
@@ -23,9 +22,11 @@ jobs:
         with:
           folder: dist/qinglong
           branch: qinglong
+        if: github.ref_name == github.event.repository.default_branch
       - name: Deploy Monkey scripts
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           folder: dist/monkey
           branch: monkey
+        if: github.ref_name == github.event.repository.default_branch
 
