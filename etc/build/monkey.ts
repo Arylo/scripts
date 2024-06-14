@@ -5,7 +5,6 @@ import { ROOT_PATH, githubInfo } from '../consts'
 
 const srcPath = path.resolve(ROOT_PATH, 'src/monkey')
 const outPath = path.resolve(ROOT_PATH, 'dist/monkey')
-const cachePath = path.resolve(ROOT_PATH, '.github/cache/monkey')
 
 const pkgInfo = require(path.resolve(ROOT_PATH, 'package.json'))
 const { domain, repo, branch } = githubInfo
