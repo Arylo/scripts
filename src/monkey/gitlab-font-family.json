@@ -1,6 +1,6 @@
 {
-  "name": "Add Font Family",
-  "version": "0.1.0",
+  "name": "Add Font Family for Gitlab",
+  "version": "0.1.1",
   "author": "You",
   "include": [
     "/^https:\/\/git.[^\/]+\/.*\/-\/blob\/.*/",
