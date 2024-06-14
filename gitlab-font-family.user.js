@@ -6,10 +6,10 @@
 // @include /^https://git.[^/]+/.*/-/commit/.*/
 // @include /^https://git.[^/]+/.*/-/merge_requests/\d+\b/
 // @include /^https://git.[^/]+/.*/-/merge_requests/\d+/diffs\b/
+// @downloadURL https://raw.githubusercontent.com/Arylo/scripts//monkey/gitlab-font-family.user.js
+// @updateURL https://raw.githubusercontent.com/Arylo/scripts//monkey/gitlab-font-family.meta.js
 // @run-at document-end
 // @grant none
-// @downloadURL https://raw.githubusercontent.com/Arylo/scripts/monkey/gitlab-font-family.js
-// @updateURL https://raw.githubusercontent.com/Arylo/scripts/monkey/gitlab-font-family.meta.js
 // ==/UserScript==
 "use strict";
 (() => {
