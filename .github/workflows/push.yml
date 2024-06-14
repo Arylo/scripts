@@ -15,7 +15,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
       - name: TS Type Check
-        run: npx tsc --noEmit
+        run: npm run lint:type-check
       - name: Build Qinglong
         run: npm run build
       - name: Deploy Qinglong

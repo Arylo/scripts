@@ -1,5 +1,5 @@
-const el = document.createElement('style')
-el.id = 'append-font'
+const elem = document.createElement('style')
+elem.id = 'append-font'
 
 const fontStyle = '{ font-family: "Fira Code", "Smiley Sans", "Courier New", monospace; }'
 const query = [
@@ -7,5 +7,8 @@ const query = [
   'table.code tr.line_holder td.line_content',
   '.diff-grid-row'
 ]
-query.forEach((q) => el.append(`${q} ${fontStyle}`))
-document.body.append(el)
+query.forEach((q) => elem.append(`${q} ${fontStyle}`))
+
+document.body.append(elem)
+
+export {}
