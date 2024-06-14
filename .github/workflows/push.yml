@@ -18,12 +18,12 @@ jobs:
         run: npm run lint:type-check
       - name: Build Qinglong
         run: npm run build
-      - name: Deploy Qinglong
+      - name: Deploy Qinglong scripts
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           folder: dist/qinglong
           branch: qinglong
-      - name: Deploy Qinglong
+      - name: Deploy Monkey scripts
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           folder: dist/monkey
