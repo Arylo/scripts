@@ -5,7 +5,7 @@ import { checkVariables } from "./utils/checkVariables"
 import { genBatchCheckFn } from './utils/genBatchCheckFn'
 import logger from './utils/logger'
 
-type FILE = {
+type RAW_FILE = {
   realPath: string,
   name: string,
   stat: fs.Stats,
@@ -18,7 +18,7 @@ const ROOT_PATH_KEY = 'GROUP_VIDEO_ROOT_PATH'
 const TARGET_PATH_KEY = 'GROUP_VIDEO_TARGET_PATH'
 const FOLDER_PREFIX = 'tag_'
 const FILE_EXT = ['.mp4', '.mkv']
-const TAG_FILTER_FNS: Array<(file: Readonly<FILE>) => string> = [
+const TAG_FILTER_FNS: Array<(file: Readonly<RAW_FILE>) => string> = [
   (file) => {
     return file.stat.ctime.getFullYear().toString()
   },
@@ -61,7 +61,7 @@ const fileListMap = FILE_EXT
   }, [])
   .map((p) => {
     const stat = fs.statSync(p)
-    const baseObj = Object.freeze({
+    const baseObj: Readonly<RAW_FILE> = Object.freeze({
       realPath: p,
       name: path.basename(p),
       stat,
