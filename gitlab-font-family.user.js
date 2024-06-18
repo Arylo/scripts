@@ -1,11 +1,12 @@
 // ==UserScript==
 // @name Add Font Family for Gitlab
-// @version 0.1.1
+// @version 1.2
 // @author Arylo Yeung <arylo.open@gmail.com>
-// @include /^https://git.[^/]+/.*/-/blob/.*/
-// @include /^https://git.[^/]+/.*/-/commit/.*/
-// @include /^https://git.[^/]+/.*/-/merge_requests/\d+\b/
-// @include /^https://git.[^/]+/.*/-/merge_requests/\d+/diffs\b/
+// @include /^https://git\b.[^/]+/.*/-/raw/.*/
+// @include /^https://git\b.[^/]+/.*/-/blob/.*/
+// @include /^https://git\b.[^/]+/.*/-/commit/.*/
+// @include /^https://git\b.[^/]+/.*/-/merge_requests/(\d+|new)\b/
+// @include /^https://git\b.[^/]+/.*/-/merge_requests/(\d+|new)/diffs\b/
 // @downloadURL https://raw.githubusercontent.com/Arylo/scripts/monkey/gitlab-font-family.user.js
 // @updateURL https://raw.githubusercontent.com/Arylo/scripts/monkey/gitlab-font-family.meta.js
 // @run-at document-end
@@ -13,15 +14,17 @@
 // ==/UserScript==
 "use strict";
 (() => {
+  // src/monkey/gitlab-font-family.css
+  var gitlab_font_family_default = 'code {\n  font-family: "Fira Code", "Smiley Sans", "Courier New", "Consolas", monospace;\n}\n\n.blob-content.file-content.code pre code {\n  font-family: "Fira Code", "Smiley Sans", "Courier New", "Consolas", monospace;\n}\n\ntable.code tr.line_holder td.line_content {\n  font-family: "Fira Code", "Smiley Sans", "Courier New", "Consolas", monospace;\n}\n\n.diff-grid-row {\n  font-family: "Fira Code", "Smiley Sans", "Courier New", "Consolas", monospace;\n}\n';
+
+  // src/monkey/utils/appendStyleElement.ts
+  var appendStyleElement = (cssContent, id) => {
+    const elem = document.createElement("style");
+    id && (elem.id = id);
+    elem.innerText = cssContent.replace(/\n/g, "");
+    document.body.append(elem);
+  };
+
   // src/monkey/gitlab-font-family.ts
-  var elem = document.createElement("style");
-  elem.id = "append-font";
-  var fontStyle = '{ font-family: "Fira Code", "Smiley Sans", "Courier New", monospace; }';
-  var query = [
-    ".blob-content.file-content.code pre code",
-    "table.code tr.line_holder td.line_content",
-    ".diff-grid-row"
-  ];
-  query.forEach((q) => elem.append(`${q} ${fontStyle}`));
-  document.body.append(elem);
+  setTimeout(() => appendStyleElement(gitlab_font_family_default, "append-font"), 25);
 })();
