@@ -1,6 +1,5 @@
 import css from './gitlab-font-family.css'
-import { appendStyleElement } from './utils/appendStyleElement'
 
-setTimeout(() => appendStyleElement(css, 'append-font'), 25)
+setTimeout(() => GM_addStyle(css), 25)
 
 export {}
