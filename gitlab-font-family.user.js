@@ -21,7 +21,7 @@
   var appendStyleElement = (cssContent, id) => {
     const elem = document.createElement("style");
     id && (elem.id = id);
-    elem.innerText = cssContent.replace(/\n/g, "");
+    elem.innerHTML = cssContent;
     document.body.append(elem);
   };
 
