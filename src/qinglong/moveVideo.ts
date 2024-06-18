@@ -14,6 +14,6 @@ const {
 
 cd(rootPath as string)
 
-moveFiles(['./**/*.mp4', './**/*.mkv'], targetPath as string)
+moveFiles(['./**/*.mp4', './**/*.mkv', './**/*.avi'], targetPath as string)
 
 console.log(ls('./**/*.bt.xltd'))

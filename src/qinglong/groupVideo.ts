@@ -7,6 +7,7 @@ import logger from './utils/logger'
 
 type RAW_FILE = {
   realPath: string,
+  basename: string,
   name: string,
   stat: fs.Stats,
   ino: number,
@@ -17,14 +18,30 @@ type RAW_FILE = {
 const ROOT_PATH_KEY = 'GROUP_VIDEO_ROOT_PATH'
 const TARGET_PATH_KEY = 'GROUP_VIDEO_TARGET_PATH'
 const FOLDER_PREFIX = 'tag_'
-const FILE_EXT = ['.mp4', '.mkv']
-const TAG_FILTER_FNS: Array<(file: Readonly<RAW_FILE>) => string> = [
+const FILE_EXT = ['.mp4', '.mkv', '.avi']
+const TAG_FILTER_FNS: Array<(file: Readonly<RAW_FILE>) => string | undefined> = [
   (file) => {
     return file.stat.ctime.getFullYear().toString()
+  },
+  (file) => {
+    const matches = [
+      matchText(file.name, /^(FC2\s?PPV)\s+\d+$/i, 'FC2PPV'),
+      matchText(file.name, /^(HEYZO)\s+\d+$/i),
+      matchText(file.name, /^\d+-\d+-(carib)$/i),
+      matchText(file.name, /^\d+_\d+-(10mu)$/i),
+      matchText(file.name, /^(\d*[A-Z]+)-\d+$/i),
+    ]
+    // console.log(matches)
+    return matches.filter(Boolean)[0]
   },
 ]
 
 // --------------------------------------------------
+
+function matchText (text: string, reg: RegExp, commonText?: string) {
+  const matched = text.match(reg)
+  return matched ? (commonText ?? matched[1]) : undefined
+}
 
 checkVariables([ROOT_PATH_KEY, TARGET_PATH_KEY])
 
@@ -61,16 +78,18 @@ const fileListMap = FILE_EXT
   }, [])
   .map((p) => {
     const stat = fs.statSync(p)
+    const basename = path.basename(p)
     const baseObj: Readonly<RAW_FILE> = Object.freeze({
       realPath: p,
-      name: path.basename(p),
+      basename,
+      name: path.basename(p, path.extname(p)),
       stat,
       ino: stat.ino,
     })
     const { stat: _, ...restObj } = baseObj
     return {
       ...restObj,
-      tags: TAG_FILTER_FNS.map((fn) => fn(baseObj)).filter(Boolean),
+      tags: TAG_FILTER_FNS.map((fn) => fn(baseObj)).filter(Boolean).map((tag) => tag?.toUpperCase()) as string[],
     }
   })
 
@@ -81,7 +100,7 @@ const tagSet = fileListMap.reduce<Set<string>>((set, { tags }) => {
   return set
 }, new Set())
 
-for (const tag of [...tagSet]) {
+for (const tag of [...tagSet].sort()) {
   logger.info(`Start to process the tag (${tag}) ...`)
 
   const targetFolderPath = path.resolve(targetPath, `${FOLDER_PREFIX}${tag}`)
@@ -96,7 +115,7 @@ for (const tag of [...tagSet]) {
   const pendingFiles = fileListMap.filter((file) => file.tags.includes(tag))
 
   fs.readdirSync(targetFolderPath)
-    .filter((filename) => filename !== pendingFiles.find((file) => file.name === filename)?.name)
+    .filter((filename) => filename !== pendingFiles.find((file) => file.basename === filename)?.basename)
     .forEach((filename) => {
       const targetFilePath = path.resolve(targetFolderPath, filename)
       logger.pending(`Unlink the file (${targetFilePath}) ...`)
@@ -105,7 +124,7 @@ for (const tag of [...tagSet]) {
     })
 
   for (const file of pendingFiles) {
-    const targetFilePath = path.resolve(targetFolderPath, file.name)
+    const targetFilePath = path.resolve(targetFolderPath, file.basename)
     if (!fs.existsSync(targetFilePath)) {
       logger.pending(`Link the file (${file.realPath}) to ${targetFilePath} ...`)
       fs.linkSync(file.realPath, targetFilePath)
