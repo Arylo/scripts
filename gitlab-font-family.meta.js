@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name Add Font Family for Gitlab
-// @version 1.2
+// @version 1.3
 // @author Arylo Yeung <arylo.open@gmail.com>
 // @include /^https://git\b.[^/]+/.*/-/raw/.*/
 // @include /^https://git\b.[^/]+/.*/-/blob/.*/
@@ -10,5 +10,5 @@
 // @downloadURL https://raw.githubusercontent.com/Arylo/scripts/monkey/gitlab-font-family.user.js
 // @updateURL https://raw.githubusercontent.com/Arylo/scripts/monkey/gitlab-font-family.meta.js
 // @run-at document-end
-// @grant none
+// @grant GM_addStyle
 // ==/UserScript==
