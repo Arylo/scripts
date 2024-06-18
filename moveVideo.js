@@ -66,6 +66,6 @@
     [TARGET_PATH_KEY]: targetPath
   } = process.env;
   (0, import_js_sh2.cd)(rootPath);
-  moveFiles(["./**/*.mp4", "./**/*.mkv"], targetPath);
+  moveFiles(["./**/*.mp4", "./**/*.mkv", "./**/*.avi"], targetPath);
   console.log((0, import_js_sh2.ls)("./**/*.bt.xltd"));
 })();

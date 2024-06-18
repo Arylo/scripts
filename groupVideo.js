@@ -76,12 +76,26 @@
   var ROOT_PATH_KEY = "GROUP_VIDEO_ROOT_PATH";
   var TARGET_PATH_KEY = "GROUP_VIDEO_TARGET_PATH";
   var FOLDER_PREFIX = "tag_";
-  var FILE_EXT = [".mp4", ".mkv"];
+  var FILE_EXT = [".mp4", ".mkv", ".avi"];
   var TAG_FILTER_FNS = [
     (file) => {
       return file.stat.ctime.getFullYear().toString();
+    },
+    (file) => {
+      const matches = [
+        matchText(file.name, /^(FC2\s?PPV)\s+\d+$/i, "FC2PPV"),
+        matchText(file.name, /^(HEYZO)\s+\d+$/i),
+        matchText(file.name, /^\d+-\d+-(carib)$/i),
+        matchText(file.name, /^\d+_\d+-(10mu)$/i),
+        matchText(file.name, /^(\d*[A-Z]+)-\d+$/i)
+      ];
+      return matches.filter(Boolean)[0];
     }
   ];
+  function matchText(text, reg, commonText) {
+    const matched = text.match(reg);
+    return matched ? commonText ?? matched[1] : void 0;
+  }
   checkVariables([ROOT_PATH_KEY, TARGET_PATH_KEY]);
   var {
     [ROOT_PATH_KEY]: rootPath,
@@ -111,16 +125,18 @@
     ];
   }, []).map((p) => {
     const stat = import_fs.default.statSync(p);
+    const basename = import_path.default.basename(p);
     const baseObj = Object.freeze({
       realPath: p,
-      name: import_path.default.basename(p),
+      basename,
+      name: import_path.default.basename(p, import_path.default.extname(p)),
       stat,
       ino: stat.ino
     });
     const { stat: _, ...restObj } = baseObj;
     return {
       ...restObj,
-      tags: TAG_FILTER_FNS.map((fn) => fn(baseObj)).filter(Boolean)
+      tags: TAG_FILTER_FNS.map((fn) => fn(baseObj)).filter(Boolean).map((tag) => tag?.toUpperCase())
     };
   });
   var tagSet = fileListMap.reduce((set, { tags }) => {
@@ -129,7 +145,7 @@
     }
     return set;
   }, /* @__PURE__ */ new Set());
-  for (const tag of [...tagSet]) {
+  for (const tag of [...tagSet].sort()) {
     logger_default.info(`Start to process the tag (${tag}) ...`);
     const targetFolderPath = import_path.default.resolve(targetPath, `${FOLDER_PREFIX}${tag}`);
     if (!import_fs.default.existsSync(targetFolderPath)) {
@@ -140,14 +156,14 @@
       logger_default.info(`The folder (${targetFolderPath}) has been created`);
     }
     const pendingFiles = fileListMap.filter((file) => file.tags.includes(tag));
-    import_fs.default.readdirSync(targetFolderPath).filter((filename) => filename !== pendingFiles.find((file) => file.name === filename)?.name).forEach((filename) => {
+    import_fs.default.readdirSync(targetFolderPath).filter((filename) => filename !== pendingFiles.find((file) => file.basename === filename)?.basename).forEach((filename) => {
       const targetFilePath = import_path.default.resolve(targetFolderPath, filename);
       logger_default.pending(`Unlink the file (${targetFilePath}) ...`);
       import_fs.default.unlinkSync(targetFilePath);
       logger_default.success(`Unlink the file (${targetFilePath}) ... Done`);
     });
     for (const file of pendingFiles) {
-      const targetFilePath = import_path.default.resolve(targetFolderPath, file.name);
+      const targetFilePath = import_path.default.resolve(targetFolderPath, file.basename);
       if (!import_fs.default.existsSync(targetFilePath)) {
         logger_default.pending(`Link the file (${file.realPath}) to ${targetFilePath} ...`);
         import_fs.default.linkSync(file.realPath, targetFilePath);
