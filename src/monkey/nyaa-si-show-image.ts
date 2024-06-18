@@ -1,32 +1,27 @@
 setTimeout(() => {
-  const elems = $('.col-md-5 a[title="User"]')
+  const userElems = $('.col-md-5 a[title="User"]')
 
-  if (elems.length && elems.text() === 'javsubs91') {
-    const pendMKElem = $('div[markdown-text]')
-    if (pendMKElem.length) {
-      const matches = pendMKElem[0].innerText.match(/\[!\[.+\]\((.+)\)\]\((.+)\)/)
-      if (matches) {
-        pendMKElem[0].innerHTML = `<a href="${matches[2]}"><img src="${matches[1]}"></a>`
-      }
-    }
-    const elems = $('a > img')
-    if (elems.length) {
-      let imgUrl = elems.attr('src')
+  if (userElems.length && userElems.text() === 'javsubs91') {
+    const imgElems = $('a > img')
+    if (imgElems.length) {
+      let imgUrl = imgElems.attr('src')
       if (!imgUrl) return
-      const linkUrl = elems.parent().attr('href')
+      const linkUrl = imgElems.parent().attr('href')
       if (!linkUrl) return
-      // console.log(imgUrl, linkUrl)
-      imgUrl = imgUrl.replace('//th', '/i')
-      const list = linkUrl.split('/')
-      imgUrl += '/'
-      imgUrl += list[list.length - 1]
-      elems.attr('src', imgUrl)
-      elems.on('error', function () {
-        setTimeout(function () {
-          elems.attr('src', imgUrl + (imgUrl.indexOf('?') === -1 ? '?' : '&') + 'refresh=' + Date.now())
-        }, Number(Math.random() * 2000))
-      })
+
+      if (imgUrl.includes('//th')) {
+        let newImgUrl = imgUrl.replace('//th', '/i')
+        const list = linkUrl.split('/')
+        newImgUrl += '/'
+        newImgUrl += list[list.length - 1]
+        imgElems.attr('src', newImgUrl)
+        imgElems.on('error', function () {
+          setTimeout(function () {
+            imgElems.attr('src', newImgUrl + (newImgUrl.indexOf('?') === -1 ? '?' : '&') + 'refresh=' + Date.now())
+          }, Number(Math.random() * 2000))
+        })
+      }
+
     }
   }
-
 }, 50)
