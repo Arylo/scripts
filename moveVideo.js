@@ -19,23 +19,48 @@
     pendingFilepaths.forEach((p) => (0, import_js_sh.mv)(p, targetPath2));
   };
 
+  // src/qinglong/utils/genBatchCheckFn.ts
+  var genBatchCheckFn = (checkFn) => {
+    return (valueOrValues, { lostExit = true } = {}) => {
+      const values = (Array.isArray(valueOrValues) ? valueOrValues : [valueOrValues]).filter((key) => typeof key === "string" && key.length > 0);
+      let allPass = true;
+      for (const val of values) {
+        const result = checkFn(val);
+        if (!result) allPass = false;
+      }
+      if (!allPass && lostExit) process.exit(1);
+      return allPass;
+    };
+  };
+
+  // src/qinglong/utils/logger.ts
+  var pending = (...msg) => console.log("[ ]", ...msg);
+  var success = (...msg) => console.log("[\u221A]", ...msg);
+  var fail = (...msg) => console.log("[x]", ...msg);
+  var info = (...msg) => console.log(">>>", ...msg);
+  var logger = {
+    pending,
+    success,
+    fail,
+    info
+  };
+  var logger_default = logger;
+
+  // src/qinglong/utils/checkVariables.ts
+  var checkVariables = genBatchCheckFn((key) => {
+    const val = process.env[key];
+    if (!val) {
+      logger_default.fail(`Lost the environment variable (${key})`);
+      return false;
+    }
+    logger_default.success(`Found the environment variable (${key}) => ${val}`);
+    return true;
+  });
+
   // src/qinglong/moveVideo.ts
   var ROOT_PATH_KEY = "MV_VIDEO_ROOT_PATH";
   var TARGET_PATH_KEY = "MV_VIDEO_TARGET_PATH";
-  var checkVariables = () => {
-    let hasLostVariable = false;
-    for (const key of [ROOT_PATH_KEY, TARGET_PATH_KEY]) {
-      const val = process.env[key];
-      if (!val) {
-        console.error(`[x] Lost the environment variable (${key})`);
-        hasLostVariable = true;
-      } else {
-        console.info(`[\u221A] Found the environment variable (${key}) => ${val}`);
-      }
-    }
-    if (hasLostVariable) process.exit(1);
-  };
-  checkVariables();
+  checkVariables([ROOT_PATH_KEY, TARGET_PATH_KEY]);
   var {
     [ROOT_PATH_KEY]: rootPath,
     [TARGET_PATH_KEY]: targetPath
