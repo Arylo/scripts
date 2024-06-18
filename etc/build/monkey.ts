@@ -78,7 +78,7 @@ const paresBanner = (filepath: string, appendInfo = {}) => {
     } = parseFilenames(filepath)
     const sourcePath = filepath
     const targetPath = path.resolve(outPath, user)
-    console.log(`Building ${path.relative(srcPath, sourcePath)} --outfile=${targetPath} ...`)
+    console.log(`Building ${path.relative(ROOT_PATH, sourcePath)} --outfile=${path.relative(ROOT_PATH, targetPath)} ...`)
     const banner = paresBanner(sourcePath)
     esbuild.buildSync({
       entryPoints: [sourcePath],
@@ -88,6 +88,6 @@ const paresBanner = (filepath: string, appendInfo = {}) => {
     })
     const metaPath = path.resolve(outPath, meta)
     fs.writeFileSync(metaPath, banner, 'utf-8')
-    console.log(`Building ${path.relative(srcPath, sourcePath)} --outfile=${targetPath} ... Done!`)
+    console.log(`Building ${path.relative(ROOT_PATH, sourcePath)} --outfile=${path.relative(ROOT_PATH, targetPath)} ... Done!`)
   }
 })()

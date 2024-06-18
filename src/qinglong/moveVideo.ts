@@ -1,24 +1,11 @@
 import { cd, ls } from '@js-sh/js-sh'
 import { moveFiles } from './utils/moveFiles'
+import { checkVariables } from './utils/checkVariables'
 
 const ROOT_PATH_KEY = 'MV_VIDEO_ROOT_PATH'
 const TARGET_PATH_KEY = 'MV_VIDEO_TARGET_PATH'
 
-const checkVariables = () => {
-  let hasLostVariable = false
-  for (const key of [ROOT_PATH_KEY, TARGET_PATH_KEY]) {
-    const val = process.env[key]
-    if (!val) {
-      console.error(`[x] Lost the environment variable (${key})`)
-      hasLostVariable = true
-    } else {
-      console.info(`[√] Found the environment variable (${key}) => ${val}`)
-    }
-  }
-  if (hasLostVariable) process.exit(1)
-}
-
-checkVariables()
+checkVariables([ROOT_PATH_KEY, TARGET_PATH_KEY])
 
 const {
   [ROOT_PATH_KEY]: rootPath,
