@@ -1,12 +1,12 @@
 {
   "name": "Add Font Family for Gitlab",
-  "version": "0.1.1",
-  "author": "You",
+  "version": "1.2",
   "include": [
-    "/^https:\/\/git.[^\/]+\/.*\/-\/blob\/.*/",
-    "/^https:\/\/git.[^\/]+\/.*\/-\/commit\/.*/",
-    "/^https:\/\/git.[^\/]+\/.*\/-\/merge_requests\/\\d+\\b/",
-    "/^https:\/\/git.[^\/]+\/.*\/-\/merge_requests\/\\d+\/diffs\\b/"
+    "/^https:\/\/git\\b.[^\/]+\/.*\/-\/raw\/.*/",
+    "/^https:\/\/git\\b.[^\/]+\/.*\/-\/blob\/.*/",
+    "/^https:\/\/git\\b.[^\/]+\/.*\/-\/commit\/.*/",
+    "/^https:\/\/git\\b.[^\/]+\/.*\/-\/merge_requests\/(\\d+|new)\\b/",
+    "/^https:\/\/git\\b.[^\/]+\/.*\/-\/merge_requests\/(\\d+|new)\/diffs\\b/"
   ],
   "run-at": "document-end",
   "grant": "none"

@@ -1,0 +1,15 @@
+code {
+  font-family: "Fira Code", "Smiley Sans", "Courier New", "Consolas", monospace;
+}
+
+.blob-content.file-content.code pre code {
+  font-family: "Fira Code", "Smiley Sans", "Courier New", "Consolas", monospace;
+}
+
+table.code tr.line_holder td.line_content {
+  font-family: "Fira Code", "Smiley Sans", "Courier New", "Consolas", monospace;
+}
+
+.diff-grid-row {
+  font-family: "Fira Code", "Smiley Sans", "Courier New", "Consolas", monospace;
+}

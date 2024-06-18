@@ -84,6 +84,7 @@ const paresBanner = (filepath: string, appendInfo = {}) => {
       entryPoints: [sourcePath],
       bundle: true,
       banner: { js: banner },
+      loader: { '.css': 'text' },
       outfile: targetPath,
     })
     const metaPath = path.resolve(outPath, meta)
