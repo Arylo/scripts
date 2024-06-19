@@ -15,7 +15,7 @@ jobs:
         run: npm ci
       - name: TS Type Check
         run: npm run lint:type-check
-      - name: Build Qinglong
+      - name: Build Scripts
         run: npm run build
       - name: Deploy Qinglong scripts
         uses: JamesIves/github-pages-deploy-action@v4
