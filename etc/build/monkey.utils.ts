@@ -91,12 +91,11 @@ export const exportLatestDeployInfo = async (filepath: string) => {
   try {
     await download(latestDeployUrl, os.tmpdir(), { filename: deployJson })
     const downloadDeployJson = JSON.parse(fs.readFileSync(path.resolve(os.tmpdir(), deployJson), 'utf-8'))
-    console.log(downloadDeployJson)
-    if (downloadDeployJson.contentHash !== contentHash && downloadDeployJson.bannerHash !== bannerHash) {
+    if (downloadDeployJson.contentHash !== contentHash || downloadDeployJson.bannerHash !== bannerHash) {
       version = Number(downloadDeployJson.version) + 1
+      console.info(`Version increased: ${downloadDeployJson.version} => ${version}`)
     } else {
       version = Number(downloadDeployJson.version)
-      console.log(downloadDeployJson)
     }
   } catch (e) {}
   return {
