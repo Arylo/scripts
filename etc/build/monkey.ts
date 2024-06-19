@@ -21,13 +21,13 @@ const outPath = path.resolve(ROOT_PATH, 'dist/monkey')
     const targetPath = path.resolve(outPath, user)
     console.log(`Building ${path.relative(ROOT_PATH, sourcePath)} --outfile=${path.relative(ROOT_PATH, targetPath)} ...`)
     const deployInfo = await exportLatestDeployInfo(sourcePath)
-    fs.writeFileSync(path.resolve(outPath, deployJson), JSON.stringify(deployInfo, null, 2), 'utf-8')
     const banner = paresBanner(sourcePath, { version: deployInfo.version })
     buildScript(sourcePath, {
       banner: { js: banner },
       outfile: targetPath,
     })
     const metaPath = path.resolve(outPath, meta)
+    fs.writeFileSync(path.resolve(outPath, deployJson), JSON.stringify(deployInfo, null, 2), 'utf-8')
     fs.writeFileSync(metaPath, banner, 'utf-8')
     console.log(`Building ${path.relative(ROOT_PATH, sourcePath)} --outfile=${path.relative(ROOT_PATH, targetPath)} ... Done!`)
   }
