@@ -33,6 +33,16 @@ const parseMetaItem = (key: string, value: any) => {
   }
 }
 
+const findIndex = (val: string, rules: Array<string|RegExp> = []) => {
+  return rules.findIndex((rule) => {
+    if (rule instanceof RegExp) {
+      return rule.test(val)
+    } else {
+      return rule === val
+    }
+  })
+}
+
 export const paresBanner = (filepath: string, appendInfo = {}) => {
   const jsonPath = parseJsonPath(filepath)
   const jsonContent = JSON.parse(fs.readFileSync(jsonPath, 'utf-8'))
@@ -51,8 +61,8 @@ export const paresBanner = (filepath: string, appendInfo = {}) => {
     .sort(([key1], [key2]) => {
       const orderHead = bannerOrderMap.head
       const orderTail = bannerOrderMap.tail
-      const key1Order = [...orderHead, ...orderTail].indexOf(key1)
-      const key2Order = [...orderHead, ...orderTail].indexOf(key2)
+      const key1Order = findIndex(key1, [...orderHead, ...orderTail])
+      const key2Order = findIndex(key2, [...orderHead, ...orderTail])
 
       let result = -1
       if (key1Order !== -1 && key2Order !== -1) {

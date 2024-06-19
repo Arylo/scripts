@@ -1,6 +1,6 @@
 {
-  "name": "Add Font Family for Gitlab",
-  "version": "1.3",
+  "name": "Add Font Family for the Self-managed Gitlab",
+  "name:zh": "为自托管 Gitlab 添加字体",
   "include": [
     "/^https:\/\/git\\b.[^\/]+\/.*\/-\/raw\/.*/",
     "/^https:\/\/git\\b.[^\/]+\/.*\/-\/blob\/.*/",

@@ -3,9 +3,11 @@ import { githubInfo } from '../consts'
 export const bannerOrderMap = {
   head: [
     'name',
+    /^name:\w+$/,
     'namespace',
     'copyright',
     'description',
+    /^description:\w+/,
     'icon',
     'iconURL',
     'defaulticon',
