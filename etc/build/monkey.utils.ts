@@ -102,7 +102,9 @@ export const exportLatestDeployInfo = async (filepath: string) => {
   let version = 1
   const latestDeployUrl = `${githubRawPrefix}/${deployJson}`
   try {
+    console.info(`Download the latest deploy info: ${latestDeployUrl} ...`)
     await download(latestDeployUrl, os.tmpdir(), { filename: deployJson })
+    console.log(`Download the latest deploy info: ${latestDeployUrl} ... Done`)
     const downloadDeployJson = JSON.parse(fs.readFileSync(path.resolve(os.tmpdir(), deployJson), 'utf-8'))
     if (downloadDeployJson.contentHash !== contentHash || downloadDeployJson.bannerHash !== bannerHash) {
       version = Number(downloadDeployJson.version) + 1
@@ -110,7 +112,10 @@ export const exportLatestDeployInfo = async (filepath: string) => {
     } else {
       version = Number(downloadDeployJson.version)
     }
-  } catch (e) {}
+  } catch (e) {
+    console.error(`Download the latest deploy info: ${latestDeployUrl} ... Failed`)
+    console.info(`Version use: ${version}`)
+  }
   return {
     contentHash,
     bannerHash,

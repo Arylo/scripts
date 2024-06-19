@@ -1,16 +1,22 @@
 const getCurrentCount = () => $('.comicContent-list > li > img').length
 
-const getTotalCount = () => Number(document.getElementsByClassName('comicCount')[0].innerText)
+const getTotalCount = () => Number((document.getElementsByClassName('comicCount')[0] as HTMLDivElement).innerText)
 
-const refreshImage = (cb) => {
+const weScrollTo = (top: number, isSmooth = false) => window.scrollTo({
+  top,
+  left: 0,
+  behavior: isSmooth ? 'smooth' : 'instant',
+})
+
+const refreshImage = (cb: Function) => {
   const nextTime = 10
   let [cur, total] = [getCurrentCount(), getTotalCount()]
-  console.log(getCurrentCount(), '/', getTotalCount())
+  console.log('Process:', getCurrentCount(), '/', getTotalCount())
   if (total === 0 || cur < total) {
-    window.scrollTo(0, document.getElementsByClassName('comicContent')[0].clientHeight, true)
+    weScrollTo(document.getElementsByClassName('comicContent')[0].clientHeight, true)
     cur = getCurrentCount()
     setTimeout(() => refreshImage(cb), nextTime)
-    setTimeout(() => window.scrollTo(0, 0, true), nextTime / 2)
+    setTimeout(() => weScrollTo(0), nextTime / 2)
     return
   }
   cb()
@@ -18,8 +24,9 @@ const refreshImage = (cb) => {
 
 setTimeout(() => {
   refreshImage(() => {
-    $('.comicContent-list > li > img').each((_, el) => {
-      el.src = el.dataset.src
+    weScrollTo(0)
+    $<HTMLImageElement>('.comicContent-list > li > img').each((_, el) => {
+      $(el).attr('src', $(el).data('src'))
     })
   })
 }, 25)
