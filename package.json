@@ -17,10 +17,15 @@
     "@js-sh/js-sh": "^0.1.1"
   },
   "devDependencies": {
+    "@types/download": "^8.0.5",
     "@types/jquery": "^3.5.30",
+    "@types/md5": "^2.3.5",
     "concurrently": "^8.2.2",
     "cross-env": "^7.0.3",
+    "download": "^8.0.0",
     "esbuild": "^0.21.5",
+    "md5": "^2.3.0",
+    "md5-file": "^5.0.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.5"
   }
