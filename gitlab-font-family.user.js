@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name Add Font Family for Gitlab
-// @version 1.3
+// @version 1
 // @author Arylo Yeung <arylo.open@gmail.com>
 // @include /^https://git\b.[^/]+/.*/-/raw/.*/
 // @include /^https://git\b.[^/]+/.*/-/blob/.*/
