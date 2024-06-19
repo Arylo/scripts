@@ -2,6 +2,7 @@
   "name": "scripts",
   "version": "1.0.0",
   "description": "",
+  "private": true,
   "main": "index.js",
   "scripts": {
     "build": "concurrently npm:build:*",
@@ -12,6 +13,10 @@
   },
   "keywords": [],
   "author": "Arylo Yeung <arylo.open@gmail.com>",
+  "homepage": "https://github.com/Arylo/scripts#readme",
+  "bugs": {
+    "url": "https://github.com/Arylo/scripts/issues"
+  },
   "license": "MIT",
   "dependencies": {
     "@js-sh/js-sh": "^0.1.1"

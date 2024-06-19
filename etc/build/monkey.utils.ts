@@ -53,6 +53,9 @@ export const paresBanner = (filepath: string, appendInfo = {}) => {
     version: undefined,
     ...appendInfo,
     author: pkgInfo.author,
+    license: pkgInfo.license,
+    homepage: pkgInfo.homepage,
+    supportURL: pkgInfo.bugs.url,
     downloadURL: `${githubRawPrefix}/${user}`,
     updateURL: `${githubRawPrefix}/${meta}`,
   }

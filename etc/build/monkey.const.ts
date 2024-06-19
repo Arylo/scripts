@@ -21,9 +21,9 @@ export const bannerOrderMap = {
     'homepageURL',
     'website',
     'source',
+    'supportURL',
     'downloadURL',
     'updateURL',
-    'supportURL',
     'run-at',
     'grant'
   ],
