@@ -1,0 +1,14 @@
+{
+  "name": "Load Image Rightnow on copy manga site",
+  "match": [
+    "https://copymanga.com/comic/*/chapter/*",
+    "https://copymanga.org/comic/*/chapter/*",
+    "https://copymanga.net/comic/*/chapter/*",
+    "https://copymanga.info/comic/*/chapter/*",
+    "https://copymanga.site/comic/*/chapter/*",
+    "https://copymanga.tv/comic/*/chapter/*",
+    "https://mangacopy.com/comic/*/chapter/*"
+  ],
+  "run-at": "document-end",
+  "grant": "none"
+}
