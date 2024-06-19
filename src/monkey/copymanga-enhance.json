@@ -16,6 +16,11 @@
     "https://*.copymanga.tv/comic/*/chapter/*",
     "https://*.mangacopy.com/comic/*/chapter/*"
   ],
+  "require": "https://unpkg.com/vue@2.7.14/dist/vue.min.js",
   "run-at": "document-end",
-  "grant": "none"
+  "grant": [
+    "GM_addStyle",
+    "GM_setValue",
+    "GM_getValue"
+  ]
 }

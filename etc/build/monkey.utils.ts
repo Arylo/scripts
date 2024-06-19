@@ -127,7 +127,7 @@ export const buildScript = (filepath: string, extraConfig: esbuild.BuildOptions=
   return esbuild.buildSync({
     entryPoints: [filepath],
     bundle: true,
-    loader: { '.css': 'text' },
+    loader: { '.css': 'text', '.html': 'text' },
     ...extraConfig,
   })
 }
