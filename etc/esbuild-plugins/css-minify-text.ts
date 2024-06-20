@@ -1,7 +1,7 @@
 import fs from 'fs'
 import { Plugin, transform } from 'esbuild'
 
-export const CSSMinifyTextPlugin: Plugin = {
+export const CSSMinifyTextPlugin: () => Plugin = () => ({
   name: 'CSSMinifyTextPlugin',
   setup (build) {
     build.onLoad({ filter: /\.css$/ }, async (args) => {
@@ -15,6 +15,6 @@ export const CSSMinifyTextPlugin: Plugin = {
       return { loader: 'text', contents: css.code }
     })
   }
-}
+})
 
 export default CSSMinifyTextPlugin

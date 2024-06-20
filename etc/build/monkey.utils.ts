@@ -129,10 +129,9 @@ export const buildScript = (filepath: string, extraConfig: esbuild.BuildOptions=
   return esbuild.build({
     entryPoints: [filepath],
     bundle: true,
-    loader: { '.html': 'text' },
     plugins: [
-      CSSMinifyTextPlugin,
-      HTMLMinifyTextPlugin,
+      CSSMinifyTextPlugin(),
+      HTMLMinifyTextPlugin(),
     ],
     ...extraConfig,
   })

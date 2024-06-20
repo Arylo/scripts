@@ -2,7 +2,7 @@ import fs from 'fs'
 import { Plugin } from 'esbuild'
 import htmlnano from 'htmlnano'
 
-export const HTMLMinifyTextPlugin: Plugin = {
+export const HTMLMinifyTextPlugin: () => Plugin = () => ({
   name: 'HTMLMinifyTextPlugin',
   setup (build) {
     build.onLoad({ filter: /\.html?$/ }, async (args) => {
@@ -14,6 +14,6 @@ export const HTMLMinifyTextPlugin: Plugin = {
       return { loader: 'text', contents: html.html }
     })
   }
-}
+})
 
 export default HTMLMinifyTextPlugin
