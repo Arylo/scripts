@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name Add Font Family for the Self-managed Gitlab
 // @name:zh 为自托管 Gitlab 添加字体
-// @version 3
+// @version 4
 // @author Arylo Yeung <arylo.open@gmail.com>
 // @include /^https://git\b.[^/]+/.*/-/raw/.*/
 // @include /^https://git\b.[^/]+/.*/-/blob/.*/
@@ -19,7 +19,7 @@
 "use strict";
 (() => {
   // src/monkey/gitlab-font-family.css
-  var gitlab_font_family_default = 'code {\n  font-family: "Fira Code", "Smiley Sans", "Courier New", "Consolas", monospace;\n}\n\n.blob-content.file-content.code pre code {\n  font-family: "Fira Code", "Smiley Sans", "Courier New", "Consolas", monospace;\n}\n\ntable.code tr.line_holder td.line_content {\n  font-family: "Fira Code", "Smiley Sans", "Courier New", "Consolas", monospace;\n}\n\n.diff-grid-row {\n  font-family: "Fira Code", "Smiley Sans", "Courier New", "Consolas", monospace;\n}\n';
+  var gitlab_font_family_default = "code,.blob-content.file-content.code pre code,table.code tr.line_holder td.line_content,.diff-grid-row{font-family:Fira Code,Smiley Sans,Courier New,Consolas,monospace}\n";
 
   // src/monkey/gitlab-font-family.ts
   setTimeout(() => GM_addStyle(gitlab_font_family_default), 25);

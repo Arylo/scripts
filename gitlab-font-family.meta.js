@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name Add Font Family for the Self-managed Gitlab
 // @name:zh 为自托管 Gitlab 添加字体
-// @version 3
+// @version 4
 // @author Arylo Yeung <arylo.open@gmail.com>
 // @include /^https://git\b.[^/]+/.*/-/raw/.*/
 // @include /^https://git\b.[^/]+/.*/-/blob/.*/

@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name Max Size CI/CD Setting Page for the Self-managed Gitlab
 // @name:zh 自托管 Gitlab CI/CD 设置页面最大化尺寸
-// @version 3
+// @version 4
 // @author Arylo Yeung <arylo.open@gmail.com>
 // @include /^https://git\b.[^/]+/.*/-/settings/ci_cd$/
 // @license MIT
@@ -15,7 +15,7 @@
 "use strict";
 (() => {
   // src/monkey/gitlab-settings-max-size.css
-  var gitlab_settings_max_size_default = ".content-wrapper nav { max-width: 100%; }\n.content-wrapper .container-fluid { max-width: 100%; }\n.ci-variable-table table colgroup col:nth-child(3) { width: 100px; }\n.ci-variable-table table colgroup col:nth-child(4) { width: 200px; }\n.ci-variable-table table colgroup col:nth-child(5) { width: 50px; }\n";
+  var gitlab_settings_max_size_default = ".content-wrapper nav{max-width:100%}.content-wrapper .container-fluid{max-width:100%}.ci-variable-table table colgroup col:nth-child(3){width:100px}.ci-variable-table table colgroup col:nth-child(4){width:200px}.ci-variable-table table colgroup col:nth-child(5){width:50px}\n";
 
   // src/monkey/gitlab-settings-max-size.ts
   setTimeout(() => GM_addStyle(gitlab_settings_max_size_default), 25);
