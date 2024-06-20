@@ -95,7 +95,7 @@ export const paresBanner = (filepath: string, appendInfo = {}) => {
 
 export const exportLatestDeployInfo = async (filepath: string) => {
   const { min, deployJson } = parseFilenames(filepath)
-  buildScript(filepath, {
+  await buildScript(filepath, {
     minify: true,
     outfile: path.resolve(os.tmpdir(), min),
   })
