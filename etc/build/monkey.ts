@@ -22,7 +22,7 @@ const outPath = path.resolve(ROOT_PATH, 'dist/monkey')
     console.log(`Building ${path.relative(ROOT_PATH, sourcePath)} --outfile=${path.relative(ROOT_PATH, targetPath)} ...`)
     const deployInfo = await exportLatestDeployInfo(sourcePath)
     const banner = paresBanner(sourcePath, { version: deployInfo.version })
-    buildScript(sourcePath, {
+    await buildScript(sourcePath, {
       banner: { js: banner },
       outfile: targetPath,
     })

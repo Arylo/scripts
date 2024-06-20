@@ -7,6 +7,8 @@ import md5 from 'md5'
 import download from 'download'
 import { bannerOrderMap, githubRawPrefix } from './monkey.const'
 import { ROOT_PATH } from '../consts'
+import CSSMinifyTextPlugin from '../esbuild-plugins/css-minify-text'
+import HTMLMinifyTextPlugin from '../esbuild-plugins/html-minify-text'
 
 export const parseFilenames = (filepath: string) => {
   const filename = path.basename(filepath, path.extname(filepath))
@@ -124,10 +126,14 @@ export const exportLatestDeployInfo = async (filepath: string) => {
 }
 
 export const buildScript = (filepath: string, extraConfig: esbuild.BuildOptions= {}) => {
-  return esbuild.buildSync({
+  return esbuild.build({
     entryPoints: [filepath],
     bundle: true,
-    loader: { '.css': 'text', '.html': 'text' },
+    loader: { '.html': 'text' },
+    plugins: [
+      CSSMinifyTextPlugin,
+      HTMLMinifyTextPlugin,
+    ],
     ...extraConfig,
   })
 }

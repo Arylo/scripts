@@ -1,3 +1,7 @@
+:root {
+  ---image-max-height: calc(100vh - 30px)
+}
+
 #app {
   overflow: hidden;
   height: 100vh;
@@ -23,12 +27,11 @@
   flex-wrap: wrap;
   justify-content: center;
   overflow: auto;
-  height: calc(100vh - 30px);
+  height: var(---image-max-height);
 }
 
 #app .images div {
-  height: calc(100vh - 30px);
-  min-width: 50%;
+  height: var(---image-max-height);
 }
 
 #app .images.ttb div {
