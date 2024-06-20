@@ -1,5 +1,7 @@
 :root {
-  ---image-max-height: calc(100vh - 30px)
+  --header-height: 30px;
+  --image-max-height: calc(100vh - var(--header-height));
+  --action-color: rgba(0, 0, 0, 0.2);
 }
 
 #app {
@@ -8,7 +10,7 @@
 }
 
 #app .header {
-  height: 30px;
+  height: var(--header-height);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -27,14 +29,84 @@
   flex-wrap: wrap;
   justify-content: center;
   overflow: auto;
-  height: var(---image-max-height);
+  height: var(--image-max-height);
 }
 
 #app .images div {
-  height: var(---image-max-height);
+  height: var(--image-max-height);
 }
 
 #app .images.ttb div {
   height: auto;
   width: 90vw;
+}
+
+#app .hint {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  padding: 15px;
+  background-color: var(--action-color);
+}
+
+#app .hint.top {
+  top: var(--header-height);
+  align-items: flex-start;
+  width: 100px;
+}
+
+#app .hint.bottom {
+  bottom: 0;
+  align-items: flex-end;
+  width: 100px;
+}
+
+#app .hint.left {
+  left: 0;
+  justify-content: flex-start;
+  height: 100px;
+  box-shadow: 10px 0 18px var(--action-color);
+}
+
+#app .hint.left:not(.top):not(.bottom) {
+  height: 200px;
+  width: 100px;
+  border-bottom-right-radius: 100px;
+  border-top-right-radius: 100px;
+  top: calc((100vh - 200px) / 2);
+}
+
+#app .hint.left.top {
+  border-bottom-right-radius: 100px;
+}
+
+#app .hint.left.bottom {
+  border-top-right-radius: 100px;
+}
+
+#app .hint.right {
+  right: 0;
+  justify-content: flex-end;
+  height: 100px;
+  box-shadow: -10px 0 18px var(--action-color);
+}
+
+#app .hint.right:not(.top):not(.bottom) {
+  height: 200px;
+  width: 100px;
+  border-bottom-left-radius: 100px;
+  border-top-left-radius: 100px;
+  top: calc((100vh - 200px) / 2);
+}
+
+#app .hint.right.top {
+  border-bottom-left-radius: 100px;
+}
+
+#app .hint.right.bottom {
+  border-top-left-radius: 100px;
+}
+
+#app .hint div {
+  color: white;
 }

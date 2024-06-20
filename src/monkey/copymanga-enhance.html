@@ -6,9 +6,19 @@
     <a @click="() => switchMode(ComicDirection.TTB)" class="btn" v-if="mode !== 'ttb'"><span>正常模式</span></a>
     <a @click="() => switchMode(ComicDirection.LTR)" class="btn" v-else><span>条漫模式</span></a>
   </div>
-  <div class="images" :class="mode" @click="onClick">
+  <div class="images" :class="mode" @click="onClick" @mousemove="onMouseMove">
     <div v-for="(image, index) of images">
-      <img :src="image" :index="index" ref="images" @load="() => imageLoaded(index)"/>
+      <img
+        :src="image"
+        :index="index"
+        ref="images"
+        @load="(e) => imageLoaded(e, index)"
+        crossorigin="anonymous"
+      />
     </div>
+  </div>
+  <div class="hint" :class="hintClasses">
+    <div v-if="hintClasses.includes(ClickAction.PREV)">上一页</div>
+    <div v-if="hintClasses.includes(ClickAction.NEXT)">下一页</div>
   </div>
 </app>
