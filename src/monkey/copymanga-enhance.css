@@ -24,6 +24,10 @@
   align-items: center;
 }
 
+#app .header:hover ~ .hint {
+  display: none;
+}
+
 #app .header span {
   color: var(--header-label-color);
 }
