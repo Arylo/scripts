@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name Enhance the copy manga site
-// @version 4
+// @version 5
 // @author Arylo Yeung <arylo.open@gmail.com>
 // @license MIT
 // @match https://copymanga.com/comic/*/chapter/*
@@ -33,7 +33,7 @@
   var copymanga_enhance_default = ":root{--header-height: 30px;--image-max-height: calc(100vh - var(--header-height));--action-color: rgba(0, 0, 0, .2)}#app{overflow:hidden;height:100vh}#app .header{height:var(--header-height);display:flex;justify-content:center;align-items:center}#app .header span{color:#fff}#app .header .btn{min-width:80px}#app .images{display:flex;flex-wrap:wrap;justify-content:center;overflow:auto;height:var(--image-max-height)}#app .images div{height:var(--image-max-height)}#app .images.ttb div{height:auto;width:90vw}#app .hint{position:absolute;display:flex;align-items:center;padding:15px;background-color:var(--action-color)}#app .hint.top{top:var(--header-height);align-items:flex-start;width:100px}#app .hint.bottom{bottom:0;align-items:flex-end;width:100px}#app .hint.left{left:0;justify-content:flex-start;height:100px;box-shadow:10px 0 18px var(--action-color)}#app .hint.left:not(.top):not(.bottom){height:200px;width:100px;border-bottom-right-radius:100px;border-top-right-radius:100px;top:calc((100vh - 200px)/2)}#app .hint.left.top{border-bottom-right-radius:100px}#app .hint.left.bottom{border-top-right-radius:100px}#app .hint.right{right:0;justify-content:flex-end;height:100px;box-shadow:-10px 0 18px var(--action-color)}#app .hint.right:not(.top):not(.bottom){height:200px;width:100px;border-bottom-left-radius:100px;border-top-left-radius:100px;top:calc((100vh - 200px)/2)}#app .hint.right.top{border-bottom-left-radius:100px}#app .hint.right.bottom{border-top-left-radius:100px}#app .hint div{color:#fff}\n";
 
   // src/monkey/copymanga-enhance.html
-  var copymanga_enhance_default2 = `<div id="app"> <div class="header"> <a :href="prevUrl" :disable="!prevUrl" class="btn"><span>\u4E0A\u4E00\u8BDD</span></a> <span class="title">{{ title }}</span> <a :href="nextUrl" :disable="!nextUrl" class="btn"><span>\u4E0B\u4E00\u8BDD</span></a> <a @click="() => switchMode(ComicDirection.TTB)" class="btn" v-if="mode !== 'ttb'"><span>\u6B63\u5E38\u6A21\u5F0F</span></a> <a @click="() => switchMode(ComicDirection.LTR)" class="btn" v-else><span>\u6761\u6F2B\u6A21\u5F0F</span></a> </div> <div class="images" :class="mode" @click="onClick" @mousemove="onMouseMove"> <div v-for="(image, index) of images"> <img :src="image" :index="index" ref="images" @load="(e) => imageLoaded(e, index)" crossorigin> </div> </div> <div class="hint" :class="hintClasses"> <div v-if="hintClasses.includes(ClickAction.PREV)">\u4E0A\u4E00\u9875</div> <div v-if="hintClasses.includes(ClickAction.NEXT)">\u4E0B\u4E00\u9875</div> </div> </div>`;
+  var copymanga_enhance_default2 = `<div id="app"> <div class="header"> <a :href="prevUrl" :disable="!prevUrl" class="btn"><span>\u4E0A\u4E00\u8BDD</span></a> <span class="title">{{ title }}</span> <a :href="nextUrl" :disable="!nextUrl" class="btn"><span>\u4E0B\u4E00\u8BDD</span></a> <a @click="() => switchMode(ComicDirection.TTB)" class="btn" v-if="mode !== 'ttb'"><span>\u6B63\u5E38\u6A21\u5F0F</span></a> <a @click="() => switchMode(ComicDirection.LTR)" class="btn" v-else><span>\u6761\u6F2B\u6A21\u5F0F</span></a> </div> <div class="images" :class="mode" @click="onClick" @mousemove="onMouseMove"> <div v-for="(image, index) of images"> <img :src="image" :index="index" ref="images" @load="(e) => imageLoaded(e, index)"> </div> </div> <div class="hint" :class="hintClasses"> <div v-if="hintClasses.includes(ClickAction.PREV)">\u4E0A\u4E00\u9875</div> <div v-if="hintClasses.includes(ClickAction.NEXT)">\u4E0B\u4E00\u9875</div> </div> </div>`;
 
   // src/monkey/copymanga-enhance/common.ts
   var genScrollTo = (el) => (top, isSmooth = false) => el.scrollTo({
@@ -43,45 +43,6 @@
   });
   var comic = window.location.pathname.split("/")[2];
   var chapter = window.location.pathname.split("/")[4];
-  var pickImageRGB = (pixels) => {
-    const rgbMap = { r: [], g: [], b: [] };
-    for (let i = 0; i < pixels.length; i += 4) {
-      rgbMap.r.push(pixels[i]);
-      rgbMap.g.push(pixels[i + 1]);
-      rgbMap.b.push(pixels[i + 2]);
-    }
-    return {
-      r: Math.round(rgbMap.r.reduce((a, b) => a + b) / rgbMap.r.length),
-      g: Math.round(rgbMap.g.reduce((a, b) => a + b) / rgbMap.g.length),
-      b: Math.round(rgbMap.b.reduce((a, b) => a + b) / rgbMap.b.length)
-    };
-  };
-  var pickImageRGBs = (el, count) => {
-    const PICK_WIDTH = 15;
-    const canvas = document.createElement("canvas");
-    const ctx = canvas.getContext("2d");
-    const img = el;
-    const validCount = Math.round(Math.max(1, count));
-    const map = {
-      left: [],
-      right: []
-    };
-    return new Promise((resolve) => {
-      canvas.width = img.naturalWidth;
-      canvas.height = img.naturalHeight;
-      const preHeight = Math.floor(canvas.height / validCount);
-      ctx.drawImage(img, 0, 0);
-      for (let index = 0; index < validCount; index++) {
-        const pixels = ctx.getImageData(0, preHeight * index, PICK_WIDTH, preHeight).data;
-        map.left.push(pickImageRGB(pixels));
-      }
-      for (let index = 0; index < validCount; index++) {
-        const pixels = ctx.getImageData(canvas.width - PICK_WIDTH, preHeight * index, PICK_WIDTH, preHeight).data;
-        map.right.push(pickImageRGB(pixels));
-      }
-      resolve(map);
-    });
-  };
 
   // src/monkey/copymanga-enhance/new.ts
   var ComicDirection = {
@@ -134,7 +95,6 @@
         async imageLoaded(e, index) {
           const that = this;
           if (that.mode === ComicDirection.LTR) {
-            console.log(index, await pickImageRGBs(e.target, 5));
           }
         },
         switchMode(mode) {
