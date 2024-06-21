@@ -20,9 +20,9 @@ export const render = ({ info, preFn = Function }: { info: any, preFn: Function 
       ...info,
       mode: GM_getValue(`${comic}.direction.mode`, 'ltr'),
       hintClasses: [],
+      headerHeight: 0,
     },
     computed: {
-      headerHeight: () => document.getElementsByClassName('header')[0].clientHeight,
       actionZones () {
         const that = (this as any)
         const element = document.body
@@ -125,6 +125,20 @@ export const render = ({ info, preFn = Function }: { info: any, preFn: Function 
         const that = (this as any)
         that.hintClasses.splice(0, that.hintClasses.length)
       },
+      init() {
+        const that = (this as any)
+        that.headerHeight = document.getElementsByClassName("header")[0].clientHeight
+      },
+    },
+    beforeMount () {
+      const that = (this as any)
+      that.init()
+    },
+    mounted () {
+      const that = (this as any)
+      window.onresize = () => {
+        that.init()
+      }
     },
   })
 }
