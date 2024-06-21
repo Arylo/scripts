@@ -40,6 +40,10 @@
   height: var(--image-max-height);
 }
 
+#app .images.rtl {
+  flex-direction: row-reverse;
+}
+
 #app .images div {
   height: var(--image-max-height);
 }

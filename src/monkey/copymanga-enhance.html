@@ -3,8 +3,11 @@
     <a :href="prevUrl" :disable="!prevUrl" class="btn"><span>上一话</span></a>
     <span class="title">{{ title }}</span>
     <a :href="nextUrl" :disable="!nextUrl" class="btn"><span>下一话</span></a>
-    <a @click="() => switchMode(ComicDirection.TTB)" class="btn" v-if="mode !== 'ttb'"><span>正常模式</span></a>
-    <a @click="() => switchMode(ComicDirection.LTR)" class="btn" v-else><span>条漫模式</span></a>
+    <select v-model="mode" @change="selectMode">
+      <option :value="ComicDirection.LTR">正常模式</option>
+      <option :value="ComicDirection.RTL">日漫模式</option>
+      <option :value="ComicDirection.TTB">条漫模式</option>
+    </select>
   </div>
   <div
     class="images"

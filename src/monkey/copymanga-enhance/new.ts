@@ -4,6 +4,7 @@ declare const Vue: any
 
 const ComicDirection = {
   LTR: 'ltr',
+  RTL: 'rtl',
   TTB: 'ttb',
 }
 
@@ -57,10 +58,16 @@ export const render = ({ info, preFn = Function }: { info: any, preFn: Function 
           // console.log(index, await pickImageRGBsByElement(e.target, 5))
         }
       },
+      selectMode (evt: InputEvent) {
+        const that = (this as any)
+        const value = (evt.target as HTMLSelectElement)?.value
+        console.log('switch mode', value)
+        that.switchMode(value)
+        GM_setValue(`${comic}.direction.mode`, value)
+      },
       switchMode (mode: string) {
         const that = (this as any)
         that.mode = mode
-        GM_setValue(`${comic}.direction.mode`, mode)
       },
       getActionZone (evt: MouseEvent) {
         const that = (this as any)
