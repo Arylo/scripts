@@ -19,7 +19,7 @@ export const render = ({ info, preFn = Function }: { info: any, preFn: Function 
     el: '#app',
     data: {
       ...info,
-      mode: GM_getValue(`${comic}.direction.mode`, 'ltr'),
+      mode: GM_getValue(`${comic}.direction.mode`, ComicDirection.RTL),
       hintClasses: [],
       headerHeight: 0,
     },
