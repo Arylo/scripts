@@ -27,6 +27,7 @@ const buildinDependencies = [
     esbuild.buildSync({
       entryPoints: [filepath],
       bundle: true,
+      treeShaking: true,
       external: [...buildinDependencies, ...dependencies],
       outdir: outPath,
     })

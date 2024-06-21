@@ -4,6 +4,7 @@ import os from 'os'
 import * as esbuild from 'esbuild'
 import md5file from 'md5-file'
 import md5 from 'md5'
+import yn from 'yn'
 import download from 'download'
 import { bannerOrderMap, githubRawPrefix } from './monkey.const'
 import { ROOT_PATH } from '../consts'
@@ -103,20 +104,24 @@ export const exportLatestDeployInfo = async (filepath: string) => {
   const bannerHash = md5(paresBanner(filepath))
   let version = 1
   const latestDeployUrl = `${githubRawPrefix}/${deployJson}`
-  try {
-    console.info(`Download the latest deploy info: ${latestDeployUrl} ...`)
-    await download(latestDeployUrl, os.tmpdir(), { filename: deployJson })
-    console.log(`Download the latest deploy info: ${latestDeployUrl} ... Done`)
-    const downloadDeployJson = JSON.parse(fs.readFileSync(path.resolve(os.tmpdir(), deployJson), 'utf-8'))
-    if (downloadDeployJson.contentHash !== contentHash || downloadDeployJson.bannerHash !== bannerHash) {
-      version = Number(downloadDeployJson.version) + 1
-      console.info(`Version increased: ${downloadDeployJson.version} => ${version}`)
-    } else {
-      version = Number(downloadDeployJson.version)
+  if (yn(process.env.CI, { default: false }))  {
+    try {
+      console.info(`Download the latest deploy info: ${latestDeployUrl} ...`)
+      await download(latestDeployUrl, os.tmpdir(), { filename: deployJson })
+      console.log(`Download the latest deploy info: ${latestDeployUrl} ... Done`)
+      const downloadDeployJson = JSON.parse(fs.readFileSync(path.resolve(os.tmpdir(), deployJson), 'utf-8'))
+      if (downloadDeployJson.contentHash !== contentHash || downloadDeployJson.bannerHash !== bannerHash) {
+        version = Number(downloadDeployJson.version) + 1
+        console.info(`Version increased: ${downloadDeployJson.version} => ${version}`)
+      } else {
+        version = Number(downloadDeployJson.version)
+      }
+    } catch (e) {
+      console.error(`Download the latest deploy info: ${latestDeployUrl} ... Failed`)
+      console.info(`Version use: ${version}`)
     }
-  } catch (e) {
-    console.error(`Download the latest deploy info: ${latestDeployUrl} ... Failed`)
-    console.info(`Version use: ${version}`)
+  } else {
+    console.info('Current Environment is not CI, use default version 1')
   }
   return {
     contentHash,
@@ -129,6 +134,7 @@ export const buildScript = (filepath: string, extraConfig: esbuild.BuildOptions=
   return esbuild.build({
     entryPoints: [filepath],
     bundle: true,
+    treeShaking: true,
     plugins: [
       CSSMinifyTextPlugin(),
       HTMLMinifyTextPlugin(),

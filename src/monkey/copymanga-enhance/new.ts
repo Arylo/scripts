@@ -121,6 +121,10 @@ export const render = ({ info, preFn = Function }: { info: any, preFn: Function 
           that.hintClasses.push(...zone.names)
         }
       },
+      onBlur () {
+        const that = (this as any)
+        that.hintClasses.splice(0, that.hintClasses.length)
+      },
     },
   })
 }

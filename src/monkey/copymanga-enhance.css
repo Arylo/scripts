@@ -1,7 +1,14 @@
 :root {
+  --header-label-color: rgba(255, 255, 255, 0.95);
   --header-height: 30px;
   --image-max-height: calc(100vh - var(--header-height));
-  --action-color: rgba(0, 0, 0, 0.2);
+  --action-btn-label-color: rgba(255, 255, 255, 0.95);
+  --action-btn-bg-color: rgba(0, 0, 0, 0.2);
+  --action-btn-height: 100px;
+  --action-btn-width: 100px;
+  --action-btn-border-radius: 100px;
+  --action-btn-only-height: 30vh;
+  --action-btn-only-width: 75px;
 }
 
 #app {
@@ -11,13 +18,14 @@
 
 #app .header {
   height: var(--header-height);
+  width: 100vw;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
 #app .header span {
-  color: white;
+  color: var(--header-label-color);
 }
 
 #app .header .btn {
@@ -46,67 +54,55 @@
   display: flex;
   align-items: center;
   padding: 15px;
-  background-color: var(--action-color);
+  height: var(--action-btn-height);
+  width: var(--action-btn-width);
+  background-color: var(--action-btn-bg-color);
+  border-radius: var(--action-btn-border-radius);
+  box-shadow: var(--action-btn-shadow-x, 0) var(--action-btn-shadow-y, 0) 18px var(--action-btn-bg-color);
 }
 
 #app .hint.top {
+  --action-btn-shadow-y: 10px;
+
   top: var(--header-height);
   align-items: flex-start;
-  width: 100px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
 }
 
 #app .hint.bottom {
+  --action-btn-shadow-y: -10px;
+
   bottom: 0;
   align-items: flex-end;
-  width: 100px;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+#app .hint:not(.top):not(.bottom) {
+  height: var(--action-btn-only-height);
+  width: var(--action-btn-only-width);
+  top: calc((100vh - var(--action-btn-only-height)) / 2);
 }
 
 #app .hint.left {
+  --action-btn-shadow-x: 10px;
+
   left: 0;
   justify-content: flex-start;
-  height: 100px;
-  box-shadow: 10px 0 18px var(--action-color);
-}
-
-#app .hint.left:not(.top):not(.bottom) {
-  height: 200px;
-  width: 100px;
-  border-bottom-right-radius: 100px;
-  border-top-right-radius: 100px;
-  top: calc((100vh - 200px) / 2);
-}
-
-#app .hint.left.top {
-  border-bottom-right-radius: 100px;
-}
-
-#app .hint.left.bottom {
-  border-top-right-radius: 100px;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
 }
 
 #app .hint.right {
+  --action-btn-shadow-x: -10px;
+
   right: 0;
   justify-content: flex-end;
-  height: 100px;
-  box-shadow: -10px 0 18px var(--action-color);
-}
-
-#app .hint.right:not(.top):not(.bottom) {
-  height: 200px;
-  width: 100px;
-  border-bottom-left-radius: 100px;
-  border-top-left-radius: 100px;
-  top: calc((100vh - 200px) / 2);
-}
-
-#app .hint.right.top {
-  border-bottom-left-radius: 100px;
-}
-
-#app .hint.right.bottom {
-  border-top-left-radius: 100px;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
 }
 
 #app .hint div {
-  color: white;
+  color: var(--action-btn-label-color);
 }

@@ -6,7 +6,14 @@
     <a @click="() => switchMode(ComicDirection.TTB)" class="btn" v-if="mode !== 'ttb'"><span>正常模式</span></a>
     <a @click="() => switchMode(ComicDirection.LTR)" class="btn" v-else><span>条漫模式</span></a>
   </div>
-  <div class="images" :class="mode" @click="onClick" @mousemove="onMouseMove">
+  <div
+    class="images"
+    tabindex="0"
+    :class="mode"
+    @click="onClick"
+    @mousemove="onMouseMove"
+    @blue="onBlur"
+  >
     <div v-for="(image, index) of images">
       <img
         :src="image"
