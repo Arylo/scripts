@@ -39,20 +39,26 @@ export const pickImageRGBs = (el: HTMLImageElement, count: number) => {
     right: [],
   }
   return new Promise<typeof map>((resolve) => {
-    canvas.width = img.naturalWidth
-    canvas.height = img.naturalHeight
+    img.setAttribute('crossOrigin', 'anonymous')
+    canvas.width = img.naturalWidth || img.offsetWidth || img.width
+    canvas.height = img.naturalHeight || img.offsetHeight || img.height
     const preHeight = Math.floor(canvas.height / validCount)
     ctx.drawImage(img, 0, 0)
 
-    // Left side
-    for (let index = 0; index < validCount; index++) {
-      const pixels = ctx.getImageData(0, preHeight * index, PICK_WIDTH, preHeight).data
-      map.left.push(pickImageRGB(pixels))
-    }
-    // Right side
-    for (let index = 0; index < validCount; index++) {
-      const pixels = ctx.getImageData(canvas.width - PICK_WIDTH, preHeight * index, PICK_WIDTH, preHeight).data
-      map.right.push(pickImageRGB(pixels))
+    try {
+      // Left side
+      for (let index = 0; index < validCount; index++) {
+        const pixels = ctx.getImageData(0, preHeight * index, PICK_WIDTH, preHeight).data
+        map.left.push(pickImageRGB(pixels))
+      }
+      // Right side
+      for (let index = 0; index < validCount; index++) {
+        const pixels = ctx.getImageData(canvas.width - PICK_WIDTH, preHeight * index, PICK_WIDTH, preHeight).data
+        map.right.push(pickImageRGB(pixels))
+      }
+    } catch (error) {
+      el.removeAttribute('crossOrigin')
+      console.log(error)
     }
 
     resolve(map)

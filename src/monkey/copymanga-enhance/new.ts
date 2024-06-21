@@ -54,7 +54,7 @@ export const render = ({ info, preFn = Function }: { info: any, preFn: Function 
       async imageLoaded (e: any, index: number) {
         const that = (this as any)
         if (that.mode === ComicDirection.LTR) {
-          console.log(index, await pickImageRGBsByElement(e.target, 5))
+          // console.log(index, await pickImageRGBsByElement(e.target, 5))
         }
       },
       switchMode (mode: string) {
