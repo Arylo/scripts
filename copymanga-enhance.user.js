@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name Enhance the copy manga site
-// @version 7
+// @version 8
 // @author Arylo Yeung <arylo.open@gmail.com>
 // @license MIT
 // @match https://copymanga.com/comic/*/chapter/*
@@ -30,10 +30,10 @@
 "use strict";
 (() => {
   // src/monkey/copymanga-enhance.css
-  var copymanga_enhance_default = ":root{--header-label-color: rgba(255, 255, 255, .95);--header-height: 30px;--image-max-height: calc(100vh - var(--header-height));--action-btn-label-color: rgba(255, 255, 255, .95);--action-btn-bg-color: rgba(0, 0, 0, .2);--action-btn-height: 100px;--action-btn-width: 100px;--action-btn-border-radius: 100px;--action-btn-only-height: 30vh;--action-btn-only-width: 75px}#app{overflow:hidden;height:100vh}#app .header{height:var(--header-height);width:100vw;display:flex;justify-content:center;align-items:center}#app .header span{color:var(--header-label-color)}#app .header .btn{min-width:80px}#app .images{display:flex;flex-wrap:wrap;justify-content:center;overflow:auto;height:var(--image-max-height)}#app .images div{height:var(--image-max-height)}#app .images.ttb div{height:auto;width:90vw}#app .hint{position:absolute;display:flex;align-items:center;padding:15px;height:var(--action-btn-height);width:var(--action-btn-width);background-color:var(--action-btn-bg-color);border-radius:var(--action-btn-border-radius);box-shadow:var(--action-btn-shadow-x, 0) var(--action-btn-shadow-y, 0) 18px var(--action-btn-bg-color)}#app .hint.top{--action-btn-shadow-y: 10px;top:var(--header-height);align-items:flex-start;border-top-left-radius:0;border-top-right-radius:0}#app .hint.bottom{--action-btn-shadow-y: -10px;bottom:0;align-items:flex-end;border-bottom-left-radius:0;border-bottom-right-radius:0}#app .hint:not(.top):not(.bottom){height:var(--action-btn-only-height);width:var(--action-btn-only-width);top:calc((100vh - var(--action-btn-only-height)) / 2)}#app .hint.left{--action-btn-shadow-x: 10px;left:0;justify-content:flex-start;border-top-left-radius:0;border-bottom-left-radius:0}#app .hint.right{--action-btn-shadow-x: -10px;right:0;justify-content:flex-end;border-top-right-radius:0;border-bottom-right-radius:0}#app .hint div{color:var(--action-btn-label-color)}\n";
+  var copymanga_enhance_default = ":root{--header-label-color: rgba(255, 255, 255, .95);--header-height: 30px;--image-max-height: calc(100vh - var(--header-height));--action-btn-label-color: rgba(255, 255, 255, .95);--action-btn-bg-color: rgba(0, 0, 0, .2);--action-btn-height: 100px;--action-btn-width: 100px;--action-btn-border-radius: 100px;--action-btn-only-height: 30vh;--action-btn-only-width: 75px}#app{overflow:hidden;height:100vh}#app .header{height:var(--header-height);width:100vw;display:flex;justify-content:center;align-items:center}#app .header span{color:var(--header-label-color)}#app .header .btn{min-width:80px}#app .images{display:flex;flex-wrap:wrap;justify-content:center;overflow:auto;height:var(--image-max-height)}#app .images.rtl{flex-direction:row-reverse}#app .images div{height:var(--image-max-height)}#app .images.ttb div{height:auto;width:90vw}#app .hint{position:absolute;display:flex;align-items:center;padding:15px;height:var(--action-btn-height);width:var(--action-btn-width);background-color:var(--action-btn-bg-color);border-radius:var(--action-btn-border-radius);box-shadow:var(--action-btn-shadow-x, 0) var(--action-btn-shadow-y, 0) 18px var(--action-btn-bg-color)}#app .hint.top{--action-btn-shadow-y: 10px;top:var(--header-height);align-items:flex-start;border-top-left-radius:0;border-top-right-radius:0}#app .hint.bottom{--action-btn-shadow-y: -10px;bottom:0;align-items:flex-end;border-bottom-left-radius:0;border-bottom-right-radius:0}#app .hint:not(.top):not(.bottom){height:var(--action-btn-only-height);width:var(--action-btn-only-width);top:calc((100vh - var(--action-btn-only-height)) / 2)}#app .hint.left{--action-btn-shadow-x: 10px;left:0;justify-content:flex-start;border-top-left-radius:0;border-bottom-left-radius:0}#app .hint.right{--action-btn-shadow-x: -10px;right:0;justify-content:flex-end;border-top-right-radius:0;border-bottom-right-radius:0}#app .hint div{color:var(--action-btn-label-color)}\n";
 
   // src/monkey/copymanga-enhance.html
-  var copymanga_enhance_default2 = `<div id="app"> <div class="header"> <a :href="prevUrl" :disable="!prevUrl" class="btn"><span>\u4E0A\u4E00\u8BDD</span></a> <span class="title">{{ title }}</span> <a :href="nextUrl" :disable="!nextUrl" class="btn"><span>\u4E0B\u4E00\u8BDD</span></a> <a @click="() => switchMode(ComicDirection.TTB)" class="btn" v-if="mode !== 'ttb'"><span>\u6B63\u5E38\u6A21\u5F0F</span></a> <a @click="() => switchMode(ComicDirection.LTR)" class="btn" v-else><span>\u6761\u6F2B\u6A21\u5F0F</span></a> </div> <div class="images" tabindex="0" :class="mode" @click="onClick" @mousemove="onMouseMove" @blue="onBlur"> <div v-for="(image, index) of images"> <img :src="image" :index="index" ref="images" @load="(e) => imageLoaded(e, index)"> </div> </div> <div class="hint" :class="hintClasses" v-if="hintClasses.length"> <div v-if="hintClasses.includes(ClickAction.PREV)">\u4E0A\u4E00\u9875</div> <div v-if="hintClasses.includes(ClickAction.NEXT)">\u4E0B\u4E00\u9875</div> </div> </div>`;
+  var copymanga_enhance_default2 = '<div id="app"> <div class="header"> <a :href="prevUrl" :disable="!prevUrl" class="btn"><span>\u4E0A\u4E00\u8BDD</span></a> <span class="title">{{ title }}</span> <a :href="nextUrl" :disable="!nextUrl" class="btn"><span>\u4E0B\u4E00\u8BDD</span></a> <select v-model="mode" @change="selectMode"> <option :value="ComicDirection.LTR">\u6B63\u5E38\u6A21\u5F0F</option> <option :value="ComicDirection.RTL">\u65E5\u6F2B\u6A21\u5F0F</option> <option :value="ComicDirection.TTB">\u6761\u6F2B\u6A21\u5F0F</option> </select> </div> <div class="images" tabindex="0" :class="mode" @click="onClick" @mousemove="onMouseMove" @blue="onBlur"> <div v-for="(image, index) of images"> <img :src="image" :index="index" ref="images" @load="(e) => imageLoaded(e, index)"> </div> </div> <div class="hint" :class="hintClasses" v-if="hintClasses.length"> <div v-if="hintClasses.includes(ClickAction.PREV)">\u4E0A\u4E00\u9875</div> <div v-if="hintClasses.includes(ClickAction.NEXT)">\u4E0B\u4E00\u9875</div> </div> </div>';
 
   // src/monkey/copymanga-enhance/common.ts
   var genScrollTo = (el) => (top, isSmooth = false) => el.scrollTo({
@@ -47,6 +47,7 @@
   // src/monkey/copymanga-enhance/new.ts
   var ComicDirection = {
     LTR: "ltr",
+    RTL: "rtl",
     TTB: "ttb"
   };
   var ClickAction = {
@@ -97,10 +98,16 @@
           if (that.mode === ComicDirection.LTR) {
           }
         },
+        selectMode(evt) {
+          const that = this;
+          const value = evt.target?.value;
+          console.log("switch mode", value);
+          that.switchMode(value);
+          GM_setValue(`${comic}.direction.mode`, value);
+        },
         switchMode(mode) {
           const that = this;
           that.mode = mode;
-          GM_setValue(`${comic}.direction.mode`, mode);
         },
         getActionZone(evt) {
           const that = this;
