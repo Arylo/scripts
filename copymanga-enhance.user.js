@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name Enhance the copy manga site
-// @version 8
+// @version 9
 // @author Arylo Yeung <arylo.open@gmail.com>
 // @license MIT
 // @match https://copymanga.com/comic/*/chapter/*
@@ -60,7 +60,7 @@
       el: "#app",
       data: {
         ...info,
-        mode: GM_getValue(`${comic}.direction.mode`, "ltr"),
+        mode: GM_getValue(`${comic}.direction.mode`, ComicDirection.RTL),
         hintClasses: [],
         headerHeight: 0
       },
