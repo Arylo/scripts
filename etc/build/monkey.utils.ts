@@ -95,6 +95,7 @@ export const paresBanner = (filepath: string, appendInfo = {}) => {
 }
 
 export const exportLatestDeployInfo = async (filepath: string) => {
+  const isCI = yn(process.env.CI, { default: false })
   const { min, deployJson } = parseFilenames(filepath)
   await buildScript(filepath, {
     minify: true,
@@ -104,7 +105,7 @@ export const exportLatestDeployInfo = async (filepath: string) => {
   const bannerHash = md5(paresBanner(filepath))
   let version = 1
   const latestDeployUrl = `${githubRawPrefix}/${deployJson}`
-  if (yn(process.env.CI, { default: false }))  {
+  if (isCI)  {
     try {
       console.info(`Download the latest deploy info: ${latestDeployUrl} ...`)
       await download(latestDeployUrl, os.tmpdir(), { filename: deployJson })
@@ -131,14 +132,22 @@ export const exportLatestDeployInfo = async (filepath: string) => {
 }
 
 export const buildScript = (filepath: string, extraConfig: esbuild.BuildOptions= {}) => {
+  const isCI = yn(process.env.CI, { default: false })
   return esbuild.build({
     entryPoints: [filepath],
     bundle: true,
     treeShaking: true,
-    plugins: [
-      CSSMinifyTextPlugin(),
-      HTMLMinifyTextPlugin(),
-    ],
+    ...(isCI ? {
+      plugins: [
+        CSSMinifyTextPlugin(),
+        HTMLMinifyTextPlugin(),
+      ],
+    } : {
+      loader: {
+        '.css': 'text',
+        '.html': 'text',
+      },
+    }),
     ...extraConfig,
   })
 }
