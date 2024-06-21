@@ -13,6 +13,12 @@ const ClickAction = {
   NEXT: 'next',
 }
 
+const PrivateKey = {
+  INIT: 'init',
+  HEADER_HEIGHT: 'headerHeight',
+  GEN_ACTION_ZONES: 'genActionZones',
+}
+
 export const render = ({ info, preFn = Function }: { info: any, preFn: Function }) => {
   preFn()
   new Vue({
@@ -21,33 +27,10 @@ export const render = ({ info, preFn = Function }: { info: any, preFn: Function 
       ...info,
       mode: GM_getValue(`${comic}.direction.mode`, ComicDirection.RTL),
       hintClasses: [],
-      headerHeight: 0,
+      actionZones: [],
+      [PrivateKey.HEADER_HEIGHT]: 0,
     },
     computed: {
-      actionZones () {
-        const that = (this as any)
-        const element = document.body
-        const actionWidth = element.clientWidth * 0.3
-        return [{
-          left: 0,
-          top: 0,
-          width: actionWidth,
-          height: element.clientHeight - that.headerHeight,
-          names: ['left', ClickAction.PREV]
-        }, {
-          top: 0,
-          left: element.clientWidth - actionWidth,
-          width: actionWidth,
-          height: (element.clientHeight - that.headerHeight) * 0.4,
-          names: ['top', 'right', ClickAction.PREV]
-        }, {
-          top: (element.clientHeight - that.headerHeight) * 0.4,
-          left: element.clientWidth - actionWidth,
-          width: actionWidth,
-          height: (element.clientHeight - that.headerHeight) * 0.6,
-          names: ['bottom', 'right', ClickAction.NEXT]
-        }]
-      },
       ComicDirection: () => ComicDirection,
       ClickAction: () => ClickAction,
     },
@@ -71,7 +54,7 @@ export const render = ({ info, preFn = Function }: { info: any, preFn: Function 
       },
       getActionZone (evt: MouseEvent) {
         const that = (this as any)
-        if (evt.clientY < that.headerHeight) {
+        if (evt.clientY < that[PrivateKey.HEADER_HEIGHT]) {
           return
         }
         const zone = that.actionZones.find((zone: { top: number, left: number, width: number, height: number, names: string[] }) => {
@@ -94,7 +77,7 @@ export const render = ({ info, preFn = Function }: { info: any, preFn: Function 
           zone.names.includes(ClickAction.NEXT) ? ClickAction.NEXT : undefined,
         ].filter(Boolean)[0]
         if (that.mode === ComicDirection.LTR) {
-          const offsetTops = [...document.getElementsByTagName('img')].map(el => el.offsetTop - that.headerHeight)
+          const offsetTops = [...document.getElementsByTagName('img')].map(el => el.offsetTop - that[PrivateKey.HEADER_HEIGHT])
           const currentTop = containerElement.scrollTop
           for (let i = 0; i < offsetTops.length - 1; i++) {
             if (nextAction === ClickAction.PREV) {
@@ -112,7 +95,7 @@ export const render = ({ info, preFn = Function }: { info: any, preFn: Function 
           }
         } else if (that.mode === ComicDirection.TTB) {
           let nextTop = nextAction === ClickAction.PREV ? containerElement.scrollTop - element.clientHeight : containerElement.scrollTop + element.clientHeight
-          nextTop += that.headerHeight
+          nextTop += that[PrivateKey.HEADER_HEIGHT]
           nextTop = Math.max(0, nextTop)
           containerScrollTo(nextTop, true)
         }
@@ -132,20 +115,42 @@ export const render = ({ info, preFn = Function }: { info: any, preFn: Function 
         const that = (this as any)
         that.hintClasses.splice(0, that.hintClasses.length)
       },
-      init() {
+      [PrivateKey.INIT]() {
         const that = (this as any)
-        that.headerHeight = document.getElementsByClassName("header")[0].clientHeight
+        that[PrivateKey.HEADER_HEIGHT] = document.getElementsByClassName("header")[0].clientHeight
+        that[PrivateKey.GEN_ACTION_ZONES]()
       },
-    },
-    beforeMount () {
-      const that = (this as any)
-      that.init()
+      [PrivateKey.GEN_ACTION_ZONES] () {
+        const that = (this as any)
+        const element = document.body
+        const actionWidth = element.clientWidth * 0.3
+        that.actionZones = [{
+          left: 0,
+          top: 0,
+          width: actionWidth,
+          height: element.clientHeight - that[PrivateKey.HEADER_HEIGHT],
+          names: ['left', ClickAction.PREV]
+        }, {
+          top: 0,
+          left: element.clientWidth - actionWidth,
+          width: actionWidth,
+          height: (element.clientHeight - that[PrivateKey.HEADER_HEIGHT]) * 0.4,
+          names: ['top', 'right', ClickAction.PREV]
+        }, {
+          top: (element.clientHeight - that[PrivateKey.HEADER_HEIGHT]) * 0.4,
+          left: element.clientWidth - actionWidth,
+          width: actionWidth,
+          height: (element.clientHeight - that[PrivateKey.HEADER_HEIGHT]) * 0.6,
+          names: ['bottom', 'right', ClickAction.NEXT]
+        }].map((zone) => ({ ...zone, id: Math.floor(Math.random() * 1e8).toString(16) }))
+      },
     },
     mounted () {
       const that = (this as any)
       window.onresize = () => {
-        that.init()
+        that[PrivateKey.INIT]()
       }
+      that[PrivateKey.INIT]()
     },
   })
 }
