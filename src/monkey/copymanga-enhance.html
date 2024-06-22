@@ -1,8 +1,8 @@
 <div id="app">
   <div class="header">
-    <a :href="prevUrl" :disable="!prevUrl" class="btn"><span>上一话</span></a>
+    <a :href="prevUrl" :class="{'no-action': !prevUrl}" class="btn"><span>上一话</span></a>
     <span class="title">{{ title }}</span>
-    <a :href="nextUrl" :disable="!nextUrl" class="btn"><span>下一话</span></a>
+    <a :href="nextUrl" :class="{'no-action': !nextUrl}" class="btn"><span>下一话</span></a>
     <select v-model="mode" @change="selectMode">
       <option :value="ComicDirection.LTR">正常模式</option>
       <option :value="ComicDirection.RTL">日漫模式</option>
@@ -13,9 +13,6 @@
     class="images"
     tabindex="0"
     :class="mode"
-    @click="onClick"
-    @mousemove="onMouseMove"
-    @blue="onBlur"
   >
     <div v-for="(image, index) of images">
       <img
@@ -26,8 +23,8 @@
       />
     </div>
   </div>
-  <div class="hint" :class="hintClasses" v-if="hintClasses.length">
-    <div v-if="hintClasses.includes(ClickAction.PREV)">上一页</div>
-    <div v-if="hintClasses.includes(ClickAction.NEXT)">下一页</div>
+  <div class="hint-container" :class="zone.names" v-for="zone of ActionZones" @click="() => onActionZoneClick(zone)">
+    <div v-if="zone.names.includes(ClickAction.PREV_PAGE)">上一页</div>
+    <div v-if="zone.names.includes(ClickAction.NEXT_PAGE)">下一页</div>
   </div>
 </app>
