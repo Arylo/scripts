@@ -8,17 +8,27 @@
       <option :value="ComicDirection.RTL">日漫模式</option>
       <option :value="ComicDirection.TTB">条漫模式</option>
     </select>
+    <template v-if="canWhitePage">
+      <a v-if="!hasWhitePage" class="btn" @click="() => addWhitePage()"><span>增加空白页</span></a>
+      <a v-else class="btn" @click="() => removeWhitePage()"><span>移除空白页</span></a>
+    </template>
   </div>
   <div
     class="images"
     tabindex="0"
     :class="mode"
   >
+    <div v-if="hasWhitePage">
+      <img
+        :src="images[0]"
+        class="white-page"
+      />
+    </div>
     <div v-for="(image, index) of images">
       <img
+        class="comic"
         :src="image"
         :index="index"
-        ref="images"
         @load="(e) => imageLoaded(e, index)"
       />
     </div>

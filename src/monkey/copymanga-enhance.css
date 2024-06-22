@@ -61,6 +61,10 @@
   width: 90vw;
 }
 
+#app .images .white-page {
+  visibility: hidden;
+}
+
 #app .hint-container {
   position: absolute;
   height: var(--hint-action-zone-height, var(--image-max-height));

@@ -33,21 +33,42 @@ export const render = ({ info, preFn = Function }: { info: any, preFn: Function 
     data: {
       ...info,
       mode: GM_getValue(`${comic}.direction.mode`, ComicDirection.RTL),
-      hintClasses: [],
       actionZones: [],
       [PrivateKey.HEADER_HEIGHT]: 0,
+      imageInfos: Array(info.images.length).fill(undefined),
+      hasWhitePage: false,
     },
     computed: {
       ComicDirection: () => ComicDirection,
       ClickAction: () => ClickAction,
       ActionZones: () => ActionZones,
+      canWhitePage () {
+        const that = (this as any)
+        if (![ComicDirection.LTR, ComicDirection.RTL].includes(that.mode)) {
+          return false
+        }
+        return that.imageInfos.filter(Boolean).length === info.images.length
+      },
     },
     methods: {
       async imageLoaded (e: any, index: number) {
         const that = (this as any)
+        const el = e.target as HTMLImageElement
+        that.imageInfos.splice(index, 1, {
+          width: el.width,
+          height: el.height,
+        })
         if (that.mode === ComicDirection.LTR) {
           // console.log(index, await pickImageRGBsByElement(e.target, 5))
         }
+      },
+      addWhitePage () {
+        const that = (this as any)
+        that.hasWhitePage = true
+      },
+      removeWhitePage () {
+        const that = (this as any)
+        that.hasWhitePage = false
       },
       selectMode (evt: InputEvent) {
         const that = (this as any)
@@ -70,7 +91,7 @@ export const render = ({ info, preFn = Function }: { info: any, preFn: Function 
           names.includes(ClickAction.NEXT_PAGE) ? ClickAction.NEXT_PAGE : undefined,
         ].filter(Boolean)[0]
         if ([ComicDirection.LTR, ComicDirection.RTL].includes(that.mode)) {
-          const offsetTops = [...document.getElementsByTagName('img')].map(el => el.offsetTop - that[PrivateKey.HEADER_HEIGHT])
+          const offsetTops = [...document.getElementsByClassName('comic')].map(el => (el as HTMLImageElement).offsetTop - that[PrivateKey.HEADER_HEIGHT])
           const currentTop = containerElement.scrollTop
           for (let i = 0; i < offsetTops.length - 1; i++) {
             if (nextAction === ClickAction.PREV_PAGE) {
