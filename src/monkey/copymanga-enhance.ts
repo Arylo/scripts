@@ -1,8 +1,10 @@
 import css from './copymanga-enhance.css'
 import html from './copymanga-enhance.html'
-import { comic } from './copymanga-enhance/common'
+import { chapter, comic } from './copymanga-enhance/common'
 import { render } from './copymanga-enhance/new'
 import { getPageInfo, refreshImage, windowScrollTo } from './copymanga-enhance/old'
+
+const sessionStorageKey = `${comic}.info.${chapter}`
 
 const renderNewPage = (info: any) => render({
   info,
@@ -13,7 +15,7 @@ const renderNewPage = (info: any) => render({
 })
 
 setTimeout(() => {
-  let cacheContent = sessionStorage.getItem(`${comic}.info`)
+  let cacheContent = sessionStorage.getItem(sessionStorageKey)
   let info
   if (cacheContent) {
     info = JSON.parse(cacheContent)
@@ -22,7 +24,7 @@ setTimeout(() => {
   refreshImage(() => {
     windowScrollTo(0)
     info = getPageInfo()
-    sessionStorage.setItem(`${comic}.info`, JSON.stringify(info))
+    sessionStorage.setItem(sessionStorageKey, JSON.stringify(info))
     renderNewPage(info)
   })
 }, 25)
