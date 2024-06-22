@@ -16,14 +16,17 @@ const renderNewPage = (info: any) => render({
 
 setTimeout(() => {
   let cacheContent = sessionStorage.getItem(sessionStorageKey)
-  let info
   if (cacheContent) {
-    info = JSON.parse(cacheContent)
+    const info = {
+      prevUrl: void 0,
+      nextUrl: void 0,
+      ...JSON.parse(cacheContent),
+    }
     return renderNewPage(info)
   }
   refreshImage(() => {
     windowScrollTo(0)
-    info = getPageInfo()
+    const  info = getPageInfo()
     sessionStorage.setItem(sessionStorageKey, JSON.stringify(info))
     renderNewPage(info)
   })

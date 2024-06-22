@@ -15,7 +15,6 @@ const ClickAction = {
 
 const PrivateKey = {
   INIT: 'init',
-  HEADER_HEIGHT: 'headerHeight',
 }
 
 const ActionZones = [{
@@ -34,7 +33,6 @@ export const render = ({ info, preFn = Function }: { info: any, preFn: Function 
       ...info,
       mode: GM_getValue(`${comic}.direction.mode`, ComicDirection.RTL),
       actionZones: [],
-      [PrivateKey.HEADER_HEIGHT]: 0,
       imageInfos: Array(info.images.length).fill(undefined),
       hasWhitePage: false,
     },
@@ -86,12 +84,13 @@ export const render = ({ info, preFn = Function }: { info: any, preFn: Function 
         const containerElement = document.getElementsByClassName('images')[0]
         const containerScrollTo = genScrollTo(containerElement)
         const { names } = zone
+        const headerHeight = document.getElementsByClassName("header")[0].clientHeight
         const nextAction = [
           names.includes(ClickAction.PREV_PAGE) ? ClickAction.PREV_PAGE : undefined,
           names.includes(ClickAction.NEXT_PAGE) ? ClickAction.NEXT_PAGE : undefined,
         ].filter(Boolean)[0]
         if ([ComicDirection.LTR, ComicDirection.RTL].includes(that.mode)) {
-          const offsetTops = [...document.getElementsByClassName('comic')].map(el => (el as HTMLImageElement).offsetTop - that[PrivateKey.HEADER_HEIGHT])
+          const offsetTops = [...document.getElementsByClassName('comic')].map(el => (el as HTMLImageElement).offsetTop - headerHeight)
           const currentTop = containerElement.scrollTop
           for (let i = 0; i < offsetTops.length - 1; i++) {
             if (nextAction === ClickAction.PREV_PAGE) {
@@ -111,14 +110,13 @@ export const render = ({ info, preFn = Function }: { info: any, preFn: Function 
           let nextTop = nextAction === ClickAction.PREV_PAGE ?
             containerElement.scrollTop - element.clientHeight :
             containerElement.scrollTop + element.clientHeight
-          nextTop += that[PrivateKey.HEADER_HEIGHT]
+          nextTop += headerHeight
           nextTop = Math.max(0, nextTop)
           containerScrollTo(nextTop, true)
         }
       },
       [PrivateKey.INIT]() {
-        const that = (this as any)
-        that[PrivateKey.HEADER_HEIGHT] = document.getElementsByClassName("header")[0].clientHeight
+        // const that = (this as any)
       },
     },
     mounted () {
