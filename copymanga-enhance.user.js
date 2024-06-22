@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name Enhance the copy manga site
-// @version 13
+// @version 14
 // @author Arylo Yeung <arylo.open@gmail.com>
 // @license MIT
 // @match https://copymanga.com/comic/*/chapter/*
@@ -55,8 +55,7 @@
     NEXT_PAGE: "next_page"
   };
   var PrivateKey = {
-    INIT: "init",
-    HEADER_HEIGHT: "headerHeight"
+    INIT: "init"
   };
   var ActionZones = [{
     names: ["left", ClickAction.PREV_PAGE]
@@ -73,7 +72,6 @@
         ...info,
         mode: GM_getValue(`${comic}.direction.mode`, ComicDirection.RTL),
         actionZones: [],
-        [PrivateKey.HEADER_HEIGHT]: 0,
         imageInfos: Array(info.images.length).fill(void 0),
         hasWhitePage: false
       },
@@ -124,12 +122,13 @@
           const containerElement = document.getElementsByClassName("images")[0];
           const containerScrollTo = genScrollTo(containerElement);
           const { names } = zone;
+          const headerHeight = document.getElementsByClassName("header")[0].clientHeight;
           const nextAction = [
             names.includes(ClickAction.PREV_PAGE) ? ClickAction.PREV_PAGE : void 0,
             names.includes(ClickAction.NEXT_PAGE) ? ClickAction.NEXT_PAGE : void 0
           ].filter(Boolean)[0];
           if ([ComicDirection.LTR, ComicDirection.RTL].includes(that.mode)) {
-            const offsetTops = [...document.getElementsByClassName("comic")].map((el) => el.offsetTop - that[PrivateKey.HEADER_HEIGHT]);
+            const offsetTops = [...document.getElementsByClassName("comic")].map((el) => el.offsetTop - headerHeight);
             const currentTop = containerElement.scrollTop;
             for (let i = 0; i < offsetTops.length - 1; i++) {
               if (nextAction === ClickAction.PREV_PAGE) {
@@ -147,14 +146,12 @@
             }
           } else if (that.mode === ComicDirection.TTB) {
             let nextTop = nextAction === ClickAction.PREV_PAGE ? containerElement.scrollTop - element.clientHeight : containerElement.scrollTop + element.clientHeight;
-            nextTop += that[PrivateKey.HEADER_HEIGHT];
+            nextTop += headerHeight;
             nextTop = Math.max(0, nextTop);
             containerScrollTo(nextTop, true);
           }
         },
         [PrivateKey.INIT]() {
-          const that = this;
-          that[PrivateKey.HEADER_HEIGHT] = document.getElementsByClassName("header")[0].clientHeight;
         }
       },
       mounted() {
@@ -201,6 +198,7 @@
   };
 
   // src/monkey/copymanga-enhance.ts
+  var sessionStorageKey = `${comic}.info.${chapter}`;
   var renderNewPage = (info) => render({
     info,
     preFn: () => {
@@ -209,16 +207,19 @@
     }
   });
   setTimeout(() => {
-    let cacheContent = sessionStorage.getItem(`${comic}.info`);
-    let info;
+    let cacheContent = sessionStorage.getItem(sessionStorageKey);
     if (cacheContent) {
-      info = JSON.parse(cacheContent);
+      const info = {
+        prevUrl: void 0,
+        nextUrl: void 0,
+        ...JSON.parse(cacheContent)
+      };
       return renderNewPage(info);
     }
     refreshImage(() => {
       windowScrollTo(0);
-      info = getPageInfo();
-      sessionStorage.setItem(`${comic}.info`, JSON.stringify(info));
+      const info = getPageInfo();
+      sessionStorage.setItem(sessionStorageKey, JSON.stringify(info));
       renderNewPage(info);
     });
   }, 25);
