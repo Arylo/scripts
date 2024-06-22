@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name Enhance the copy manga site
-// @version 10
+// @version 11
 // @author Arylo Yeung <arylo.open@gmail.com>
 // @license MIT
 // @match https://copymanga.com/comic/*/chapter/*
@@ -30,10 +30,10 @@
 "use strict";
 (() => {
   // src/monkey/copymanga-enhance.css
-  var copymanga_enhance_default = ":root{--header-label-color: rgba(255, 255, 255, .95);--header-height: 30px;--image-max-height: calc(100vh - var(--header-height));--action-btn-label-color: rgba(255, 255, 255, .95);--action-btn-bg-color: rgba(0, 0, 0, .2);--action-btn-height: 100px;--action-btn-width: 100px;--action-btn-border-radius: 100px;--action-btn-only-height: 30vh;--action-btn-only-width: 75px}#app{overflow:hidden;height:100vh}#app .header{height:var(--header-height);width:100vw;display:flex;justify-content:center;align-items:center}#app .header:hover~.hint{display:none}#app .header span{color:var(--header-label-color)}#app .header .btn{min-width:80px}#app .images{display:flex;flex-wrap:wrap;justify-content:center;overflow:auto;height:var(--image-max-height)}#app .images.rtl{flex-direction:row-reverse}#app .images div{height:var(--image-max-height)}#app .images.ttb div{height:auto;width:90vw}#app .hint{position:absolute;display:flex;align-items:center;padding:15px;height:var(--action-btn-height);width:var(--action-btn-width);background-color:var(--action-btn-bg-color);border-radius:var(--action-btn-border-radius);box-shadow:var(--action-btn-shadow-x, 0) var(--action-btn-shadow-y, 0) 18px var(--action-btn-bg-color)}#app .hint.top{--action-btn-shadow-y: 10px;top:var(--header-height);align-items:flex-start;border-top-left-radius:0;border-top-right-radius:0}#app .hint.bottom{--action-btn-shadow-y: -10px;bottom:0;align-items:flex-end;border-bottom-left-radius:0;border-bottom-right-radius:0}#app .hint:not(.top):not(.bottom){height:var(--action-btn-only-height);width:var(--action-btn-only-width);top:calc((100vh - var(--action-btn-only-height)) / 2)}#app .hint.left{--action-btn-shadow-x: 10px;left:0;justify-content:flex-start;border-top-left-radius:0;border-bottom-left-radius:0}#app .hint.right{--action-btn-shadow-x: -10px;right:0;justify-content:flex-end;border-top-right-radius:0;border-bottom-right-radius:0}#app .hint div{color:var(--action-btn-label-color)}\n";
+  var copymanga_enhance_default = ":root{--header-label-color: rgba(255, 255, 255, .95);--header-height: 30px;--image-max-height: calc(100vh - var(--header-height));--action-btn-label-color: rgba(255, 255, 255, .95);--action-btn-bg-color: rgba(0, 0, 0, .2);--action-btn-height: 100px;--action-btn-width: 100px;--action-btn-border-radius: 100px;--action-btn-only-height: 30vh;--action-btn-only-width: 95px}#app{overflow:hidden;height:100vh}#app .header{height:var(--header-height);width:100vw;display:flex;justify-content:center;align-items:center}#app .header:hover~.hint{display:none}#app .header span{color:var(--header-label-color)}#app .header .btn{min-width:80px}#app .header .btn.no-action{visibility:hidden}#app .images{display:flex;flex-wrap:wrap;justify-content:center;overflow:auto;height:var(--image-max-height)}#app .images.rtl{flex-direction:row-reverse}#app .images div{height:var(--image-max-height)}#app .images.ttb div{height:auto;width:90vw}#app .hint-container{position:absolute;height:var(--hint-action-zone-height, var(--image-max-height));top:var(--hint-action-zone-top, var(--header-height));display:flex;width:30vw;align-items:center;cursor:pointer;overflow:hidden}#app .hint-container.left{left:0;justify-content:flex-start}#app .hint-container.right{right:0;justify-content:flex-end}#app .hint-container.top{--hint-action-zone-top: var(--header-height);--hint-action-zone-height: calc(var(--image-max-height) * .4);align-items:flex-start}#app .hint-container.bottom{--hint-action-zone-top: calc(var(--header-height) + var(--image-max-height) * .4);--hint-action-zone-height: calc(var(--image-max-height) * .6);align-items:flex-end}#app .hint-container>div{display:none;padding:20px;border-radius:var(--action-btn-border-radius);height:var(--action-btn-height);width:var(--action-btn-width);color:var(--action-btn-label-color);background-color:var(--action-btn-bg-color);box-shadow:var(--action-btn-shadow-x, 0) var(--action-btn-shadow-y, 0) 18px var(--action-btn-bg-color)}#app .hint-container:hover>div{display:flex}#app .hint-container.left>div{--action-btn-shadow-x: 10px;justify-content:flex-start;border-top-left-radius:0;border-bottom-left-radius:0}#app .hint-container.right>div{--action-btn-shadow-x: -10px;justify-content:flex-end;border-top-right-radius:0;border-bottom-right-radius:0}#app .hint-container.top>div{--action-btn-shadow-y: 10px;align-items:flex-start;border-top-left-radius:0;border-top-right-radius:0}#app .hint-container.bottom>div{--action-btn-shadow-y: -10px;align-items:flex-end;border-bottom-left-radius:0;border-bottom-right-radius:0}#app .hint-container:not(.top):not(.bottom)>div{align-items:center;height:var(--action-btn-only-height);width:var(--action-btn-only-width)}\n";
 
   // src/monkey/copymanga-enhance.html
-  var copymanga_enhance_default2 = '<div id="app"> <div class="header"> <a :href="prevUrl" :disable="!prevUrl" class="btn"><span>\u4E0A\u4E00\u8BDD</span></a> <span class="title">{{ title }}</span> <a :href="nextUrl" :disable="!nextUrl" class="btn"><span>\u4E0B\u4E00\u8BDD</span></a> <select v-model="mode" @change="selectMode"> <option :value="ComicDirection.LTR">\u6B63\u5E38\u6A21\u5F0F</option> <option :value="ComicDirection.RTL">\u65E5\u6F2B\u6A21\u5F0F</option> <option :value="ComicDirection.TTB">\u6761\u6F2B\u6A21\u5F0F</option> </select> </div> <div class="images" tabindex="0" :class="mode" @click="onClick" @mousemove="onMouseMove" @blue="onBlur"> <div v-for="(image, index) of images"> <img :src="image" :index="index" ref="images" @load="(e) => imageLoaded(e, index)"> </div> </div> <div class="hint" :class="hintClasses" v-if="hintClasses.length"> <div v-if="hintClasses.includes(ClickAction.PREV)">\u4E0A\u4E00\u9875</div> <div v-if="hintClasses.includes(ClickAction.NEXT)">\u4E0B\u4E00\u9875</div> </div> </div>';
+  var copymanga_enhance_default2 = `<div id="app"> <div class="header"> <a :href="prevUrl" :class="{'no-action': !prevUrl}" class="btn"><span>\u4E0A\u4E00\u8BDD</span></a> <span class="title">{{ title }}</span> <a :href="nextUrl" :class="{'no-action': !nextUrl}" class="btn"><span>\u4E0B\u4E00\u8BDD</span></a> <select v-model="mode" @change="selectMode"> <option :value="ComicDirection.LTR">\u6B63\u5E38\u6A21\u5F0F</option> <option :value="ComicDirection.RTL">\u65E5\u6F2B\u6A21\u5F0F</option> <option :value="ComicDirection.TTB">\u6761\u6F2B\u6A21\u5F0F</option> </select> </div> <div class="images" tabindex="0" :class="mode"> <div v-for="(image, index) of images"> <img :src="image" :index="index" ref="images" @load="(e) => imageLoaded(e, index)"> </div> </div> <div class="hint-container" :class="zone.names" v-for="zone of ActionZones" @click="() => onActionZoneClick(zone)"> <div v-if="zone.names.includes(ClickAction.PREV_PAGE)">\u4E0A\u4E00\u9875</div> <div v-if="zone.names.includes(ClickAction.NEXT_PAGE)">\u4E0B\u4E00\u9875</div> </div> </div>`;
 
   // src/monkey/copymanga-enhance/common.ts
   var genScrollTo = (el) => (top, isSmooth = false) => el.scrollTo({
@@ -51,14 +51,20 @@
     TTB: "ttb"
   };
   var ClickAction = {
-    PREV: "prev",
-    NEXT: "next"
+    PREV_PAGE: "prev_page",
+    NEXT_PAGE: "next_page"
   };
   var PrivateKey = {
     INIT: "init",
-    HEADER_HEIGHT: "headerHeight",
-    GEN_ACTION_ZONES: "genActionZones"
+    HEADER_HEIGHT: "headerHeight"
   };
+  var ActionZones = [{
+    names: ["left", ClickAction.PREV_PAGE]
+  }, {
+    names: ["top", "right", ClickAction.PREV_PAGE]
+  }, {
+    names: ["bottom", "right", ClickAction.NEXT_PAGE]
+  }];
   var render = ({ info, preFn = Function }) => {
     preFn();
     new Vue({
@@ -72,7 +78,8 @@
       },
       computed: {
         ComicDirection: () => ComicDirection,
-        ClickAction: () => ClickAction
+        ClickAction: () => ClickAction,
+        ActionZones: () => ActionZones
       },
       methods: {
         async imageLoaded(e, index) {
@@ -83,7 +90,6 @@
         selectMode(evt) {
           const that = this;
           const value = evt.target?.value;
-          console.log("switch mode", value);
           that.switchMode(value);
           GM_setValue(`${comic}.direction.mode`, value);
         },
@@ -91,40 +97,27 @@
           const that = this;
           that.mode = mode;
         },
-        getActionZone(evt) {
+        onActionZoneClick(zone) {
           const that = this;
-          if (evt.clientY < that[PrivateKey.HEADER_HEIGHT]) {
-            return;
-          }
-          const zone = that.actionZones.find((zone2) => {
-            return evt.clientX >= zone2.left && evt.clientX <= zone2.left + zone2.width && evt.clientY >= zone2.top && evt.clientY <= zone2.top + zone2.height;
-          });
-          return zone;
-        },
-        onClick(evt) {
-          const that = this;
-          const zone = that.getActionZone(evt);
-          if (!zone) {
-            return;
-          }
           const element = document.body;
           const containerElement = document.getElementsByClassName("images")[0];
           const containerScrollTo = genScrollTo(containerElement);
+          const { names } = zone;
           const nextAction = [
-            zone.names.includes(ClickAction.PREV) ? ClickAction.PREV : void 0,
-            zone.names.includes(ClickAction.NEXT) ? ClickAction.NEXT : void 0
+            names.includes(ClickAction.PREV_PAGE) ? ClickAction.PREV_PAGE : void 0,
+            names.includes(ClickAction.NEXT_PAGE) ? ClickAction.NEXT_PAGE : void 0
           ].filter(Boolean)[0];
-          if (that.mode === ComicDirection.LTR) {
+          if ([ComicDirection.LTR, ComicDirection.RTL].includes(that.mode)) {
             const offsetTops = [...document.getElementsByTagName("img")].map((el) => el.offsetTop - that[PrivateKey.HEADER_HEIGHT]);
             const currentTop = containerElement.scrollTop;
             for (let i = 0; i < offsetTops.length - 1; i++) {
-              if (nextAction === ClickAction.PREV) {
+              if (nextAction === ClickAction.PREV_PAGE) {
                 if (offsetTops[i] < currentTop && offsetTops[i + 1] >= currentTop) {
                   containerScrollTo(offsetTops[i], true);
                   break;
                 }
               }
-              if (nextAction === ClickAction.NEXT) {
+              if (nextAction === ClickAction.NEXT_PAGE) {
                 if (offsetTops[i] <= currentTop && offsetTops[i + 1] > currentTop) {
                   containerScrollTo(offsetTops[i + 1], true);
                   break;
@@ -132,55 +125,15 @@
               }
             }
           } else if (that.mode === ComicDirection.TTB) {
-            let nextTop = nextAction === ClickAction.PREV ? containerElement.scrollTop - element.clientHeight : containerElement.scrollTop + element.clientHeight;
+            let nextTop = nextAction === ClickAction.PREV_PAGE ? containerElement.scrollTop - element.clientHeight : containerElement.scrollTop + element.clientHeight;
             nextTop += that[PrivateKey.HEADER_HEIGHT];
             nextTop = Math.max(0, nextTop);
             containerScrollTo(nextTop, true);
           }
         },
-        onMouseMove(evt) {
-          const that = this;
-          const zone = that.getActionZone(evt);
-          if (!zone) {
-            return;
-          }
-          that.hintClasses.splice(0, that.hintClasses.length);
-          if (zone) {
-            that.hintClasses.push(...zone.names);
-          }
-        },
-        onBlur() {
-          const that = this;
-          that.hintClasses.splice(0, that.hintClasses.length);
-        },
         [PrivateKey.INIT]() {
           const that = this;
           that[PrivateKey.HEADER_HEIGHT] = document.getElementsByClassName("header")[0].clientHeight;
-          that[PrivateKey.GEN_ACTION_ZONES]();
-        },
-        [PrivateKey.GEN_ACTION_ZONES]() {
-          const that = this;
-          const element = document.body;
-          const actionWidth = element.clientWidth * 0.3;
-          that.actionZones = [{
-            left: 0,
-            top: 0,
-            width: actionWidth,
-            height: element.clientHeight - that[PrivateKey.HEADER_HEIGHT],
-            names: ["left", ClickAction.PREV]
-          }, {
-            top: 0,
-            left: element.clientWidth - actionWidth,
-            width: actionWidth,
-            height: (element.clientHeight - that[PrivateKey.HEADER_HEIGHT]) * 0.4,
-            names: ["top", "right", ClickAction.PREV]
-          }, {
-            top: (element.clientHeight - that[PrivateKey.HEADER_HEIGHT]) * 0.4,
-            left: element.clientWidth - actionWidth,
-            width: actionWidth,
-            height: (element.clientHeight - that[PrivateKey.HEADER_HEIGHT]) * 0.6,
-            names: ["bottom", "right", ClickAction.NEXT]
-          }].map((zone) => ({ ...zone, id: Math.floor(Math.random() * 1e8).toString(16) }));
         }
       },
       mounted() {
