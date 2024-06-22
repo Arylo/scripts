@@ -9,8 +9,8 @@
       <option :value="ComicDirection.TTB">条漫模式</option>
     </select>
     <template v-if="canWhitePage">
-      <a v-if="!hasWhitePage" class="btn" @click="() => addWhitePage()"><span>增加空白页</span></a>
-      <a v-else class="btn" @click="() => removeWhitePage()"><span>移除空白页</span></a>
+      <a v-if="!hasWhitePage" class="btn" @click="() => toggleWhitePage()"><span>增加空白页</span></a>
+      <a v-else class="btn" @click="() => toggleWhitePage()"><span>移除空白页</span></a>
     </template>
   </div>
   <div

@@ -1,4 +1,4 @@
-import { comic, genScrollTo, pickImageRGBs as pickImageRGBsByElement } from "./common"
+import { chapter, comic, genScrollTo, pickImageRGBs as pickImageRGBsByElement } from "./common"
 
 declare const Vue: any
 
@@ -8,9 +8,9 @@ const ComicDirection = {
   TTB: 'ttb',
 }
 
-const ClickAction = {
-  PREV_PAGE: 'prev_page',
-  NEXT_PAGE: 'next_page',
+enum ClickAction {
+  PREV_PAGE = 'prev_page',
+  NEXT_PAGE = 'next_page',
 }
 
 const PrivateKey = {
@@ -34,7 +34,7 @@ export const render = ({ info, preFn = Function }: { info: any, preFn: Function 
       mode: GM_getValue(`${comic}.direction.mode`, ComicDirection.RTL),
       actionZones: [],
       imageInfos: Array(info.images.length).fill(undefined),
-      hasWhitePage: false,
+      hasWhitePage: JSON.parse(sessionStorage.getItem(`${comic}.hasWhitePage.${chapter}`) || 'false'),
     },
     computed: {
       ComicDirection: () => ComicDirection,
@@ -60,13 +60,9 @@ export const render = ({ info, preFn = Function }: { info: any, preFn: Function 
           // console.log(index, await pickImageRGBsByElement(e.target, 5))
         }
       },
-      addWhitePage () {
+      toggleWhitePage () {
         const that = (this as any)
-        that.hasWhitePage = true
-      },
-      removeWhitePage () {
-        const that = (this as any)
-        that.hasWhitePage = false
+        that.hasWhitePage = !that.hasWhitePage
       },
       selectMode (evt: InputEvent) {
         const that = (this as any)
@@ -78,17 +74,13 @@ export const render = ({ info, preFn = Function }: { info: any, preFn: Function 
         const that = (this as any)
         that.mode = mode
       },
-      onActionZoneClick (zone: typeof ActionZones[0]) {
+      onJumpPage (nextAction: ClickAction) {
         const that = (this as any)
         const element = document.body
         const containerElement = document.getElementsByClassName('images')[0]
         const containerScrollTo = genScrollTo(containerElement)
-        const { names } = zone
         const headerHeight = document.getElementsByClassName("header")[0].clientHeight
-        const nextAction = [
-          names.includes(ClickAction.PREV_PAGE) ? ClickAction.PREV_PAGE : undefined,
-          names.includes(ClickAction.NEXT_PAGE) ? ClickAction.NEXT_PAGE : undefined,
-        ].filter(Boolean)[0]
+
         if ([ComicDirection.LTR, ComicDirection.RTL].includes(that.mode)) {
           const offsetTops = [...document.getElementsByClassName('comic')].map(el => (el as HTMLImageElement).offsetTop - headerHeight)
           const currentTop = containerElement.scrollTop
@@ -115,8 +107,22 @@ export const render = ({ info, preFn = Function }: { info: any, preFn: Function 
           containerScrollTo(nextTop, true)
         }
       },
+      onActionZoneClick (zone: typeof ActionZones[0]) {
+        const that = (this as any)
+        const { names } = zone
+        const nextAction = [
+          names.includes(ClickAction.PREV_PAGE) ? ClickAction.PREV_PAGE : undefined,
+          names.includes(ClickAction.NEXT_PAGE) ? ClickAction.NEXT_PAGE : undefined,
+        ].filter(Boolean)[0]
+        that.onJumpPage(nextAction)
+      },
       [PrivateKey.INIT]() {
         // const that = (this as any)
+      },
+    },
+    watch: {
+      hasWhitePage (val: boolean) {
+        sessionStorage.setItem(`${comic}.hasWhitePage.${chapter}`, JSON.stringify(val))
       },
     },
     mounted () {
@@ -124,6 +130,29 @@ export const render = ({ info, preFn = Function }: { info: any, preFn: Function 
       window.onresize = () => {
         that[PrivateKey.INIT]()
       }
+      window.addEventListener('keyup', ({ code }) => {
+        switch (code.toLowerCase()) {
+          case 'ArrowLeft'.toLowerCase():
+            that.prevUrl && (window.location.href = that.prevUrl)
+            break;
+          case 'ArrowRight'.toLowerCase():
+            that.nextUrl && (window.location.href = that.nextUrl)
+            break;
+          case 'ArrowUp'.toLowerCase():
+            that.onJumpPage(ClickAction.PREV_PAGE)
+            break;
+          case 'Space'.toLowerCase():
+          case 'ArrowDown'.toLowerCase():
+            that.onJumpPage(ClickAction.NEXT_PAGE)
+            break;
+          case 'ControlLeft'.toLowerCase():
+            that.hasWhitePage = false;
+            break;
+          case 'ControlRight'.toLowerCase():
+            that.hasWhitePage = true;
+            break;
+        }
+      })
       that[PrivateKey.INIT]()
     },
   })
