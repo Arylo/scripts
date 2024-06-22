@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name Enhance the copy manga site
-// @version 12
+// @version 13
 // @author Arylo Yeung <arylo.open@gmail.com>
 // @license MIT
 // @match https://copymanga.com/comic/*/chapter/*
@@ -201,16 +201,25 @@
   };
 
   // src/monkey/copymanga-enhance.ts
+  var renderNewPage = (info) => render({
+    info,
+    preFn: () => {
+      document.body.innerHTML = copymanga_enhance_default2;
+      GM_addStyle(copymanga_enhance_default);
+    }
+  });
   setTimeout(() => {
+    let cacheContent = sessionStorage.getItem(`${comic}.info`);
+    let info;
+    if (cacheContent) {
+      info = JSON.parse(cacheContent);
+      return renderNewPage(info);
+    }
     refreshImage(() => {
       windowScrollTo(0);
-      render({
-        info: getPageInfo(),
-        preFn: () => {
-          document.body.innerHTML = copymanga_enhance_default2;
-          GM_addStyle(copymanga_enhance_default);
-        }
-      });
+      info = getPageInfo();
+      sessionStorage.setItem(`${comic}.info`, JSON.stringify(info));
+      renderNewPage(info);
     });
   }, 25);
 })();
