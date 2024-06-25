@@ -18,20 +18,22 @@
     tabindex="0"
     :class="mode"
   >
-    <div v-if="hasWhitePage">
-      <img
-        :src="images[0]"
-        class="white-page"
-      />
-    </div>
-    <div v-for="(image, index) of images">
-      <img
-        class="comic"
-        :src="image"
-        :index="index"
-        @load="(e) => imageLoaded(e, index)"
-      />
-    </div>
+    <template v-for="(image, index) of images">
+      <div v-if="hasWhitePage && whitePageIndex === index">
+        <img
+          :src="image"
+          class="white-page"
+        />
+      </div>
+      <div>
+        <img
+          class="comic"
+          :src="image"
+          :index="index"
+          @load="(e) => imageLoaded(e, index)"
+        />
+      </div>
+    </template>
   </div>
   <div class="hint-container" :class="zone.names" v-for="zone of ActionZones" @click="() => onActionZoneClick(zone)">
     <div v-if="zone.names.includes(ClickAction.PREV_PAGE)">上一页</div>
