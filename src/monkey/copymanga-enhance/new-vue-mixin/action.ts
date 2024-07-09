@@ -50,6 +50,11 @@ const ActionMixin = () => ({
       ].filter(Boolean)[0]
       that.onJumpPage(nextAction)
     },
+    onActionZoneWheel (event: any) {
+      const containerElement = document.getElementsByClassName('images')[0]
+      const containerScrollTo = genScrollTo(containerElement)
+      containerScrollTo(containerElement.scrollTop - event.wheelDeltaY * 2, true)
+    },
   },
   mounted () {
     const that = (this as any)

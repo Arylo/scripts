@@ -35,7 +35,13 @@
       </div>
     </template>
   </div>
-  <div class="hint-container" :class="zone.names" v-for="zone of ActionZones" @click="() => onActionZoneClick(zone)">
+  <div
+    class="hint-container"
+    :class="zone.names"
+    v-for="zone of ActionZones"
+    @click="() => onActionZoneClick(zone)"
+    @wheel.stop="onActionZoneWheel"
+  >
     <div v-if="zone.names.includes(ClickAction.PREV_PAGE)">上一页</div>
     <div v-if="zone.names.includes(ClickAction.NEXT_PAGE)">下一页</div>
   </div>
