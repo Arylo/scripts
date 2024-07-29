@@ -12,6 +12,9 @@
       <a v-if="!hasWhitePage" class="btn" @click="() => toggleWhitePage()"><span>增加空白页</span></a>
       <a v-else class="btn" @click="() => toggleWhitePage()"><span>移除空白页</span></a>
     </template>
+    <template v-else>
+      &nbsp;{{currentImageCount}} / {{ totalImageCount }}</span>
+    </template>
   </div>
   <div
     class="images"

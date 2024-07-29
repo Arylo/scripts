@@ -7,20 +7,28 @@ const ImageMixin = (info: PageInfo) => ({
     hasWhitePage: JSON.parse(sessionStorage.getItem(`${comic}.hasWhitePage.${chapter}`) || 'false'),
   },
   computed: {
-    isImagesLoaded () {
+    currentImageCount () {
       const that = (this as any)
-      return that.imageInfos.filter(Boolean).length === info.images.length
+      return that.imageInfos.filter(Boolean).length
+    },
+    totalImageCount () {
+      const that = (this as any)
+      return that.imageInfos.length
+    },
+    isAllImagesLoaded () {
+      const that = (this as any)
+      return that.currentImageCount === that.totalImageCount
     },
     canWhitePage () {
       const that = (this as any)
       if (![ComicDirection.LTR, ComicDirection.RTL].includes(that.mode)) {
         return false
       }
-      return that.isImagesLoaded
+      return that.isAllImagesLoaded
     },
     whitePageIndex () {
       const that = (this as any)
-      if (!that.hasWhitePage || !that.isImagesLoaded) return -1
+      if (!that.hasWhitePage || !that.isAllImagesLoaded) return -1
       const groupList = group(that.imageInfos, (info: any) => info?.type)
       if (groupList.length === 1) return 0
       if (groupList.length >= 2) {
