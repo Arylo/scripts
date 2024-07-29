@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name Enhance the copy manga site
-// @version 17
+// @version 18
 // @author Arylo Yeung <arylo.open@gmail.com>
 // @license MIT
 // @match https://copymanga.com/comic/*/chapter/*
@@ -33,7 +33,7 @@
   var copymanga_enhance_default = ":root{--header-label-color: rgba(255, 255, 255, .95);--header-height: 30px;--image-max-height: calc(100vh - var(--header-height));--action-btn-label-color: rgba(255, 255, 255, .95);--action-btn-bg-color: rgba(0, 0, 0, .2);--action-btn-height: 100px;--action-btn-width: 100px;--action-btn-border-radius: 100px;--action-btn-only-height: 30vh;--action-btn-only-width: 95px}#app{overflow:hidden;height:100vh}#app .header{height:var(--header-height);width:100vw;display:flex;justify-content:center;align-items:center}#app .header:hover~.hint{display:none}#app .header span{color:var(--header-label-color)}#app .header .btn{min-width:80px}#app .header .btn.no-action{visibility:hidden}#app .images{display:flex;flex-wrap:wrap;justify-content:center;overflow:auto;height:var(--image-max-height)}#app .images.rtl{flex-direction:row-reverse}#app .images div{height:var(--image-max-height)}#app .images.ttb div{height:auto;width:90vw}#app .images .white-page{visibility:hidden}#app .hint-container{position:absolute;height:var(--hint-action-zone-height, var(--image-max-height));top:var(--hint-action-zone-top, var(--header-height));display:flex;width:30vw;align-items:center;cursor:pointer;overflow:hidden}#app .hint-container.left{left:0;justify-content:flex-start}#app .hint-container.right{right:0;justify-content:flex-end}#app .hint-container.top{--hint-action-zone-top: var(--header-height);--hint-action-zone-height: calc(var(--image-max-height) * .4);align-items:flex-start}#app .hint-container.bottom{--hint-action-zone-top: calc(var(--header-height) + var(--image-max-height) * .4);--hint-action-zone-height: calc(var(--image-max-height) * .6);align-items:flex-end}#app .hint-container>div{display:none;padding:20px;border-radius:var(--action-btn-border-radius);height:var(--action-btn-height);width:var(--action-btn-width);color:var(--action-btn-label-color);background-color:var(--action-btn-bg-color);box-shadow:var(--action-btn-shadow-x, 0) var(--action-btn-shadow-y, 0) 18px var(--action-btn-bg-color)}#app .hint-container:hover>div{display:flex}#app .hint-container.left>div{--action-btn-shadow-x: 10px;justify-content:flex-start;border-top-left-radius:0;border-bottom-left-radius:0}#app .hint-container.right>div{--action-btn-shadow-x: -10px;justify-content:flex-end;border-top-right-radius:0;border-bottom-right-radius:0}#app .hint-container.top>div{--action-btn-shadow-y: 10px;align-items:flex-start;border-top-left-radius:0;border-top-right-radius:0}#app .hint-container.bottom>div{--action-btn-shadow-y: -10px;align-items:flex-end;border-bottom-left-radius:0;border-bottom-right-radius:0}#app .hint-container:not(.top):not(.bottom)>div{align-items:center;height:var(--action-btn-only-height);width:var(--action-btn-only-width)}\n";
 
   // src/monkey/copymanga-enhance.html
-  var copymanga_enhance_default2 = `<div id="app"> <div class="header"> <a :href="prevUrl" :class="{'no-action': !prevUrl}" class="btn"><span>\u4E0A\u4E00\u8BDD</span></a> <span class="title">{{ title }}</span> <a :href="nextUrl" :class="{'no-action': !nextUrl}" class="btn"><span>\u4E0B\u4E00\u8BDD</span></a> <select v-model="mode" @change="selectMode"> <option :value="ComicDirection.LTR">\u6B63\u5E38\u6A21\u5F0F</option> <option :value="ComicDirection.RTL">\u65E5\u6F2B\u6A21\u5F0F</option> <option :value="ComicDirection.TTB">\u6761\u6F2B\u6A21\u5F0F</option> </select> <template v-if="canWhitePage"> <a v-if="!hasWhitePage" class="btn" @click="() => toggleWhitePage()"><span>\u589E\u52A0\u7A7A\u767D\u9875</span></a> <a v-else class="btn" @click="() => toggleWhitePage()"><span>\u79FB\u9664\u7A7A\u767D\u9875</span></a> </template> </div> <div class="images" tabindex="0" :class="mode"> <template v-for="(image, index) of images"> <div v-if="hasWhitePage && whitePageIndex === index"> <img :src="image" class="white-page"> </div> <div> <img class="comic" :src="image" :index="index" @load="(e) => imageLoaded(e, index)"> </div> </template> </div> <div class="hint-container" :class="zone.names" v-for="zone of ActionZones" @click="() => onActionZoneClick(zone)" @wheel.stop="onActionZoneWheel"> <div v-if="zone.names.includes(ClickAction.PREV_PAGE)">\u4E0A\u4E00\u9875</div> <div v-if="zone.names.includes(ClickAction.NEXT_PAGE)">\u4E0B\u4E00\u9875</div> </div> </div>`;
+  var copymanga_enhance_default2 = `<div id="app"> <div class="header"> <a :href="prevUrl" :class="{'no-action': !prevUrl}" class="btn"><span>\u4E0A\u4E00\u8BDD</span></a> <span class="title">{{ title }}</span> <a :href="nextUrl" :class="{'no-action': !nextUrl}" class="btn"><span>\u4E0B\u4E00\u8BDD</span></a> <select v-model="mode" @change="selectMode"> <option :value="ComicDirection.LTR">\u6B63\u5E38\u6A21\u5F0F</option> <option :value="ComicDirection.RTL">\u65E5\u6F2B\u6A21\u5F0F</option> <option :value="ComicDirection.TTB">\u6761\u6F2B\u6A21\u5F0F</option> </select> <template v-if="canWhitePage"> <a v-if="!hasWhitePage" class="btn" @click="() => toggleWhitePage()"><span>\u589E\u52A0\u7A7A\u767D\u9875</span></a> <a v-else class="btn" @click="() => toggleWhitePage()"><span>\u79FB\u9664\u7A7A\u767D\u9875</span></a> </template> <template v-else> &nbsp;{{currentImageCount}} / {{ totalImageCount }} </template> </div> <div class="images" tabindex="0" :class="mode"> <template v-for="(image, index) of images"> <div v-if="hasWhitePage && whitePageIndex === index"> <img :src="image" class="white-page"> </div> <div> <img class="comic" :src="image" :index="index" @load="(e) => imageLoaded(e, index)"> </div> </template> </div> <div class="hint-container" :class="zone.names" v-for="zone of ActionZones" @click="() => onActionZoneClick(zone)" @wheel.stop="onActionZoneWheel"> <div v-if="zone.names.includes(ClickAction.PREV_PAGE)">\u4E0A\u4E00\u9875</div> <div v-if="zone.names.includes(ClickAction.NEXT_PAGE)">\u4E0B\u4E00\u9875</div> </div> </div>`;
 
   // src/monkey/copymanga-enhance/common.ts
   var genScrollTo = (el) => (top, isSmooth = false) => el.scrollTo({
@@ -175,20 +175,28 @@
       hasWhitePage: JSON.parse(sessionStorage.getItem(`${comic}.hasWhitePage.${chapter}`) || "false")
     },
     computed: {
-      isImagesLoaded() {
+      currentImageCount() {
         const that = this;
-        return that.imageInfos.filter(Boolean).length === info.images.length;
+        return that.imageInfos.filter(Boolean).length;
+      },
+      totalImageCount() {
+        const that = this;
+        return that.imageInfos.length;
+      },
+      isAllImagesLoaded() {
+        const that = this;
+        return that.currentImageCount === that.totalImageCount;
       },
       canWhitePage() {
         const that = this;
         if (!["ltr" /* LTR */, "rtl" /* RTL */].includes(that.mode)) {
           return false;
         }
-        return that.isImagesLoaded;
+        return that.isAllImagesLoaded;
       },
       whitePageIndex() {
         const that = this;
-        if (!that.hasWhitePage || !that.isImagesLoaded) return -1;
+        if (!that.hasWhitePage || !that.isAllImagesLoaded) return -1;
         const groupList = group(that.imageInfos, (info2) => info2?.type);
         if (groupList.length === 1) return 0;
         if (groupList.length >= 2) {
