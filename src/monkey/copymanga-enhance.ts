@@ -20,6 +20,7 @@ setTimeout(() => {
     const info = {
       prevUrl: void 0,
       nextUrl: void 0,
+      menuUrl: void 0,
       ...JSON.parse(cacheContent),
     }
     return renderNewPage(info)

@@ -1,7 +1,7 @@
 <div id="app">
   <div class="header">
     <a :href="prevUrl" :class="{'no-action': !prevUrl}" class="btn"><span>上一话</span></a>
-    <span class="title">{{ title }}</span>
+    <a :href="menuUrl" class="title"><span>{{ title }}</span></a>
     <a :href="nextUrl" :class="{'no-action': !nextUrl}" class="btn"><span>下一话</span></a>
     <select v-model="mode" @change="selectMode">
       <option :value="ComicDirection.LTR">正常模式</option>

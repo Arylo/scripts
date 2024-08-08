@@ -30,8 +30,10 @@ export const getPageInfo = () => {
   const info: PageInfo = {
     images: list,
     title: $('.header').get(0)?.innerText,
+    menuUrl: footerElements.get(3)?.href,
     prevUrl: footerElements.get(1)?.className.includes('prev-null') ? undefined : footerElements.get(1)?.href,
     nextUrl: footerElements.get(2)?.className.includes('prev-null') ? undefined : footerElements.get(2)?.href,
   }
+  console.log('PageInfo:', info)
   return info
 }

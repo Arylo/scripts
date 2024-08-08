@@ -3,6 +3,7 @@ export type PageInfo = {
   title?: string,
   prevUrl?: string,
   nextUrl?: string,
+  menuUrl?: string,
 }
 
 export type VueBaseData = Record<string, any>
