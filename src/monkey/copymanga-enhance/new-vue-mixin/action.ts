@@ -5,7 +5,10 @@ import { MixinThis } from "../types";
 const ActionMixin = () => ({
   computed: {
     ClickAction: () => ClickAction,
-    ActionZones: () => ActionZones,
+    ActionZones: () => ActionZones.map(zone => ({
+      names: zone.names.concat($.isWindow(window) ? ['windows'] : []).filter(Boolean),
+    }),
+    ),
   },
   methods: {
     onJumpPage (nextAction: ClickAction) {
