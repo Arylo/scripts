@@ -2,6 +2,7 @@ import path from 'path'
 import fs from 'fs'
 import * as esbuild from 'esbuild'
 import { ROOT_PATH } from '../consts'
+import logger, { inject as loggerInject } from './logger'
 
 const buildinDependencies = [
   'fs',
@@ -23,14 +24,16 @@ const buildinDependencies = [
   const dependencies = Object.keys(require(path.resolve(ROOT_PATH, 'package.json')).dependencies)
 
   for (const filepath of filepaths) {
-    console.log(`esbuild ${path.relative(ROOT_PATH, filepath)} --outdir=${path.relative(ROOT_PATH, outPath)} ...`)
-    esbuild.buildSync({
-      entryPoints: [filepath],
-      bundle: true,
-      treeShaking: true,
-      external: [...buildinDependencies, ...dependencies],
-      outdir: outPath,
+    loggerInject(path.basename(filepath), () => {
+      logger.log(`esbuild ${path.relative(ROOT_PATH, filepath)} --outdir ${path.relative(ROOT_PATH, outPath)} ...`)
+      esbuild.buildSync({
+        entryPoints: [filepath],
+        bundle: true,
+        treeShaking: true,
+        external: [...buildinDependencies, ...dependencies],
+        outdir: outPath,
+      })
+      logger.log(`esbuild ${path.relative(ROOT_PATH, filepath)} --outdir=${path.relative(ROOT_PATH, outPath)} ... Done!`)
     })
-    console.log(`esbuild ${path.relative(ROOT_PATH, filepath)} --outdir=${path.relative(ROOT_PATH, outPath)} ... Done!`)
   }
 })()

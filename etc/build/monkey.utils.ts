@@ -6,6 +6,7 @@ import md5file from 'md5-file'
 import md5 from 'md5'
 import yn from 'yn'
 import download from 'download'
+import logger from './logger'
 import { bannerOrderMap, githubRawPrefix } from './monkey.const'
 import { POLYFILL_PATH, ROOT_PATH } from '../consts'
 import CSSMinifyTextPlugin from '../esbuild-plugins/css-minify-text'
@@ -124,22 +125,22 @@ export const exportLatestDeployInfo = async (filepath: string) => {
   const latestDeployUrl = `${githubRawPrefix}/${deployJson}`
   if (isCI)  {
     try {
-      console.info(`Download the latest deploy info: ${latestDeployUrl} ...`)
+      logger.info(`Download the latest deploy info: ${latestDeployUrl} ...`)
       await download(latestDeployUrl, os.tmpdir(), { filename: deployJson })
-      console.log(`Download the latest deploy info: ${latestDeployUrl} ... Done`)
+      logger.log(`Download the latest deploy info: ${latestDeployUrl} ... Done`)
       const downloadDeployJson = JSON.parse(fs.readFileSync(path.resolve(os.tmpdir(), deployJson), 'utf-8'))
       if (downloadDeployJson.contentHash !== contentHash || downloadDeployJson.bannerHash !== bannerHash) {
         version = Number(downloadDeployJson.version) + 1
-        console.info(`Version increased: ${downloadDeployJson.version} => ${version}`)
+        logger.info(`Version increased: ${downloadDeployJson.version} => ${version}`)
       } else {
         version = Number(downloadDeployJson.version)
       }
     } catch (e) {
-      console.error(`Download the latest deploy info: ${latestDeployUrl} ... Failed`)
-      console.info(`Version use: ${version}`)
+      logger.error(`Download the latest deploy info: ${latestDeployUrl} ... Failed`)
+      logger.info(`Version use: ${version}`)
     }
   } else {
-    console.info('Current Environment is not CI, use default version 1')
+    logger.info('Current Environment is not CI, use default version 1')
   }
   return {
     contentHash,
