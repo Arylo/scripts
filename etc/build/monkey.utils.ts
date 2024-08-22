@@ -65,7 +65,7 @@ export const parseBanner = (mainFilepath: string) =>{
 
 export const stringifyBanner = (mainFilepath: string, appendInfo = {}) => {
   const jsonContent = parseBanner(mainFilepath)
-  const { user, meta } = parseFilenames(mainFilepath)
+  const { user, meta } = parseFilenames(path.dirname(mainFilepath))
 
   const metaData = {
     ...jsonContent,
