@@ -7,7 +7,7 @@ import md5 from 'md5'
 import yn from 'yn'
 import download from 'download'
 import { bannerOrderMap, githubRawPrefix } from './monkey.const'
-import { ROOT_PATH } from '../consts'
+import { POLYFILL_PATH, ROOT_PATH } from '../consts'
 import CSSMinifyTextPlugin from '../esbuild-plugins/css-minify-text'
 import HTMLMinifyTextPlugin from '../esbuild-plugins/html-minify-text'
 
@@ -27,7 +27,7 @@ export const parseFilenames = (filepath: string) => {
   }
 }
 
-export const parseJsonPath = (filepath: string) => path.resolve(path.dirname(filepath), parseFilenames(filepath).bannerJson)
+export const parseJsonPath = (mainFilepath: string) => path.resolve(path.dirname(mainFilepath), parseFilenames(mainFilepath).bannerJson)
 
 const pkgInfo = require(path.resolve(ROOT_PATH, 'package.json'))
 
@@ -49,15 +49,22 @@ const findIndex = (val: string, rules: Array<string|RegExp> = []) => {
   })
 }
 
-export const parseBanner = (filepath: string) =>{
-  const jsonPath = parseJsonPath(filepath)
+export const exportInjectFiles = (mainFilepath: string) => {
+  const { grant = [] } = parseBanner(mainFilepath)
+  return (Array.isArray(grant) ? grant : [grant])
+    .map((name) => path.resolve(POLYFILL_PATH, `${name}.ts`))
+    .filter((filepath) => isFile(filepath))
+}
+
+export const parseBanner = (mainFilepath: string) =>{
+  const jsonPath = parseJsonPath(mainFilepath)
   const jsonContent = JSON.parse(fs.readFileSync(jsonPath, 'utf-8'))
   return jsonContent
 }
 
-export const stringifyBanner = (filepath: string, appendInfo = {}) => {
-  const jsonContent = parseBanner(filepath)
-  const { user, meta } = parseFilenames(filepath)
+export const stringifyBanner = (mainFilepath: string, appendInfo = {}) => {
+  const jsonContent = parseBanner(mainFilepath)
+  const { user, meta } = parseFilenames(mainFilepath)
 
   const metaData = {
     ...jsonContent,
@@ -105,9 +112,11 @@ export const stringifyBanner = (filepath: string, appendInfo = {}) => {
 export const exportLatestDeployInfo = async (filepath: string) => {
   const isCI = yn(process.env.CI, { default: false })
   const { name, min, bannerJson, deployJson } = parseFilenames(filepath)
-  await buildScript(path.resolve(filepath, name), {
+  const sourcePath = path.resolve(filepath, name)
+  await buildScript(sourcePath, {
     minify: true,
     outfile: path.resolve(os.tmpdir(), min),
+    inject: exportInjectFiles(sourcePath),
   })
   const contentHash = md5file.sync(path.resolve(os.tmpdir(), min))
   const bannerHash = md5(stringifyBanner(path.resolve(filepath, bannerJson)))
