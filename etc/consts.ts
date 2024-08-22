@@ -7,3 +7,5 @@ export const githubInfo = {
   repo: 'Arylo/scripts',
   branch: 'monkey',
 }
+
+export const POLYFILL_PATH = path.resolve(ROOT_PATH, 'src/monkey/polyfill')

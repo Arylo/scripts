@@ -49,9 +49,14 @@ const findIndex = (val: string, rules: Array<string|RegExp> = []) => {
   })
 }
 
-export const paresBanner = (filepath: string, appendInfo = {}) => {
+export const parseBanner = (filepath: string) =>{
   const jsonPath = parseJsonPath(filepath)
   const jsonContent = JSON.parse(fs.readFileSync(jsonPath, 'utf-8'))
+  return jsonContent
+}
+
+export const stringifyBanner = (filepath: string, appendInfo = {}) => {
+  const jsonContent = parseBanner(filepath)
   const { user, meta } = parseFilenames(filepath)
 
   const metaData = {
@@ -105,7 +110,7 @@ export const exportLatestDeployInfo = async (filepath: string) => {
     outfile: path.resolve(os.tmpdir(), min),
   })
   const contentHash = md5file.sync(path.resolve(os.tmpdir(), min))
-  const bannerHash = md5(paresBanner(path.resolve(filepath, bannerJson)))
+  const bannerHash = md5(stringifyBanner(path.resolve(filepath, bannerJson)))
   let version = 1
   const latestDeployUrl = `${githubRawPrefix}/${deployJson}`
   if (isCI)  {
@@ -140,6 +145,7 @@ export const buildScript = (filepath: string, extraConfig: esbuild.BuildOptions=
     entryPoints: [filepath],
     bundle: true,
     treeShaking: true,
+    ...extraConfig,
     ...(isCI ? {
       plugins: [
         CSSMinifyTextPlugin(),
@@ -151,7 +157,6 @@ export const buildScript = (filepath: string, extraConfig: esbuild.BuildOptions=
         '.html': 'text',
       },
     }),
-    ...extraConfig,
   })
 }
 
