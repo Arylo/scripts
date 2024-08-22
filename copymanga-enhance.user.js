@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name Enhance the copy manga site
-// @version 21
+// @version 22
 // @author Arylo Yeung <arylo.open@gmail.com>
 // @license MIT
 // @match https://copymanga.com/comic/*/chapter/*
@@ -20,8 +20,8 @@
 // @require https://unpkg.com/vue@2.7.14/dist/vue.min.js
 // @homepage https://github.com/Arylo/scripts#readme
 // @supportURL https://github.com/Arylo/scripts/issues
-// @downloadURL https://raw.githubusercontent.com/Arylo/scripts/monkey/copymanga-enhance.user.js
-// @updateURL https://raw.githubusercontent.com/Arylo/scripts/monkey/copymanga-enhance.meta.js
+// @downloadURL https://raw.githubusercontent.com/Arylo/scripts/monkey/index.ts.user.js
+// @updateURL https://raw.githubusercontent.com/Arylo/scripts/monkey/index.ts.meta.js
 // @run-at document-end
 // @grant GM_addStyle
 // @grant GM_setValue
@@ -29,13 +29,28 @@
 // ==/UserScript==
 "use strict";
 (() => {
-  // src/monkey/copymanga-enhance.css
-  var copymanga_enhance_default = ":root{--header-label-color: rgba(255, 255, 255, .95);--header-height: 30px;--image-max-height: calc(100vh - var(--header-height));--action-btn-label-color: rgba(255, 255, 255, .95);--action-btn-bg-color: rgba(0, 0, 0, .2);--action-btn-height: 100px;--action-btn-width: 100px;--action-btn-border-radius: 100px;--action-btn-only-height: 30vh;--action-btn-only-width: 95px}#app{overflow:hidden;height:100vh}#app .header{height:var(--header-height);width:100vw;display:flex;justify-content:center;align-items:center}#app .header:hover~.hint{display:none}#app .header span{color:var(--header-label-color)}#app .header .btn{min-width:80px}#app .header .btn.no-action{visibility:hidden}#app .images{display:flex;flex-wrap:wrap;justify-content:center;overflow:auto;height:var(--image-max-height)}#app .images.rtl{flex-direction:row-reverse}#app .images div{height:var(--image-max-height)}#app .images.ttb div{height:auto;width:90vw}#app .images .white-page{visibility:hidden}#app .hint-container{position:absolute;height:var(--hint-action-zone-height, var(--image-max-height));top:var(--hint-action-zone-top, var(--header-height));display:flex;width:30vw;align-items:center;cursor:pointer;overflow:hidden}#app .hint-container.left{left:0;justify-content:flex-start}#app .hint-container.right{right:0;justify-content:flex-end}#app .hint-container.windows.right{right:16px}#app .hint-container.top{--hint-action-zone-top: var(--header-height);--hint-action-zone-height: calc(var(--image-max-height) * .4);align-items:flex-start}#app .hint-container.bottom{--hint-action-zone-top: calc(var(--header-height) + var(--image-max-height) * .4);--hint-action-zone-height: calc(var(--image-max-height) * .6);align-items:flex-end}#app .hint-container>div{display:none;padding:20px;border-radius:var(--action-btn-border-radius);height:var(--action-btn-height);width:var(--action-btn-width);color:var(--action-btn-label-color);background-color:var(--action-btn-bg-color);box-shadow:var(--action-btn-shadow-x, 0) var(--action-btn-shadow-y, 0) 18px var(--action-btn-bg-color)}#app .hint-container:hover>div{display:flex}#app .hint-container.left>div{--action-btn-shadow-x: 10px;justify-content:flex-start;border-top-left-radius:0;border-bottom-left-radius:0}#app .hint-container.right>div{--action-btn-shadow-x: -10px;justify-content:flex-end;border-top-right-radius:0;border-bottom-right-radius:0}#app .hint-container.top>div{--action-btn-shadow-y: 10px;align-items:flex-start;border-top-left-radius:0;border-top-right-radius:0}#app .hint-container.bottom>div{--action-btn-shadow-y: -10px;align-items:flex-end;border-bottom-left-radius:0;border-bottom-right-radius:0}#app .hint-container:not(.top):not(.bottom)>div{align-items:center;height:var(--action-btn-only-height);width:var(--action-btn-only-width)}\n";
+  // src/monkey/polyfill/GM_addStyle.ts
+  if (typeof window.GM_addStyle == "undefined") {
+    window.GM_addStyle = (cssContent) => {
+      let head = document.getElementsByTagName("head")[0];
+      if (head) {
+        let style = document.createElement("style");
+        style.setAttribute("type", "text/css");
+        style.textContent = cssContent;
+        head.appendChild(style);
+        return style;
+      }
+      return null;
+    };
+  }
 
-  // src/monkey/copymanga-enhance.html
-  var copymanga_enhance_default2 = `<div id="app"> <div class="header"> <a :href="prevUrl" :class="{'no-action': !prevUrl}" class="btn"><span>\u4E0A\u4E00\u8BDD</span></a> <a :href="menuUrl" class="title"><span>{{ title }}</span></a> <a :href="nextUrl" :class="{'no-action': !nextUrl}" class="btn"><span>\u4E0B\u4E00\u8BDD</span></a> <select v-model="mode" @change="selectMode"> <option :value="ComicDirection.LTR">\u6B63\u5E38\u6A21\u5F0F</option> <option :value="ComicDirection.RTL">\u65E5\u6F2B\u6A21\u5F0F</option> <option :value="ComicDirection.TTB">\u6761\u6F2B\u6A21\u5F0F</option> </select> <template v-if="canWhitePage"> <a v-if="!hasWhitePage" class="btn" @click="() => toggleWhitePage()"><span>\u589E\u52A0\u7A7A\u767D\u9875</span></a> <a v-else class="btn" @click="() => toggleWhitePage()"><span>\u79FB\u9664\u7A7A\u767D\u9875</span></a> </template> <template v-else> <span style="margin-left: 15px;color: white;">{{currentImageCount}} / {{ totalImageCount }}</span> </template> </div> <div class="images" tabindex="0" :class="mode"> <template v-for="(image, index) of images"> <div v-if="hasWhitePage && whitePageIndex === index"> <img :src="image" class="white-page"> </div> <div> <img class="comic" :src="image" :index="index" @load="(e) => imageLoaded(e, index)"> </div> </template> </div> <div class="hint-container" :class="zone.names" v-for="zone of ActionZones" @click="() => onActionZoneClick(zone)" @wheel.stop="onActionZoneWheel"> <div v-if="zone.names.includes(ClickAction.PREV_PAGE)">\u4E0A\u4E00\u9875</div> <div v-if="zone.names.includes(ClickAction.NEXT_PAGE)">\u4E0B\u4E00\u9875</div> </div> </div>`;
+  // src/monkey/copymanga-enhance/style.css
+  var style_default = ":root{--header-label-color: rgba(255, 255, 255, .95);--header-height: 30px;--image-max-height: calc(100vh - var(--header-height));--action-btn-label-color: rgba(255, 255, 255, .95);--action-btn-bg-color: rgba(0, 0, 0, .2);--action-btn-height: 100px;--action-btn-width: 100px;--action-btn-border-radius: 100px;--action-btn-only-height: 30vh;--action-btn-only-width: 95px}#app{overflow:hidden;height:100vh}#app .header{height:var(--header-height);width:100vw;display:flex;justify-content:center;align-items:center}#app .header:hover~.hint{display:none}#app .header span{color:var(--header-label-color)}#app .header .btn{min-width:80px}#app .header .btn.no-action{visibility:hidden}#app .images{display:flex;flex-wrap:wrap;justify-content:center;overflow:auto;height:var(--image-max-height)}#app .images.rtl{flex-direction:row-reverse}#app .images div{height:var(--image-max-height)}#app .images.ttb div{height:auto;width:90vw}#app .images .white-page{visibility:hidden}#app .hint-container{position:absolute;height:var(--hint-action-zone-height, var(--image-max-height));top:var(--hint-action-zone-top, var(--header-height));display:flex;width:30vw;align-items:center;cursor:pointer;overflow:hidden}#app .hint-container.left{left:0;justify-content:flex-start}#app .hint-container.right{right:0;justify-content:flex-end}#app .hint-container.windows.right{right:16px}#app .hint-container.top{--hint-action-zone-top: var(--header-height);--hint-action-zone-height: calc(var(--image-max-height) * .4);align-items:flex-start}#app .hint-container.bottom{--hint-action-zone-top: calc(var(--header-height) + var(--image-max-height) * .4);--hint-action-zone-height: calc(var(--image-max-height) * .6);align-items:flex-end}#app .hint-container>div{display:none;padding:20px;border-radius:var(--action-btn-border-radius);height:var(--action-btn-height);width:var(--action-btn-width);color:var(--action-btn-label-color);background-color:var(--action-btn-bg-color);box-shadow:var(--action-btn-shadow-x, 0) var(--action-btn-shadow-y, 0) 18px var(--action-btn-bg-color)}#app .hint-container:hover>div{display:flex}#app .hint-container.left>div{--action-btn-shadow-x: 10px;justify-content:flex-start;border-top-left-radius:0;border-bottom-left-radius:0}#app .hint-container.right>div{--action-btn-shadow-x: -10px;justify-content:flex-end;border-top-right-radius:0;border-bottom-right-radius:0}#app .hint-container.top>div{--action-btn-shadow-y: 10px;align-items:flex-start;border-top-left-radius:0;border-top-right-radius:0}#app .hint-container.bottom>div{--action-btn-shadow-y: -10px;align-items:flex-end;border-bottom-left-radius:0;border-bottom-right-radius:0}#app .hint-container:not(.top):not(.bottom)>div{align-items:center;height:var(--action-btn-only-height);width:var(--action-btn-only-width)}\n";
 
-  // src/monkey/copymanga-enhance/common.ts
+  // src/monkey/copymanga-enhance/template.html
+  var template_default = `<div id="app"> <div class="header"> <a :href="prevUrl" :class="{'no-action': !prevUrl}" class="btn"><span>\u4E0A\u4E00\u8BDD</span></a> <a :href="menuUrl" class="title"><span>{{ title }}</span></a> <a :href="nextUrl" :class="{'no-action': !nextUrl}" class="btn"><span>\u4E0B\u4E00\u8BDD</span></a> <select v-model="mode" @change="selectMode"> <option :value="ComicDirection.LTR">\u6B63\u5E38\u6A21\u5F0F</option> <option :value="ComicDirection.RTL">\u65E5\u6F2B\u6A21\u5F0F</option> <option :value="ComicDirection.TTB">\u6761\u6F2B\u6A21\u5F0F</option> </select> <template v-if="canWhitePage"> <a v-if="!hasWhitePage" class="btn" @click="() => toggleWhitePage()"><span>\u589E\u52A0\u7A7A\u767D\u9875</span></a> <a v-else class="btn" @click="() => toggleWhitePage()"><span>\u79FB\u9664\u7A7A\u767D\u9875</span></a> </template> <template v-else> <span style="margin-left: 15px;color: white;">{{currentImageCount}} / {{ totalImageCount }}</span> </template> </div> <div class="images" tabindex="0" :class="mode"> <template v-for="(image, index) of images"> <div v-if="hasWhitePage && whitePageIndex === index"> <img :src="image" class="white-page"> </div> <div> <img class="comic" :src="image" :index="index" @load="(e) => imageLoaded(e, index)"> </div> </template> </div> <div class="hint-container" :class="zone.names" v-for="zone of ActionZones" @click="() => onActionZoneClick(zone)" @wheel.stop="onActionZoneWheel"> <div v-if="zone.names.includes(ClickAction.PREV_PAGE)">\u4E0A\u4E00\u9875</div> <div v-if="zone.names.includes(ClickAction.NEXT_PAGE)">\u4E0B\u4E00\u9875</div> </div> </div>`;
+
+  // src/monkey/copymanga-enhance/scripts/common.ts
   var genScrollTo = (el) => (top, isSmooth = false) => el.scrollTo({
     top,
     left: 0,
@@ -68,7 +83,7 @@
     }, []);
   };
 
-  // src/monkey/copymanga-enhance/constant.ts
+  // src/monkey/copymanga-enhance/scripts/constant.ts
   var ComicDirection = /* @__PURE__ */ ((ComicDirection2) => {
     ComicDirection2["LTR"] = "ltr";
     ComicDirection2["RTL"] = "rtl";
@@ -88,7 +103,7 @@
     names: ["bottom", "right", "next_page" /* NEXT_PAGE */]
   }];
 
-  // src/monkey/copymanga-enhance/new-vue-mixin/action.ts
+  // src/monkey/copymanga-enhance/scripts/new-vue-mixin/action.ts
   var ActionMixin = () => ({
     computed: {
       ClickAction: () => ClickAction,
@@ -173,7 +188,7 @@
   });
   var action_default = ActionMixin;
 
-  // src/monkey/copymanga-enhance/new-vue-mixin/image.ts
+  // src/monkey/copymanga-enhance/scripts/new-vue-mixin/image.ts
   var ImageMixin = (info) => ({
     data: {
       hasWhitePage: JSON.parse(sessionStorage.getItem(`${comic}.hasWhitePage.${chapter}`) || "false")
@@ -245,7 +260,7 @@
   });
   var image_default = ImageMixin;
 
-  // src/monkey/copymanga-enhance/new-vue-mixin/init.ts
+  // src/monkey/copymanga-enhance/scripts/new-vue-mixin/init.ts
   var InitMixin = (info) => ({
     data: {
       ...info,
@@ -254,7 +269,7 @@
   });
   var init_default = InitMixin;
 
-  // src/monkey/copymanga-enhance/new-vue-mixin/mode.ts
+  // src/monkey/copymanga-enhance/scripts/new-vue-mixin/mode.ts
   var ModeMixin = () => ({
     data: {
       mode: GM_getValue(`${comic}.direction.mode`, "rtl" /* RTL */)
@@ -276,7 +291,7 @@
   });
   var mode_default = ModeMixin;
 
-  // src/monkey/copymanga-enhance/new.ts
+  // src/monkey/copymanga-enhance/scripts/new.ts
   var render = ({ info, preFn = Function }) => {
     preFn();
     new Vue({
@@ -290,7 +305,7 @@
     });
   };
 
-  // src/monkey/copymanga-enhance/old.ts
+  // src/monkey/copymanga-enhance/scripts/old.ts
   var getCurrentCount = () => $(".comicContent-list > li > img").length;
   var getTotalCount = () => Number(document.getElementsByClassName("comicCount")[0].innerText);
   var windowScrollTo = genScrollTo(window);
@@ -326,13 +341,13 @@
     return info;
   };
 
-  // src/monkey/copymanga-enhance.ts
+  // src/monkey/copymanga-enhance/index.ts
   var sessionStorageKey = `${comic}.info.${chapter}`;
   var renderNewPage = (info) => render({
     info,
     preFn: () => {
-      document.body.innerHTML = copymanga_enhance_default2;
-      GM_addStyle(copymanga_enhance_default);
+      document.body.innerHTML = template_default;
+      GM_addStyle(style_default);
     }
   });
   setTimeout(() => {
