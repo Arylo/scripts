@@ -12,14 +12,17 @@ import CSSMinifyTextPlugin from '../esbuild-plugins/css-minify-text'
 import HTMLMinifyTextPlugin from '../esbuild-plugins/html-minify-text'
 
 export const parseFilenames = (filepath: string) => {
-  const filename = path.basename(filepath, path.extname(filepath))
+  const filename = path.basename(filepath)
   return {
+    // Raw
     raw: path.basename(filename),
-    name: filename,
+    // Input
+    bannerJson: 'banner.json',
+    // Output
+    name: 'index.ts',
     meta: `${filename}.meta.js`,
     user: `${filename}.user.js`,
     min: `${filename}.min.js`,
-    bannerJson: `${filename}.json`,
     deployJson: `${filename}.deploy.json`,
   }
 }
@@ -96,13 +99,13 @@ export const paresBanner = (filepath: string, appendInfo = {}) => {
 
 export const exportLatestDeployInfo = async (filepath: string) => {
   const isCI = yn(process.env.CI, { default: false })
-  const { min, deployJson } = parseFilenames(filepath)
-  await buildScript(filepath, {
+  const { name, min, bannerJson, deployJson } = parseFilenames(filepath)
+  await buildScript(path.resolve(filepath, name), {
     minify: true,
     outfile: path.resolve(os.tmpdir(), min),
   })
   const contentHash = md5file.sync(path.resolve(os.tmpdir(), min))
-  const bannerHash = md5(paresBanner(filepath))
+  const bannerHash = md5(paresBanner(path.resolve(filepath, bannerJson)))
   let version = 1
   const latestDeployUrl = `${githubRawPrefix}/${deployJson}`
   if (isCI)  {
@@ -150,4 +153,8 @@ export const buildScript = (filepath: string, extraConfig: esbuild.BuildOptions=
     }),
     ...extraConfig,
   })
+}
+
+export function isFile (filepath: string) {
+  return fs.existsSync(filepath) && fs.statSync(filepath).isFile()
 }

@@ -1,4 +1,4 @@
-import css from './gitlab-settings-max-size.css';
+import css from './style.css'
 
 setTimeout(() => GM_addStyle(css), 25)
 

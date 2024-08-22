@@ -1,7 +1,7 @@
 import path from 'path'
 import fs from 'fs'
 import { ROOT_PATH } from '../consts'
-import { buildScript, exportLatestDeployInfo, paresBanner, parseFilenames, parseJsonPath } from './monkey.utils'
+import { buildScript, exportLatestDeployInfo, isFile, paresBanner, parseFilenames } from './monkey.utils'
 
 const srcPath = path.resolve(ROOT_PATH, 'src/monkey')
 const outPath = path.resolve(ROOT_PATH, 'dist/monkey')
@@ -9,7 +9,11 @@ const outPath = path.resolve(ROOT_PATH, 'dist/monkey')
 ;(async () => {
   const filepaths = fs.readdirSync(srcPath)
     .map((filename) => path.resolve(srcPath, filename))
-    .filter((filepath) => fs.statSync(filepath).isFile() && filepath.endsWith('.ts') && fs.statSync(parseJsonPath(filepath)).isFile())
+    .filter((filepath) => fs.statSync(filepath).isDirectory())
+    .filter((filepath) => [
+      isFile(path.resolve(filepath, parseFilenames(filepath).name)),
+      isFile(path.resolve(filepath, parseFilenames(filepath).bannerJson)),
+    ].some(Boolean))
 
   for (const filepath of filepaths) {
     const {
@@ -17,10 +21,10 @@ const outPath = path.resolve(ROOT_PATH, 'dist/monkey')
       user,
       deployJson
     } = parseFilenames(filepath)
-    const sourcePath = filepath
+    const sourcePath = path.resolve(filepath, parseFilenames(filepath).name)
     const targetPath = path.resolve(outPath, user)
-    console.log(`Building ${path.relative(ROOT_PATH, sourcePath)} --outfile=${path.relative(ROOT_PATH, targetPath)} ...`)
-    const deployInfo = await exportLatestDeployInfo(sourcePath)
+    console.log(`Building ${path.relative(ROOT_PATH, sourcePath)} --outfile ${path.relative(ROOT_PATH, targetPath)} ...`)
+    const deployInfo = await exportLatestDeployInfo(filepath)
     const banner = paresBanner(sourcePath, { version: deployInfo.version })
     await buildScript(sourcePath, {
       banner: { js: banner },

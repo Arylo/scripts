@@ -1,8 +1,8 @@
-import css from './copymanga-enhance.css'
-import html from './copymanga-enhance.html'
-import { chapter, comic } from './copymanga-enhance/common'
-import { render } from './copymanga-enhance/new'
-import { getPageInfo, refreshImage, windowScrollTo } from './copymanga-enhance/old'
+import css from './style.css'
+import html from './template.html'
+import { chapter, comic } from './scripts/common'
+import { render } from './scripts/new'
+import { getPageInfo, refreshImage, windowScrollTo } from './scripts/old'
 
 const sessionStorageKey = `${comic}.info.${chapter}`
 
