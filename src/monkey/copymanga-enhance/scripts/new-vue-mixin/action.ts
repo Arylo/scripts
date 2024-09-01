@@ -76,9 +76,11 @@ const ActionMixin = () => ({
         case 'ArrowDown'.toLowerCase():
           that.onJumpPage(ClickAction.NEXT_PAGE)
           break;
+        case 'MetaLeft'.toLowerCase():
         case 'ControlLeft'.toLowerCase():
           that.hasWhitePage = false;
           break;
+        case 'MetaRight'.toLowerCase():
         case 'ControlRight'.toLowerCase():
           that.hasWhitePage = true;
           break;
