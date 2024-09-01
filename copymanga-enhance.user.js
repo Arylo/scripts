@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name Enhance the copy manga site
-// @version 23
+// @version 24
 // @author Arylo Yeung <arylo.open@gmail.com>
 // @license MIT
 // @match https://copymanga.com/comic/*/chapter/*
@@ -176,9 +176,11 @@
           case "ArrowDown".toLowerCase():
             that.onJumpPage("next_page" /* NEXT_PAGE */);
             break;
+          case "MetaLeft".toLowerCase():
           case "ControlLeft".toLowerCase():
             that.hasWhitePage = false;
             break;
+          case "MetaRight".toLowerCase():
           case "ControlRight".toLowerCase():
             that.hasWhitePage = true;
             break;
