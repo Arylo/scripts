@@ -155,6 +155,7 @@ export const buildScript = (filepath: string, extraConfig: esbuild.BuildOptions=
     entryPoints: [filepath],
     bundle: true,
     treeShaking: true,
+    external: Object.keys(require(path.resolve(ROOT_PATH, 'package.json')).devDependencies),
     ...extraConfig,
     ...(isCI ? {
       plugins: [

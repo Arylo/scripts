@@ -1,17 +1,14 @@
-<div id="app">
+<div id="app" :class="[platform]">
   <div class="header">
     <a :href="prevUrl" :class="{'no-action': !prevUrl}" class="btn"><span>上一话</span></a>
     <a :href="menuUrl" class="title"><span>{{ title }}</span></a>
     <a :href="nextUrl" :class="{'no-action': !nextUrl}" class="btn"><span>下一话</span></a>
-    <select v-model="mode" @change="selectMode">
-      <option :value="ComicDirection.LTR">正常模式</option>
-      <option :value="ComicDirection.RTL">日漫模式</option>
-      <option :value="ComicDirection.TTB">条漫模式</option>
-    </select>
-    <template v-if="canWhitePage">
+    <switch-mode></switch-mode>
+    <toggle-white-page></toggle-white-page>
+    <!-- <template v-if="canWhitePage">
       <a v-if="!hasWhitePage" class="btn" @click="() => toggleWhitePage()"><span>增加空白页</span></a>
       <a v-else class="btn" @click="() => toggleWhitePage()"><span>移除空白页</span></a>
-    </template>
+    </template> -->
     <template v-else>
       <span style="margin-left: 15px;color: white;">{{currentImageCount}} / {{ totalImageCount }}</span>
     </template>

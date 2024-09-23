@@ -37,7 +37,7 @@ const outPath = path.resolve(ROOT_PATH, 'dist/monkey')
       const metaPath = path.resolve(outPath, meta)
       fs.writeFileSync(path.resolve(outPath, deployJson), JSON.stringify(deployInfo, null, 2), 'utf-8')
       fs.writeFileSync(metaPath, banner, 'utf-8')
-      logger.log(`Building ${path.relative(ROOT_PATH, sourcePath)} --outfile=${path.relative(ROOT_PATH, targetPath)} ... Done!`)
+      logger.log(`Building ${path.relative(ROOT_PATH, sourcePath)} --outfile ${path.relative(ROOT_PATH, targetPath)} ... Done!`)
     })
   }
 })()

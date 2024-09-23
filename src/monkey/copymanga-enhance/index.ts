@@ -1,10 +1,8 @@
 import css from './style.css'
 import html from './template.html'
-import { chapter, comic } from './scripts/common'
 import { render } from './scripts/new'
 import { getPageInfo, refreshImage, windowScrollTo } from './scripts/old'
-
-const sessionStorageKey = `${comic}.info.${chapter}`
+import store from './scripts/store'
 
 const renderNewPage = (info: any) => render({
   info,
@@ -15,20 +13,14 @@ const renderNewPage = (info: any) => render({
 })
 
 setTimeout(() => {
-  let cacheContent = sessionStorage.getItem(sessionStorageKey)
+  const cacheContent = store.info.get()
   if (cacheContent) {
-    const info = {
-      prevUrl: void 0,
-      nextUrl: void 0,
-      menuUrl: void 0,
-      ...JSON.parse(cacheContent),
-    }
-    return renderNewPage(info)
+    return renderNewPage(cacheContent)
   }
   refreshImage(() => {
     windowScrollTo(0)
-    const  info = getPageInfo()
-    sessionStorage.setItem(sessionStorageKey, JSON.stringify(info))
+    const info = getPageInfo()
+    store.info.save(info)
     renderNewPage(info)
   })
 }, 25)

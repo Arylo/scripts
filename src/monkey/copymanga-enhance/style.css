@@ -86,7 +86,7 @@
   justify-content: flex-end;
 }
 
-#app .hint-container.windows.right {
+#app.windows .hint-container.right {
   right: 16px;
 }
 
