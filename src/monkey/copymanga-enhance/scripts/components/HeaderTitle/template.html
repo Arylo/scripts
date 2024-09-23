@@ -1,0 +1,7 @@
+<template>
+  <div>
+    <a :href="prevUrl" :class="{'no-action': !prevUrl}" class="btn"><span>上一话</span></a>
+    <a :href="menuUrl" class="title"><span>{{ title }}</span></a>
+    <a :href="nextUrl" :class="{'no-action': !nextUrl}" class="btn"><span>下一话</span></a>
+  </div>
+</template>

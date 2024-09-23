@@ -1,0 +1,7 @@
+<template>
+  <select v-model="mode" @change="selectMode">
+    <option :value="ComicDirection.LTR">正常模式</option>
+    <option :value="ComicDirection.RTL">日漫模式</option>
+    <option :value="ComicDirection.TTB">条漫模式</option>
+  </select>
+</template>
