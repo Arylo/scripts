@@ -2,11 +2,11 @@
   "name": "Add Font Family for the Self-managed Gitlab",
   "name:zh": "为自托管 Gitlab 添加字体",
   "include": [
-    "/^https:\/\/git\\b.[^\/]+\/.*\/-\/raw\/.*/",
-    "/^https:\/\/git\\b.[^\/]+\/.*\/-\/blob\/.*/",
-    "/^https:\/\/git\\b.[^\/]+\/.*\/-\/commit\/.*/",
-    "/^https:\/\/git\\b.[^\/]+\/.*\/-\/merge_requests\/(\\d+|new)\\b/",
-    "/^https:\/\/git\\b.[^\/]+\/.*\/-\/merge_requests\/(\\d+|new)\/diffs\\b/"
+    "/^https:\/\/git(lab)?.[^\/]+\/.*\/-\/raw\/.*/",
+    "/^https:\/\/git(lab)?.[^\/]+\/.*\/-\/blob\/.*/",
+    "/^https:\/\/git(lab)?.[^\/]+\/.*\/-\/commit\/.*/",
+    "/^https:\/\/git(lab)?.[^\/]+\/.*\/-\/merge_requests\/(\\d+|new)\\b/",
+    "/^https:\/\/git(lab)?.[^\/]+\/.*\/-\/merge_requests\/(\\d+|new)\/diffs\\b/"
   ],
   "run-at": "document-end",
   "grant": "GM_addStyle"
