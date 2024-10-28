@@ -7,6 +7,12 @@ import { buildScript, exportLatestDeployInfo, isFile, stringifyBanner, parseFile
 const srcPath = path.resolve(ROOT_PATH, 'src/monkey')
 const outPath = path.resolve(ROOT_PATH, 'dist/monkey')
 
+const matchValueIndex = process.argv.findIndex((v) => ['--match', '-m'].includes(v))
+let matchValue!: string
+if (matchValueIndex > 0) {
+  matchValue = process.argv[matchValueIndex + 1]
+}
+
 ;(async () => {
   const filepaths = fs.readdirSync(srcPath)
     .map((filename) => path.resolve(srcPath, filename))
@@ -21,8 +27,9 @@ const outPath = path.resolve(ROOT_PATH, 'dist/monkey')
       raw,
       meta,
       user,
-      deployJson
+      deployJson,
     } = parseFilenames(filepath)
+    if (matchValue && !raw.includes(matchValue)) continue
     await loggerInject(raw, async () => {
       const sourcePath = path.resolve(filepath, parseFilenames(filepath).name)
       const targetPath = path.resolve(outPath, user)
