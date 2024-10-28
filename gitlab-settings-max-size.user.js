@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name Max Size CI/CD Setting Page for the Self-managed Gitlab
 // @name:zh 自托管 Gitlab CI/CD 设置页面最大化尺寸
-// @version 6
+// @version 7
 // @author Arylo Yeung <arylo.open@gmail.com>
-// @include /^https://git\b.[^/]+/.*/-/settings/ci_cd$/
+// @include /^https://git(lab)?.[^/]+/.*/-/settings/ci_cd$/
 // @license MIT
 // @homepage https://github.com/Arylo/scripts#readme
 // @supportURL https://github.com/Arylo/scripts/issues
@@ -14,19 +14,32 @@
 // ==/UserScript==
 "use strict";
 (() => {
+  // src/monkey/polyfill/GM.ts
+  var thisGlobal = window;
+  if (typeof thisGlobal.GM === "undefined") {
+    thisGlobal.GM = {};
+  }
+  function getGMWindow() {
+    return thisGlobal;
+  }
+
   // src/monkey/polyfill/GM_addStyle.ts
-  if (typeof window.GM_addStyle == "undefined") {
-    window.GM_addStyle = (cssContent) => {
-      let head = document.getElementsByTagName("head")[0];
+  var w = getGMWindow();
+  if (typeof w.GM_addStyle === "undefined") {
+    w.GM_addStyle = function GM_addStyle2(cssContent) {
+      const head = document.getElementsByTagName("head")[0];
       if (head) {
-        let style = document.createElement("style");
-        style.setAttribute("type", "text/css");
-        style.textContent = cssContent;
-        head.appendChild(style);
-        return style;
+        const styleElement = document.createElement("style");
+        styleElement.setAttribute("type", "text/css");
+        styleElement.textContent = cssContent;
+        head.appendChild(styleElement);
+        return styleElement;
       }
       return null;
     };
+  }
+  if (typeof w.GM.addStyle === "undefined") {
+    w.GM.addStyle = GM_addStyle;
   }
 
   // src/monkey/gitlab-settings-max-size/style.css

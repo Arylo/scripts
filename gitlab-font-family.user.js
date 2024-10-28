@@ -1,13 +1,13 @@
 // ==UserScript==
 // @name Add Font Family for the Self-managed Gitlab
 // @name:zh 为自托管 Gitlab 添加字体
-// @version 6
+// @version 7
 // @author Arylo Yeung <arylo.open@gmail.com>
-// @include /^https://git\b.[^/]+/.*/-/raw/.*/
-// @include /^https://git\b.[^/]+/.*/-/blob/.*/
-// @include /^https://git\b.[^/]+/.*/-/commit/.*/
-// @include /^https://git\b.[^/]+/.*/-/merge_requests/(\d+|new)\b/
-// @include /^https://git\b.[^/]+/.*/-/merge_requests/(\d+|new)/diffs\b/
+// @include /^https://git(lab)?.[^/]+/.*/-/raw/.*/
+// @include /^https://git(lab)?.[^/]+/.*/-/blob/.*/
+// @include /^https://git(lab)?.[^/]+/.*/-/commit/.*/
+// @include /^https://git(lab)?.[^/]+/.*/-/merge_requests/(\d+|new)\b/
+// @include /^https://git(lab)?.[^/]+/.*/-/merge_requests/(\d+|new)/diffs\b/
 // @license MIT
 // @homepage https://github.com/Arylo/scripts#readme
 // @supportURL https://github.com/Arylo/scripts/issues
@@ -18,19 +18,32 @@
 // ==/UserScript==
 "use strict";
 (() => {
+  // src/monkey/polyfill/GM.ts
+  var thisGlobal = window;
+  if (typeof thisGlobal.GM === "undefined") {
+    thisGlobal.GM = {};
+  }
+  function getGMWindow() {
+    return thisGlobal;
+  }
+
   // src/monkey/polyfill/GM_addStyle.ts
-  if (typeof window.GM_addStyle == "undefined") {
-    window.GM_addStyle = (cssContent) => {
-      let head = document.getElementsByTagName("head")[0];
+  var w = getGMWindow();
+  if (typeof w.GM_addStyle === "undefined") {
+    w.GM_addStyle = function GM_addStyle2(cssContent) {
+      const head = document.getElementsByTagName("head")[0];
       if (head) {
-        let style = document.createElement("style");
-        style.setAttribute("type", "text/css");
-        style.textContent = cssContent;
-        head.appendChild(style);
-        return style;
+        const styleElement = document.createElement("style");
+        styleElement.setAttribute("type", "text/css");
+        styleElement.textContent = cssContent;
+        head.appendChild(styleElement);
+        return styleElement;
       }
       return null;
     };
+  }
+  if (typeof w.GM.addStyle === "undefined") {
+    w.GM.addStyle = GM_addStyle;
   }
 
   // src/monkey/gitlab-font-family/style.css

@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name Enhance the copy manga site
-// @version 24
+// @version 25
 // @author Arylo Yeung <arylo.open@gmail.com>
 // @license MIT
 // @match https://copymanga.com/comic/*/chapter/*
@@ -29,19 +29,32 @@
 // ==/UserScript==
 "use strict";
 (() => {
+  // src/monkey/polyfill/GM.ts
+  var thisGlobal = window;
+  if (typeof thisGlobal.GM === "undefined") {
+    thisGlobal.GM = {};
+  }
+  function getGMWindow() {
+    return thisGlobal;
+  }
+
   // src/monkey/polyfill/GM_addStyle.ts
-  if (typeof window.GM_addStyle == "undefined") {
-    window.GM_addStyle = (cssContent) => {
-      let head = document.getElementsByTagName("head")[0];
+  var w = getGMWindow();
+  if (typeof w.GM_addStyle === "undefined") {
+    w.GM_addStyle = function GM_addStyle2(cssContent) {
+      const head = document.getElementsByTagName("head")[0];
       if (head) {
-        let style = document.createElement("style");
-        style.setAttribute("type", "text/css");
-        style.textContent = cssContent;
-        head.appendChild(style);
-        return style;
+        const styleElement = document.createElement("style");
+        styleElement.setAttribute("type", "text/css");
+        styleElement.textContent = cssContent;
+        head.appendChild(styleElement);
+        return styleElement;
       }
       return null;
     };
+  }
+  if (typeof w.GM.addStyle === "undefined") {
+    w.GM.addStyle = GM_addStyle;
   }
 
   // src/monkey/copymanga-enhance/style.css
