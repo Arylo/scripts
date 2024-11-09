@@ -11,6 +11,8 @@ import { bannerOrderMap, githubRawPrefix } from './monkey.const'
 import { POLYFILL_PATH, ROOT_PATH } from '../consts'
 import CSSMinifyTextPlugin from '../esbuild-plugins/css-minify-text'
 import HTMLMinifyTextPlugin from '../esbuild-plugins/html-minify-text'
+import VueJsxPlugin from 'unplugin-vue-jsx/esbuild'
+import GMCssModulesPlugin from '../esbuild-plugins/gm-module-css';
 
 export const parseFilenames = (filepath: string) => {
   const filename = path.basename(filepath)
@@ -48,13 +50,6 @@ const findIndex = (val: string, rules: Array<string|RegExp> = []) => {
       return rule === val
     }
   })
-}
-
-export const exportInjectFiles = (mainFilepath: string) => {
-  const { grant = [] } = parseBanner(mainFilepath)
-  return (Array.isArray(grant) ? grant : [grant])
-    .map((name) => path.resolve(POLYFILL_PATH, `${name}.ts`))
-    .filter((filepath) => isFile(filepath))
 }
 
 export const parseBanner = (mainFilepath: string) =>{
@@ -117,7 +112,6 @@ export const exportLatestDeployInfo = async (filepath: string) => {
   await buildScript(sourcePath, {
     minify: true,
     outfile: path.resolve(os.tmpdir(), min),
-    inject: exportInjectFiles(sourcePath),
   })
   const contentHash = md5file.sync(path.resolve(os.tmpdir(), min))
   const bannerHash = md5(stringifyBanner(path.resolve(filepath, bannerJson)))
@@ -151,14 +145,25 @@ export const exportLatestDeployInfo = async (filepath: string) => {
 
 export const buildScript = (filepath: string, extraConfig: esbuild.BuildOptions= {}) => {
   const isCI = yn(process.env.CI, { default: false })
+  const vuePlugins = () => [
+    VueJsxPlugin({
+      version: 2,
+      injectH: false,
+    }),
+    GMCssModulesPlugin(),
+  ]
   return esbuild.build({
     entryPoints: [filepath],
     bundle: true,
     treeShaking: true,
     external: Object.keys(require(path.resolve(ROOT_PATH, 'package.json')).devDependencies),
+    define: {
+      'h': 'window.Vue.h',
+    },
     ...extraConfig,
     ...(isCI ? {
       plugins: [
+        ...vuePlugins(),
         CSSMinifyTextPlugin(),
         HTMLMinifyTextPlugin(),
       ],
@@ -167,6 +172,9 @@ export const buildScript = (filepath: string, extraConfig: esbuild.BuildOptions=
         '.css': 'text',
         '.html': 'text',
       },
+      plugins: [
+        ...vuePlugins(),
+      ],
     }),
   })
 }

@@ -1,0 +1,8 @@
+.cmBody {
+  height: calc(100% - 35px);
+  overflow-y: auto;
+}
+
+.stateGroupContainer {
+  min-width: 50%;
+}

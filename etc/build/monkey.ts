@@ -2,7 +2,7 @@ import path from 'path'
 import fs from 'fs'
 import logger, { inject as loggerInject } from './logger'
 import { ROOT_PATH } from '../consts'
-import { buildScript, exportLatestDeployInfo, isFile, stringifyBanner, parseFilenames, exportInjectFiles } from './monkey.utils'
+import { buildScript, exportLatestDeployInfo, isFile, stringifyBanner, parseFilenames } from './monkey.utils'
 
 const srcPath = path.resolve(ROOT_PATH, 'src/monkey')
 const outPath = path.resolve(ROOT_PATH, 'dist/monkey')
@@ -39,7 +39,6 @@ if (matchValueIndex > 0) {
       await buildScript(sourcePath, {
         banner: { js: banner },
         outfile: targetPath,
-        inject: exportInjectFiles(sourcePath),
       })
       const metaPath = path.resolve(outPath, meta)
       fs.writeFileSync(path.resolve(outPath, deployJson), JSON.stringify(deployInfo, null, 2), 'utf-8')

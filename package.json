@@ -5,6 +5,7 @@
   "private": true,
   "main": "index.js",
   "scripts": {
+    "prebuild": "npm run build -ws",
     "build": "concurrently npm:build:*",
     "build:qinglong": "ts-node ./etc/build/qinglong.ts",
     "build:monkey": "ts-node ./etc/build/monkey.ts",
@@ -20,7 +21,8 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@js-sh/js-sh": "^0.1.1"
+    "@js-sh/js-sh": "^0.1.1",
+    "gm-polyfill": "^1.0.0"
   },
   "devDependencies": {
     "@types/download": "^8.0.5",
@@ -34,11 +36,16 @@
     "htmlnano": "^2.1.1",
     "md5": "^2.3.0",
     "md5-file": "^5.0.0",
+    "node-css-require": "^0.4.9",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.5",
+    "unplugin-vue-jsx": "^0.4.0",
     "vitest": "^1.6.0",
     "vue": "2.7",
     "vue-demi": "^0.14.10",
     "yn": "^4.0.0"
-  }
+  },
+  "workspaces": [
+    "packages/*"
+  ]
 }

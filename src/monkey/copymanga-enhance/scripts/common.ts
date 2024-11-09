@@ -32,3 +32,14 @@ export const group = <T>(list: T[], groupFn: (item: T) => any) => {
     return acc
   }, [])
 }
+
+export const genID = () => {
+  const MAX_LENGTH = 32
+  const hexes = [
+    Date.now().toString(16),
+    Number((Math.random() * 10e16).toFixed(0)).toString(16),
+    Number((Math.random() * 10e16).toFixed(0)).toString(16),
+  ]
+  hexes[1] = hexes[1].substring(0, MAX_LENGTH - hexes[0].length - hexes[2].length)
+  return hexes.join('').toUpperCase()
+}

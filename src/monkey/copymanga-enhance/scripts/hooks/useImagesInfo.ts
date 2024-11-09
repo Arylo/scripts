@@ -1,22 +1,36 @@
-import { computed, ref, unref } from "../library/vue";
-import store from "../store";
+import type { Ref } from "vue";
+import { genID } from "../common";
+import Vue from "../library/vue";
 import usePageInfo from "./usePageInfo";
+import { PageType } from "../constant";
 
-const imagesRef = ref(Array(store.info.get().images.length).fill(undefined))
+interface IImageInfo {
+  width: number
+  height: number
+  direction: PageType
+}
+
+const imagesRef: Ref<Array<IImageInfo | false>> = Vue.ref([])
 
 const useImagesInfo = () => {
   const { valueRef: pageInfoRef } = usePageInfo()
-  const loadedCount = computed(() => unref(imagesRef).filter(Boolean).length)
-  const total = computed(() => unref(pageInfoRef).images.length)
-  const loading = computed(() => unref(loadedCount) !== unref(total))
-  const loaded = computed(() => unref(loadedCount) === unref(total))
+  const loadedCount = Vue.computed(() => Vue.unref(imagesRef).filter(Boolean).length)
+  const total = Vue.computed(() => Vue.unref(pageInfoRef).images.length)
+  const loading = Vue.computed(() => Vue.unref(loadedCount) !== Vue.unref(total))
+  const loaded = Vue.computed(() => Vue.unref(loadedCount) === Vue.unref(total))
 
-  const loadFinish = (index: number, content: any = {}) => {
-    if (unref(total) <= index) {
+  const loadFinish = (index: number, detail: IImageInfo) => {
+    if (Vue.unref(total) <= index) {
       return console.error('index out of range')
     }
-    imagesRef.value.splice(index, 1, content)
+    imagesRef.value.splice(index, 1, detail)
   }
+
+  Vue.onMounted(() => {
+    if (Vue.unref(imagesRef.value).length === 0) {
+      imagesRef.value = Array(Vue.unref(pageInfoRef).images.length).fill(false)
+    }
+  })
   return {
     valueRef: imagesRef,
     total,

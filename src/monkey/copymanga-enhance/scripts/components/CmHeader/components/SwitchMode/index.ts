@@ -1,7 +1,7 @@
-import useMode from "../../hooks/useMode";
-import { ComicDirection } from "../../constant";
+import useMode from "../../../../hooks/useMode";
+import { ComicDirection } from "../../../../constant";
 import htmlContent from "./template.html";
-import { defineComponent } from "../../library/vue";
+import { defineComponent } from "../../../../library/vue";
 
 export default defineComponent({
   template: htmlContent,

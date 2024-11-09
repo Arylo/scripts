@@ -13,12 +13,13 @@ export default defineComponent({
       valueRef: hasWhitePage,
       toggle: toggleWhitePage,
     } = useWhitePage()
-    const { loaded } = useImagesInfo()
+    // const { loaded } = useImagesInfo()
     const canWhitePage = computed(() => {
       if (![ComicDirection.LTR, ComicDirection.RTL].includes(unref(modeRef))) {
         return false
       }
-      return unref(loaded)
+      return true
+      // return unref(loaded)
     })
     return {
       hasWhitePage,
