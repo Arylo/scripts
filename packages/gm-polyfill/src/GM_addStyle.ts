@@ -1,8 +1,4 @@
-/**
- * @param {string} cssContent
- */
-const addStyle = function GM_addStyle(cssContent: any) {
-  if ((window as any).GM_addStyle) return (window as any).GM_addStyle(cssContent)
+const addStyle = function GM_addStyle(cssContent: string) {
   const head = document.getElementsByTagName('head')[0]
   if (head) {
     const styleElement = document.createElement('style')
@@ -14,5 +10,5 @@ const addStyle = function GM_addStyle(cssContent: any) {
   return null
 }
 
-export const GM_addStyle = addStyle
+export const GM_addStyle = ((globalThis as any).GM_addStyle ?? addStyle) as typeof addStyle
 export default GM_addStyle
