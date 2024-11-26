@@ -1,0 +1,12 @@
+{
+  "name": "Enhance some features of the Self-managed Gitlab",
+  "name:zh": "强化自托管 Gitlab 能力",
+  "include": [
+    "/^https:\\/\\/(git(lab)?|code)\\.[^\/]+\\/.*\\/-\\/settings\\/ci_cd$/",
+    "/^https:\\/\\/(git(lab)?|code)\\.[^\/]+\\/dashboard\\/merge_requests\\b/"
+  ],
+  "run-at": "document-end",
+  "grant": [
+    "GM_addStyle"
+  ]
+}

@@ -1,0 +1,5 @@
+.content-wrapper nav { max-width: 100%; }
+.content-wrapper .container-fluid { max-width: 100%; }
+.ci-variable-table table colgroup col:nth-child(3) { width: 100px; }
+.ci-variable-table table colgroup col:nth-child(4) { width: 200px; }
+.ci-variable-table table colgroup col:nth-child(5) { width: 50px; }
