@@ -1,9 +1,11 @@
 // ==UserScript==
 // @name Enhance some features of the Self-managed Gitlab
 // @name:zh 强化自托管 Gitlab 能力
-// @version 1
+// @version 2
 // @author Arylo Yeung <arylo.open@gmail.com>
 // @include /^https:\/\/(git(lab)?|code)\.[^/]+\/.*\/-\/settings\/ci_cd$/
+// @include /^https:\/\/(git(lab)?|code)\.[^/]+\/.*\/-\/merge_requests\/new\b/
+// @include /^https:\/\/(git(lab)?|code)\.[^/]+\/.*\/-\/merge_requests\/\d+/edit\b/
 // @include /^https:\/\/(git(lab)?|code)\.[^/]+\/dashboard\/merge_requests\b/
 // @license MIT
 // @homepage https://github.com/Arylo/scripts#readme
@@ -12,4 +14,5 @@
 // @updateURL https://raw.githubusercontent.com/Arylo/scripts/monkey/gitlab-enhance.meta.js
 // @run-at document-end
 // @grant GM_addStyle
+// @grant GM_setClipboard
 // ==/UserScript==
