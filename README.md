@@ -4,12 +4,13 @@ This project contains scripts that are useful for Arylo's daily tasks.
 
 ## Monkey Scripts
 
-|Script                  |Description                                      |
-|--                      |--                                               |
-|gitlab-font-family      |Replace the font family in the merge request page|
-|gitlab-settings-max-size|Expand the page size in the CI/CD settings page  |
-|nyaa-si-show-image      |In some scenarios show image on the `nyaa.si`    |
-|copymanga-enhance       |Enhance UX for copy manga comic page             |
+|Script                      |Description                                        |
+|--                          |--                                                 |
+|gitlab-font-family          |Replace the font family in the merge request page  |
+|~~gitlab-settings-max-size~~|~~Expand the page size in the CI/CD settings page~~|
+|gitlab-enhance              |Enhance some features of the Self-managed Gitlab   |
+|nyaa-si-show-image          |In some scenarios show image on the `nyaa.si`      |
+|copymanga-enhance           |Enhance UX for copy manga comic page               |
 
 ## Qinglong Scripts
 
