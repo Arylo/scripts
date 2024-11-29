@@ -34,13 +34,13 @@ Replace the font family in the merge request page
 
 #### Compatibility
 
-|              |TamperMonkey|
-|--            |--          |
-|Chrome        |![][pass]   |
-|Firefox       |![][unknown]|
-|Safari        |![][unknown]|
-|Safari(iOS)   |![][unknown]|
-|Edge(Chromium)|![][unknown]|
+|              |TamperMonkey|ViolentMonkey|Stay 2      |Userscripts |
+|--            |--          |--           |--          |--          |
+|Chrome        |![][pass]   |![][unknown] |![][unknown]|![][unknown]|
+|Firefox       |![][unknown]|![][unknown] |![][unknown]|![][unknown]|
+|Safari        |![][unknown]|![][unknown] |![][unknown]|![][unknown]|
+|Safari(iOS)   |![][unknown]|![][unknown] |![][unknown]|![][unknown]|
+|Edge(Chromium)|![][unknown]|![][unknown] |![][unknown]|![][unknown]|
 
 ### Max Size for Gitlab setting page
 
@@ -62,13 +62,13 @@ Expand the page size in the CI/CD settings page
 
 #### Compatibility
 
-|              |TamperMonkey|
-|--            |--          |
-|Chrome        |![][pass]   |
-|Firefox       |![][unknown]|
-|Safari        |![][unknown]|
-|Safari(iOS)   |![][unknown]|
-|Edge(Chromium)|![][unknown]|
+|              |TamperMonkey|ViolentMonkey|Stay 2      |Userscripts |
+|--            |--          |--           |--          |--          |
+|Chrome        |![][pass]   |![][unknown] |![][unknown]|![][unknown]|
+|Firefox       |![][unknown]|![][unknown] |![][unknown]|![][unknown]|
+|Safari        |![][unknown]|![][unknown] |![][unknown]|![][unknown]|
+|Safari(iOS)   |![][unknown]|![][unknown] |![][unknown]|![][unknown]|
+|Edge(Chromium)|![][unknown]|![][unknown] |![][unknown]|![][unknown]|
 
 ### Enhance UX for the self-managed Gitlab
 
@@ -91,13 +91,13 @@ Enhance some features of the Self-managed Gitlab
 
 #### Compatibility
 
-|              |TamperMonkey|
-|--            |--          |
-|Chrome        |![][pass]   |
-|Firefox       |![][unknown]|
-|Safari        |![][unknown]|
-|Safari(iOS)   |![][unknown]|
-|Edge(Chromium)|![][unknown]|
+|              |TamperMonkey|ViolentMonkey|Stay 2      |Userscripts |
+|--            |--          |--           |--          |--          |
+|Chrome        |![][pass]   |![][unknown] |![][unknown]|![][unknown]|
+|Firefox       |![][unknown]|![][unknown] |![][unknown]|![][unknown]|
+|Safari        |![][unknown]|![][unknown] |![][unknown]|![][unknown]|
+|Safari(iOS)   |![][unknown]|![][unknown] |![][unknown]|![][unknown]|
+|Edge(Chromium)|![][unknown]|![][unknown] |![][unknown]|![][unknown]|
 
 ### Auto show the source image for nyaa.si
 
@@ -119,23 +119,23 @@ In some scenarios show image on the `nyaa.si`
 
 #### Compatibility
 
-|              |TamperMonkey|
-|--            |--          |
-|Chrome        |![][pass]   |
-|Firefox       |![][unknown]|
-|Safari        |![][unknown]|
-|Safari(iOS)   |![][unknown]|
-|Edge(Chromium)|![][unknown]|
+|              |TamperMonkey|ViolentMonkey|Stay 2      |Userscripts |
+|--            |--          |--           |--          |--          |
+|Chrome        |![][pass]   |![][unknown] |![][unknown]|![][unknown]|
+|Firefox       |![][unknown]|![][unknown] |![][unknown]|![][unknown]|
+|Safari        |![][unknown]|![][unknown] |![][unknown]|![][unknown]|
+|Safari(iOS)   |![][unknown]|![][unknown] |![][unknown]|![][unknown]|
+|Edge(Chromium)|![][unknown]|![][unknown] |![][unknown]|![][unknown]|
+
+### Enhance UX for copy manga comic sites
+
+[Top](#monkey-scripts)
 
 #### Install Addresses
 
 [Github][copymanga-enhance_github]
 
 [copymanga-enhance_github]: https://raw.githubusercontent.com/Arylo/scripts/monkey/copymanga-enhance.user.js
-
-### Enhance UX for copy manga comic sites
-
-[Top](#monkey-scripts)
 
 #### Description
 
@@ -147,13 +147,13 @@ Enhance UX for copy manga comic page
 
 #### Compatibility
 
-|              |TamperMonkey|
-|--            |--          |
-|Chrome        |![][pass]   |
-|Firefox       |![][unknown]|
-|Safari        |![][unknown]|
-|Safari(iOS)   |![][unknown]|
-|Edge(Chromium)|![][unknown]|
+|              |TamperMonkey|ViolentMonkey|Stay 2      |Userscripts |
+|--            |--          |--           |--          |--          |
+|Chrome        |![][pass]   |![][unknown] |![][unknown]|![][unknown]|
+|Firefox       |![][unknown]|![][unknown] |![][unknown]|![][unknown]|
+|Safari        |![][unknown]|![][unknown] |![][unknown]|![][unknown]|
+|Safari(iOS)   |![][unknown]|![][unknown] |![][unknown]|![][unknown]|
+|Edge(Chromium)|![][unknown]|![][unknown] |![][unknown]|![][unknown]|
 
 [pass]: https://img.shields.io/badge/-pass-green.svg?&logoColor=000&style=for-the-badge&cacheSeconds=7200
 [unknown]: https://img.shields.io/badge/-unknown-silver.svg?&logoColor=000&style=for-the-badge&cacheSeconds=7200
