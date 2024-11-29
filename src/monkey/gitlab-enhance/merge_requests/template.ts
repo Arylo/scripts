@@ -1,5 +1,6 @@
 import * as templateUtils from './templateUtils'
 import templateCss from './template.css'
+import { getButtonElement } from '../utils'
 
 enum BRANCH_TYPE {
   FEATURE,
@@ -77,22 +78,21 @@ const generateTemplate = () => {
 
 export const appendTemplateButton = () => {
   GM_addStyle(templateCss)
-  const classnames = 'gl-font-sm! gl-ml-3 gl-button btn btn-default btn-sm'
   const text = 'Copy Template'
-  const ele = $(`<a class="${classnames}">${text}</a>`)
+  const btnElement = getButtonElement(text)
   const templateContent = generateTemplate()
   const hint = $('<span class="gl-font-sm! gl-ml-3 gl-text-secondary"></span>')
   let setTimeoutId: NodeJS.Timeout | undefined
-  ele.on('click', async () => {
+  btnElement.on('click', async () => {
     hint.remove()
     setTimeoutId && clearTimeout(setTimeoutId)
     hint.text('Copying...')
-    ele.after(hint)
+    btnElement.after(hint)
     await GM_setClipboard(templateContent, 'text', () => {
       hint.text('Copied!')
       setTimeoutId = setTimeout(() => hint.remove(), 3000)
     })
   })
 
-  $('.gl-display-flex:has([for=merge_request_description])').append(ele)
+  $('.gl-display-flex:has([for=merge_request_description])').append(btnElement)
 }
