@@ -1,6 +1,6 @@
 import { appendTemplateButton } from "./template"
 
-if (location.pathname.endsWith('/-/merge_requests/new')) {
+if (/\/-\/merge_requests\/\d+\/edit$/.test(location.pathname)) {
   setTimeout(() => {
     appendTemplateButton()
   }, 1000)
