@@ -63,6 +63,8 @@ export const stringifyBanner = (mainFilepath: string, appendInfo = {}) => {
   const { user, meta } = parseFilenames(path.dirname(mainFilepath))
 
   const metaData = {
+    downloadURL: `${githubRawPrefix}/${user}`,
+    updateURL: `${githubRawPrefix}/${meta}`,
     ...jsonContent,
     version: undefined,
     ...appendInfo,
@@ -70,8 +72,6 @@ export const stringifyBanner = (mainFilepath: string, appendInfo = {}) => {
     license: pkgInfo.license,
     homepage: pkgInfo.homepage,
     supportURL: pkgInfo.bugs.url,
-    downloadURL: `${githubRawPrefix}/${user}`,
-    updateURL: `${githubRawPrefix}/${meta}`,
   }
   const content = Object
     .entries(metaData)

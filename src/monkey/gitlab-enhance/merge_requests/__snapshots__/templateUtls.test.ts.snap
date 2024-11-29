@@ -1,0 +1,22 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`genTemplate > Default empty content 1`] = `""`;
+
+exports[`genTemplate > Reusing deep utils 1`] = `
+"## 123
+
+- item 1
+- item 2
+
+### 456
+
+"
+`;
+
+exports[`genTemplate > Reusing utils 1`] = `
+"## 123
+
+### 456
+
+"
+`;

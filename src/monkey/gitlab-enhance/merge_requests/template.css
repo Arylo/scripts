@@ -1,0 +1,3 @@
+.gl-display-flex:has([for=merge_request_description]) {
+  align-items: baseline;
+}
