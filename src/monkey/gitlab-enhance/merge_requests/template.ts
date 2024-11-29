@@ -35,45 +35,43 @@ const getBranchType = () => {
 
 const generateTemplate = () => {
   const branchType = getBranchType()
-  templateUtils.initTemplate()
+  return templateUtils.genTemplate((utils) => {
+    utils.h2('Type')
+      .taskItem('Feature (Story/Refactor)', { selected: branchType === BRANCH_TYPE.FEATURE })
+      .taskItem(`Bugfix`, { selected: branchType === BRANCH_TYPE.BUGFIX })
+      .taskItem(`Hotfix (Production Issues)`, { selected: branchType === BRANCH_TYPE.HOTFIX })
+      .taskItem(`Tasks (DevOps / Unit Test / Document Update)`, { selected: branchType === BRANCH_TYPE.TASKS })
+      .taskItem(`Others`, { selected: branchType === BRANCH_TYPE.OTHERS })
+      .end()
 
-  templateUtils.h2('Type')
-    .taskItem('Feature (Story/Refactor)', { selected: branchType === BRANCH_TYPE.FEATURE })
-    .taskItem(`Bugfix`, { selected: branchType === BRANCH_TYPE.BUGFIX })
-    .taskItem(`Hotfix (Production Issues)`, { selected: branchType === BRANCH_TYPE.HOTFIX })
-    .taskItem(`Tasks (DevOps / Unit Test / Document Update)`, { selected: branchType === BRANCH_TYPE.TASKS })
-    .taskItem(`Others`, { selected: branchType === BRANCH_TYPE.OTHERS })
-    .end()
+    utils.h2('Description')
+    if (branchType !== BRANCH_TYPE.FEATURE) {
+      utils.h3('Why (Why does this happen?)')
+        .listItem()
+        .end()
 
-  templateUtils.h2('Description')
-  if (branchType !== BRANCH_TYPE.FEATURE) {
-    templateUtils.h3('Why (Why does this happen?)')
+      utils.h3('How (How can we avoid or solve it?)')
+        .listItem()
+        .end()
+    }
+
+    utils.h3('What (What did you do this time?)')
       .listItem()
       .end()
 
-    templateUtils.h3('How (How can we avoid or solve it?)')
-      .listItem()
-      .end()
-  }
+    if (branchType !== BRANCH_TYPE.TASKS) {
+      utils.h3('Results (Screenshot, etc)')
+      utils.h4('Before modification')
+      utils.h4('After modification')
 
-  templateUtils.h3('What (What did you do this time?)')
-    .listItem()
-    .end()
+      utils.h2('Affected Zone')
+        .listItem('Affected Module(s):')
+        .listItem('Affected URL(s):')
+        .end()
+    }
 
-  if (branchType !== BRANCH_TYPE.TASKS) {
-    templateUtils.h3('Results (Screenshot, etc)')
-    templateUtils.h4('Before modification')
-    templateUtils.h4('After modification')
-
-    templateUtils.h2('Affected Zone')
-      .listItem('Affected Module(s):')
-      .listItem('Affected URL(s):')
-      .end()
-  }
-
-  templateUtils.h2('External resources (Mention, Resolves, or Closes)')
-
-  return templateUtils.getTemplate()
+    utils.h2('External resources (Mention, Resolves, or Closes)')
+  })
 }
 
 export const appendTemplateButton = () => {

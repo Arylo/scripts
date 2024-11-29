@@ -1,33 +1,60 @@
 const INDENT_SPACE_LENGTH = 2
 
-let templateContent = ''
 const indent = (level: number) => Array(level * INDENT_SPACE_LENGTH).fill(' ').join('')
 const enter = () => '\n'
 
-export const emptyLine = () => (templateContent += enter())
+class Template {
+  protected templateContent: string
+  constructor(text: string) {
+    this.templateContent = text
+  }
 
-const contentUtils = {
-  listItem: (text = '', { level = 1 } = {}) => {
-    templateContent += `${indent(level - 1)}- ${text}${enter()}`
-    return {
-      ...contentUtils,
-      end: emptyLine,
-    }
-  },
-  taskItem: (text = '', { selected = false, level = 1 } = {}) => {
-    return contentUtils.listItem(`[${selected ? 'x' : ' '}] ${text}`, { level })
-  },
+  private headerNextUtils = {
+    text: this.text.bind(this),
+    listItem: this.listItem.bind(this),
+    taskItem: this.taskItem.bind(this),
+  }
+
+  private contentNextUtils = {
+    ...this.headerNextUtils,
+    end: this.emptyLine.bind(this),
+  }
+
+  private header = (level: number) => (text: string) => {
+    this.templateContent += `${Array(level).fill('#').join('')} ${text}${enter()}${enter()}`
+    return this.headerNextUtils
+  }
+  public h2 (text: string) {
+    return this.header(2)(text)
+  }
+  public h3 (text: string) {
+    return this.header(3)(text)
+  }
+  public h4 (text: string) {
+    return this.header(4)(text)
+  }
+  public [Symbol.toStringTag]() {
+    return this.templateContent.replace(/\n{3,}$/, '\n\n')
+  }
+
+  public text(text = '', { level = 1 } = {}) {
+    this.templateContent += `${indent(level - 1)}${text}${enter()}`
+    return this.contentNextUtils
+  }
+  public listItem(text = '', { level = 1 } = {}) {
+    return this.text(`- ${text}`, { level })
+  }
+  public taskItem(text = '', { selected = false, level = 1 } = {}) {
+    return this.listItem(`[${selected ? 'x' : ' '}] ${text}`, { level })
+  }
+
+  public emptyLine() {
+    this.templateContent += enter()
+  }
 }
 
-const header = (level: number) => (text: string) => {
-  templateContent += `${Array(level).fill('#').join('')} ${text}${enter()}${enter()}`
-  return contentUtils
+export const genTemplate = (callback: (utils: Template) => any = (() => {})) => {
+  const templateInst = new Template('')
+  callback(templateInst)
+  return templateInst[Symbol.toStringTag]()
 }
-export const h2 = header(2)
-export const h3 = header(3)
-export const h4 = header(4)
-
-export const listItem = contentUtils.listItem
-export const taskItem = contentUtils.taskItem
-export const initTemplate = () => (templateContent = '')
-export const getTemplate = () => templateContent
