@@ -64,7 +64,7 @@ Expand the page size in the CI/CD settings page
 
 |              |TamperMonkey|ViolentMonkey|Stay 2      |Userscripts |
 |--            |--          |--           |--          |--          |
-|Chrome        |![][pass]   |![][unknown] |![][unknown]|![][unknown]|
+|Chrome        |![][pass]   |![][pass]    |![][unknown]|![][unknown]|
 |Firefox       |![][unknown]|![][unknown] |![][unknown]|![][unknown]|
 |Safari        |![][unknown]|![][unknown] |![][unknown]|![][unknown]|
 |Safari(iOS)   |![][unknown]|![][unknown] |![][unknown]|![][unknown]|
@@ -93,7 +93,7 @@ Enhance some features of the Self-managed Gitlab
 
 |              |TamperMonkey|ViolentMonkey|Stay 2      |Userscripts |
 |--            |--          |--           |--          |--          |
-|Chrome        |![][pass]   |![][unknown] |![][unknown]|![][unknown]|
+|Chrome        |![][pass]   |![][pass]    |![][unknown]|![][unknown]|
 |Firefox       |![][unknown]|![][unknown] |![][unknown]|![][unknown]|
 |Safari        |![][unknown]|![][unknown] |![][unknown]|![][unknown]|
 |Safari(iOS)   |![][unknown]|![][unknown] |![][unknown]|![][unknown]|
@@ -121,7 +121,7 @@ In some scenarios show image on the `nyaa.si`
 
 |              |TamperMonkey|ViolentMonkey|Stay 2      |Userscripts |
 |--            |--          |--           |--          |--          |
-|Chrome        |![][pass]   |![][unknown] |![][unknown]|![][unknown]|
+|Chrome        |![][pass]   |![][pass]    |![][unknown]|![][unknown]|
 |Firefox       |![][unknown]|![][unknown] |![][unknown]|![][unknown]|
 |Safari        |![][unknown]|![][unknown] |![][unknown]|![][unknown]|
 |Safari(iOS)   |![][unknown]|![][unknown] |![][unknown]|![][unknown]|
@@ -149,7 +149,7 @@ Enhance UX for copy manga comic page
 
 |              |TamperMonkey|ViolentMonkey|Stay 2      |Userscripts |
 |--            |--          |--           |--          |--          |
-|Chrome        |![][pass]   |![][unknown] |![][unknown]|![][unknown]|
+|Chrome        |![][pass]   |![][pass]    |![][unknown]|![][unknown]|
 |Firefox       |![][unknown]|![][unknown] |![][unknown]|![][unknown]|
 |Safari        |![][unknown]|![][unknown] |![][unknown]|![][unknown]|
 |Safari(iOS)   |![][unknown]|![][unknown] |![][unknown]|![][unknown]|
