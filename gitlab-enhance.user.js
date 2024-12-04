@@ -4,7 +4,7 @@
 // @description Enhance some features of the Self-managed Gitlab, such as the CI/CD settings page, the merge request create/edit page etc.
 // @description:zh 强化自托管 Gitlab 的一些功能，如 CI/CD 设置页面、合并请求创建/编辑页面等。
 // @icon data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/PjwhRE9DVFlQRSBzdmcgIFBVQkxJQyAnLS8vVzNDLy9EVEQgU1ZHIDEuMS8vRU4nICAnaHR0cDovL3d3dy53My5vcmcvR3JhcGhpY3MvU1ZHLzEuMS9EVEQvc3ZnMTEuZHRkJz48c3ZnIGhlaWdodD0iNTEycHgiIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMCAwIDUxMiA1MTI7IiB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCA1MTIgNTEyIiB3aWR0aD0iNTEycHgiIHhtbDpzcGFjZT0icHJlc2VydmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPjxnIGlkPSJfeDMxXzQ0LWdpdGxhYiI+PGc+PGcgaWQ9IlhNTElEXzZfIj48Zz48Zz48cGF0aCBkPSJNNTIuNzUyLDIwNS41MDFsMjAzLjE4LDI2NC4wN2wtMjIyLjctMTY1LjI5Yy02LjExLTQuNTktOC43Mi0xMi41OC02LjM4LTE5Ljc3MWwyNS44Ny03OS4wNSAgICAgICBMNTIuNzUyLDIwNS41MDF6IiBzdHlsZT0iZmlsbDojRkNBMzI2OyIvPjwvZz48Zz48cG9seWdvbiBwb2ludHM9IjE3MS4zMDIsMjA1LjQ2MSAyNTYuMDEyLDQ2OS41NDEgMjU1LjkzMiw0NjkuNTcxIDUyLjc1MiwyMDUuNTAxIDUyLjgxMiwyMDUuNDYxICAgICAgICAgICAgICIgc3R5bGU9ImZpbGw6I0ZDNkQyNjsiLz48L2c+PGc+PHBvbHlnb24gcG9pbnRzPSIzNDAuNzMxLDIwNS40NjEgMjU2LjAyMSw0NjkuNTcxIDI1Ni4wMTIsNDY5LjU0MSAxNzEuMzAyLDIwNS40NjEgMTcxLjM5MiwyMDUuNDYxICAgICAgICAzNDAuNjQyLDIwNS40NjEgICAgICAiIHN0eWxlPSJmaWxsOiNFMjQzMjk7Ii8+PC9nPjxnPjxwb2x5Z29uIHBvaW50cz0iNDU5LjI5MiwyMDUuNTAxIDI1Ni4wMjEsNDY5LjU3MSAzNDAuNzMxLDIwNS40NjEgNDU5LjIzMSwyMDUuNDYxICAgICAgIiBzdHlsZT0iZmlsbDojRkM2RDI2OyIvPjwvZz48Zz48cGF0aCBkPSJNNDg1LjE5MSwyODQuNTExYzIuMjQsNy4xOS0wLjI3LDE1LjE4MS02LjQ3LDE5Ljc3MWwtMjIyLjcsMTY1LjI5bDIwMy4yNzEtMjY0LjA3bDAuMDI5LTAuMDQgICAgICAgTDQ4NS4xOTEsMjg0LjUxMXoiIHN0eWxlPSJmaWxsOiNGQ0EzMjY7Ii8+PC9nPjxnPjxwYXRoIGQ9Ik00MDguNDcyLDQ4LjQyMWw1MC43NiwxNTcuMDRoLTExOC41aC0wLjA5bDUwLjg1LTE1Ny4wNCAgICAgICBDMzk0LjM2MSw0MC40MzEsNDA1LjY4Miw0MC40MzEsNDA4LjQ3Miw0OC40MjF6IiBzdHlsZT0iZmlsbDojRTI0MzI5OyIvPjwvZz48Zz48cGF0aCBkPSJNMTcxLjM5MiwyMDUuNDYxaC0wLjA5SDUyLjgxMmw1MC43Ni0xNTcuMDRjMi44Ny03Ljk5LDE0LjE5LTcuOTksMTYuOTgsMCAgICAgICBDMTIwLjU1Miw0OC40MjEsMTcxLjMwMiwyMDUuNDYxLDE3MS4zOTIsMjA1LjQ2MXoiIHN0eWxlPSJmaWxsOiNFMjQzMjk7Ii8+PC9nPjwvZz48L2c+PC9nPjwvZz48ZyBpZD0iTGF5ZXJfMSIvPjwvc3ZnPg==
-// @version 5
+// @version 6
 // @author Arylo Yeung <arylo.open@gmail.com>
 // @include /^https:\/\/(git(lab)?|code)\.[^/]+\/.*\/-\/settings\/ci_cd$/
 // @include /^https:\/\/(git(lab)?|code)\.[^/]+\/.*\/-\/merge_requests\/new\b/
@@ -84,33 +84,57 @@
 
   // src/monkey/gitlab-enhance/merge_requests/templateUtils.ts
   var INDENT_SPACE_LENGTH = 2;
-  var templateContent = "";
   var indent = (level) => Array(level * INDENT_SPACE_LENGTH).fill(" ").join("");
   var enter = () => "\n";
-  var emptyLine = () => templateContent += enter();
-  var contentUtils = {
-    listItem: (text = "", { level = 1 } = {}) => {
-      templateContent += `${indent(level - 1)}- ${text}${enter()}`;
-      return {
-        ...contentUtils,
-        end: emptyLine
+  var Template = class {
+    constructor(text) {
+      this.header = (level) => (text) => {
+        this.templateContent += `${Array(level).fill("#").join("")} ${text}${enter()}${enter()}`;
+        return this.headerNextUtils;
       };
-    },
-    taskItem: (text = "", { selected = false, level = 1 } = {}) => {
-      return contentUtils.listItem(`[${selected ? "x" : " "}] ${text}`, { level });
+      this.templateContent = text;
+      this.headerNextUtils = {
+        text: this.text.bind(this),
+        listItem: this.listItem.bind(this),
+        taskItem: this.taskItem.bind(this)
+      };
+      this.contentNextUtils = {
+        ...this.headerNextUtils,
+        end: this.emptyLine.bind(this)
+      };
+    }
+    h2(text) {
+      return this.header(2)(text);
+    }
+    h3(text) {
+      return this.header(3)(text);
+    }
+    h4(text) {
+      return this.header(4)(text);
+    }
+    [Symbol.toStringTag]() {
+      return this.templateContent.replace(/\n{3,}$/, "\n\n");
+    }
+    text(text = "", { level = 1 } = {}) {
+      this.templateContent += `${indent(level - 1)}${text}${enter()}`;
+      return this.contentNextUtils;
+    }
+    listItem(text = "", { level = 1 } = {}) {
+      return this.text(`- ${text}`, { level });
+    }
+    taskItem(text = "", { selected = false, level = 1 } = {}) {
+      return this.listItem(`[${selected ? "x" : " "}] ${text}`, { level });
+    }
+    emptyLine() {
+      this.templateContent += enter();
     }
   };
-  var header = (level) => (text) => {
-    templateContent += `${Array(level).fill("#").join("")} ${text}${enter()}${enter()}`;
-    return contentUtils;
+  var genTemplate = (callback = () => {
+  }) => {
+    const templateInst = new Template("");
+    callback(templateInst);
+    return templateInst[Symbol.toStringTag]();
   };
-  var h2 = header(2);
-  var h3 = header(3);
-  var h4 = header(4);
-  var listItem = contentUtils.listItem;
-  var taskItem = contentUtils.taskItem;
-  var initTemplate = () => templateContent = "";
-  var getTemplate = () => templateContent;
 
   // src/monkey/gitlab-enhance/merge_requests/template.css
   var template_default = ".gl-display-flex:has([for=merge_request_description]){align-items:baseline}\n";
@@ -140,28 +164,28 @@
   };
   var generateTemplate = () => {
     const branchType = getBranchType();
-    initTemplate();
-    h2("Type").taskItem("Feature (Story/Refactor)", { selected: branchType === 0 /* FEATURE */ }).taskItem(`Bugfix`, { selected: branchType === 1 /* BUGFIX */ }).taskItem(`Hotfix (Production Issues)`, { selected: branchType === 2 /* HOTFIX */ }).taskItem(`Tasks (DevOps / Unit Test / Document Update)`, { selected: branchType === 3 /* TASKS */ }).taskItem(`Others`, { selected: branchType === 4 /* OTHERS */ }).end();
-    h2("Description");
-    if (branchType !== 0 /* FEATURE */) {
-      h3("Why (Why does this happen?)").listItem().end();
-      h3("How (How can we avoid or solve it?)").listItem().end();
-    }
-    h3("What (What did you do this time?)").listItem().end();
-    if (branchType !== 3 /* TASKS */) {
-      h3("Results (Screenshot, etc)");
-      h4("Before modification");
-      h4("After modification");
-      h2("Affected Zone").listItem("Affected Module(s):").listItem("Affected URL(s):").end();
-    }
-    h2("External resources (Mention, Resolves, or Closes)");
-    return getTemplate();
+    return genTemplate((utils) => {
+      utils.h2("Type").taskItem("Feature (Story/Refactor)", { selected: branchType === 0 /* FEATURE */ }).taskItem(`Bugfix`, { selected: branchType === 1 /* BUGFIX */ }).taskItem(`Hotfix (Production Issues)`, { selected: branchType === 2 /* HOTFIX */ }).taskItem(`Tasks (DevOps / Unit Test / Document Update)`, { selected: branchType === 3 /* TASKS */ }).taskItem(`Others`, { selected: branchType === 4 /* OTHERS */ }).end();
+      utils.h2("Description");
+      if (branchType !== 0 /* FEATURE */) {
+        utils.h3("Why (Why does this happen?)").listItem().end();
+        utils.h3("How (How can we avoid or solve it?)").listItem().end();
+      }
+      utils.h3("What (What did you do this time?)").listItem().end();
+      if (branchType !== 3 /* TASKS */) {
+        utils.h3("Results (Screenshot, etc)");
+        utils.h4("Before modification");
+        utils.h4("After modification");
+        utils.h2("Affected Zone").listItem("Affected Module(s):").listItem("Affected URL(s):").end();
+      }
+      utils.h2("External resources (Mention, Resolves, or Closes)");
+    });
   };
   var appendTemplateButton = () => {
     GM_addStyle(template_default);
     const text = "Copy Template";
     const btnElement = getButtonElement(text);
-    const templateContent2 = generateTemplate();
+    const templateContent = generateTemplate();
     const hint = $('<span class="gl-font-sm! gl-ml-3 gl-text-secondary"></span>');
     let setTimeoutId;
     btnElement.on("click", async () => {
@@ -169,7 +193,7 @@
       setTimeoutId && clearTimeout(setTimeoutId);
       hint.text("Copying...");
       btnElement.after(hint);
-      await GM_setClipboard(templateContent2, "text", () => {
+      await GM_setClipboard(templateContent, "text", () => {
         hint.text("Copied!");
         setTimeoutId = setTimeout(() => hint.remove(), 3e3);
       });
