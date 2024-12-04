@@ -5,19 +5,19 @@ const enter = () => '\n'
 
 class Template {
   protected templateContent: string
+  private headerNextUtils: { text: Template['text'], listItem: Template['listItem'], taskItem: Template['taskItem'] }
+  private contentNextUtils: Template['headerNextUtils'] & { end: Template['emptyLine'] }
   constructor(text: string) {
     this.templateContent = text
-  }
-
-  private headerNextUtils = {
-    text: this.text.bind(this),
-    listItem: this.listItem.bind(this),
-    taskItem: this.taskItem.bind(this),
-  }
-
-  private contentNextUtils = {
-    ...this.headerNextUtils,
-    end: this.emptyLine.bind(this),
+    this.headerNextUtils = {
+      text: this.text.bind(this),
+      listItem: this.listItem.bind(this),
+      taskItem: this.taskItem.bind(this),
+    }
+    this.contentNextUtils = {
+      ...this.headerNextUtils,
+      end: this.emptyLine.bind(this),
+    }
   }
 
   private header = (level: number) => (text: string) => {
