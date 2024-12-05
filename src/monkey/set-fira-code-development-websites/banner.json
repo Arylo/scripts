@@ -1,0 +1,23 @@
+{
+  "name": "Set Fira Code as font in development websites",
+  "name:zh": "将Fira Code 作为开发用网站的代码字体",
+  "description": "Unified use of `Fira Code` as the code font to enhance developers' awareness of the code on the page",
+  "description:zh": "统一将`Fira Code`作为代码字体, 提高开发者对页面中的代码的感知度",
+  "include": [
+    "https://jestjs.io/*",
+    "https://lodash.com/*",
+    "https://www.tampermonkey.net/*",
+    "https://*.github.io/*",
+    "https://docs.gitlab.com/*",
+    "https://npmjs.com/*",
+    "https://nodejs.org/docs/*",
+    "https://vuejs.org/api/*",
+    "https://greasyfork.org/*/code"
+  ],
+  "run-at": "document-idle",
+  "resource": "font_css https://cdn.jsdelivr.net/npm/firacode@6.2.0/distr/fira_code.css",
+  "grant": [
+    "GM_addStyle",
+    "GM_getResourceText"
+  ]
+}

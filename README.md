@@ -6,13 +6,14 @@ This project contains scripts that are useful for Arylo's daily tasks.
 
 ## Monkey Scripts
 
-|Script                      |Description                                        |Install                                                                  |
-|--                          |--                                                 |--                                                                       |
-|gitlab-font-family          |Replace the font family in the merge request page  |[Jump](#change-gitlab-font)|
-|~~gitlab-settings-max-size~~|~~Expand the page size in the CI/CD settings page~~|~~[Jump](#max-size-for-gitlab-setting-page)~~                            |
-|gitlab-enhance              |Enhance some features of the Self-managed Gitlab   |[Jump](#enhance-ux-for-the-self-managed-gitlab)|
-|nyaa-si-show-image          |In some scenarios show image on the `nyaa.si`      |[Jump](#auto-show-the-source-image-for-nyaasi)|
-|copymanga-enhance           |Enhance UX for copy manga comic page               |[Jump](#enhance-ux-for-copy-manga-comic-sites)|
+|Script                            |Description                                        |Install                                               |
+|--                                |--                                                 |--                                                    |
+|gitlab-font-family                |Replace the font family in the merge request page  |[Jump](#change-gitlab-font)                           |
+|~~gitlab-settings-max-size~~      |~~Expand the page size in the CI/CD settings page~~|~~[Jump](#max-size-for-gitlab-setting-page)~~         |
+|gitlab-enhance                    |Enhance some features of the Self-managed Gitlab   |[Jump](#enhance-ux-for-the-self-managed-gitlab)       |
+|nyaa-si-show-image                |In some scenarios show image on the `nyaa.si`      |[Jump](#auto-show-the-source-image-for-nyaasi)        |
+|copymanga-enhance                 |Enhance UX for copy manga comic page               |[Jump](#enhance-ux-for-copy-manga-comic-sites)        |
+|set-fira-code-development-websites|Set Fira Code as font in development websites      |[Jump](#set-fira-code-as-font-in-development-websites)|
 
 ### Change Gitlab Font
 
@@ -144,6 +145,45 @@ In some scenarios show image on the `nyaa.si`
 [copymanga-enhance_github-last-update]: https://img.shields.io/github/last-commit/arylo/scripts/monkey?path=copymanga-enhance.user.js&style=flat&label=Last%20Update
 
 Enhance UX for copy manga comic page
+
+#### Compatibility
+
+|              |TamperMonkey|ViolentMonkey|Userscripts |
+|--            |--          |--           |--          |
+|Chrome        |![][pass]   |![][pass]    |            |
+|Firefox       |![][unknown]|![][unknown] |            |
+|Safari        |![][unknown]|             |![][unknown]|
+|Safari(iOS)   |![][unknown]|             |![][unknown]|
+|Edge(Chromium)|![][unknown]|![][unknown] |            |
+
+### Set Fira Code as font in development websites
+
+[Top](#monkey-scripts)
+
+#### Install Addresses
+
+[Github][set-fira-code-development-websites_github]
+
+[set-fira-code-development-websites_github]: https://raw.githubusercontent.com/Arylo/scripts/monkey/set-fira-code-development-websites.user.js
+
+#### Description
+
+![GitHub last commit][set-fira-code-development-websites_github-last-update]
+
+[set-fira-code-development-websites_github-last-update]: https://img.shields.io/github/last-commit/arylo/scripts/monkey?path=set-fira-code-development-websites.user.js&style=flat&label=Last%20Update
+
+Unified use of `Fira Code` as the code font to enhance developers' awareness of the code on the page
+
+Support websites:
+- https://jestjs.io/*
+- https://lodash.com/*
+- https://www.tampermonkey.net/*
+- https://*.github.io/*
+- https://docs.gitlab.com/*
+- https://npmjs.com/*
+- https://nodejs.org/docs/*
+- https://vuejs.org/api/*
+- https://greasyfork.org/*/code
 
 #### Compatibility
 
