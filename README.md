@@ -175,15 +175,32 @@ Enhance UX for copy manga comic page
 Unified use of `Fira Code` as the code font to enhance developers' awareness of the code on the page
 
 Support websites:
-- https://jestjs.io/*
-- https://lodash.com/*
-- https://www.tampermonkey.net/*
-- https://*.github.io/*
-- https://docs.gitlab.com/*
-- https://npmjs.com/*
-- https://nodejs.org/docs/*
-- https://vuejs.org/api/*
-- https://greasyfork.org/*/code
+
+- https://<!-- -->webpack.js.org/\*
+- https://<!-- -->rollupjs.org/\*
+- https://<!-- -->jestjs.io/\*
+- https://<!-- -->turbo.build/\*
+- https://<!-- -->vite.dev/\*
+- https://<!-- -->vitest.dev/\*
+- https://<!-- -->lodash.com/\*
+- https://<!-- -->www.tampermonkey.net/\*
+- https://<!-- -->\*.github.io/\*
+- https://<!-- -->docs.gitlab.com/\*
+- https://<!-- -->www.w3schools.com/\*
+- https://<!-- -->www.typescriptlang.org/\*
+- https://<!-- -->yarnpkg.com/\*
+- https://<!-- -->pnpm.io/\*
+- https://<!-- -->npmjs.com/\*
+- https://<!-- -->docs.npmjs.com/\*
+- https://<!-- -->nodejs.org/docs/\*
+- https://<!-- -->vuejs.org/api/\*
+- https://<!-- -->vueuse.org/\*
+- https://<!-- -->react.dev/\*
+- https://<!-- -->rxjs.dev/\*
+- https://<!-- -->axios-http.com/\*
+- https://<!-- -->nextjs.org/\*
+- https://<!-- -->eslint.org/\*
+- https://<!-- -->greasyfork.org/\*/code
 
 #### Compatibility
 
