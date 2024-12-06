@@ -3,16 +3,32 @@
 // @name:zh 将Fira Code 作为开发用网站的代码字体
 // @description Unified use of `Fira Code` as the code font to enhance developers' awareness of the code on the page
 // @description:zh 统一将`Fira Code`作为代码字体, 提高开发者对页面中的代码的感知度
-// @version 1
+// @version 2
 // @author Arylo Yeung <arylo.open@gmail.com>
+// @include https://webpack.js.org/*
+// @include https://rollupjs.org/*
 // @include https://jestjs.io/*
+// @include https://turbo.build/*
+// @include https://vite.dev/*
+// @include https://vitest.dev/*
 // @include https://lodash.com/*
 // @include https://www.tampermonkey.net/*
 // @include https://*.github.io/*
 // @include https://docs.gitlab.com/*
+// @include https://www.w3schools.com/*
+// @include https://www.typescriptlang.org/*
+// @include https://yarnpkg.com/*
+// @include https://pnpm.io/*
 // @include https://npmjs.com/*
+// @include https://docs.npmjs.com/*
 // @include https://nodejs.org/docs/*
 // @include https://vuejs.org/api/*
+// @include https://vueuse.org/*
+// @include https://react.dev/*
+// @include https://rxjs.dev/*
+// @include https://axios-http.com/*
+// @include https://nextjs.org/*
+// @include https://eslint.org/*
 // @include https://greasyfork.org/*/code
 // @license MIT
 // @resource font_css https://cdn.jsdelivr.net/npm/firacode@6.2.0/distr/fira_code.css
@@ -58,25 +74,42 @@
   var template_default = "*{font-family:Fira Code,monospace!important;font-variant-ligatures:contextual}\n";
 
   // src/monkey/set-fira-code-development-websites/index.ts
-  var specialParentSelectors = [
+  var DEFAULT_PARENT_SELECTORS = [
     ":not(li) > a",
     ":not(h1):not(h2):not(h3):not(h4):not(h5) >"
   ];
-  function parseFontString(selector = "code, code *, pre:not(:has(code))") {
-    const selectors = selector.split(",").reduce((list, s) => {
-      for (const ps of specialParentSelectors) {
+  var DEFAULT_CODE_SELECTORS = [
+    "code",
+    "code *",
+    "pre:not(:has(code))"
+  ];
+  function parseSelectors(selectors, parentSelectors) {
+    const realSelectors = selectors.reduce((list, s) => {
+      for (const ps of parentSelectors) {
         list.push(`${ps} ${s}`);
       }
       return list;
     }, []);
+    return realSelectors;
+  }
+  function parseFontString(selectors) {
     return template_default.replace(/\*/g, selectors.join(", "));
   }
   setTimeout(() => {
     const fontCssContent = GM_getResourceText("font_css").replace(/(\burl\(["'])/g, "$1https://cdn.jsdelivr.net/npm/firacode@6.2.0/distr/");
     GM_addStyle(fontCssContent);
-    let selector = void 0;
+    const codeSelectors = DEFAULT_CODE_SELECTORS;
+    const parentSelectors = DEFAULT_PARENT_SELECTORS;
+    const selectors = parseSelectors(codeSelectors, parentSelectors);
     switch (location.host) {
+      case "react.dev":
+        selectors.push(".sp-code-editor .cm-content");
+        break;
+      case "w3schools.com":
+      case "www.w3schools.com":
+        selectors.push(".w3-code");
+        break;
     }
-    GM_addStyle(parseFontString(selector));
+    GM_addStyle(parseFontString(selectors));
   }, 25);
 })();
