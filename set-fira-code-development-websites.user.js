@@ -3,7 +3,7 @@
 // @name:zh 将Fira Code 作为开发用网站的代码字体
 // @description Unified use of `Fira Code` as the code font to enhance developers' awareness of the code on the page
 // @description:zh 统一将`Fira Code`作为代码字体, 提高开发者对页面中的代码的感知度
-// @version 2
+// @version 3
 // @author Arylo Yeung <arylo.open@gmail.com>
 // @include https://webpack.js.org/*
 // @include https://rollupjs.org/*
@@ -12,6 +12,7 @@
 // @include https://vite.dev/*
 // @include https://vitest.dev/*
 // @include https://lodash.com/*
+// @include https://yargs.js.org/*
 // @include https://www.tampermonkey.net/*
 // @include https://*.github.io/*
 // @include https://docs.gitlab.com/*
@@ -71,7 +72,7 @@
   }
 
   // src/monkey/set-fira-code-development-websites/styles/template.css
-  var template_default = "*{font-family:Fira Code,monospace!important;font-variant-ligatures:contextual}\n";
+  var template_default = '*{font-family:Fira Code,monospace!important;font-variant-ligatures:contextual;font-feature-settings:"calt"}\n';
 
   // src/monkey/set-fira-code-development-websites/index.ts
   var DEFAULT_PARENT_SELECTORS = [
