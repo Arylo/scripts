@@ -1,4 +1,5 @@
 * {
   font-family: 'Fira Code', monospace !important;
   font-variant-ligatures: contextual;
+  font-feature-settings: 'calt';
 }
