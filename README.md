@@ -183,6 +183,7 @@ Support websites:
 - https://vite.dev
 - https://vitest.dev
 - https://lodash.com
+- https://docs.taro.zone
 - https://yargs.js.org
 - https://www.tampermonkey.net
 - <https://*.github.io>
