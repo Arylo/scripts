@@ -30,7 +30,9 @@
     "https://axios-http.com/*",
     "https://nextjs.org/*",
     "https://eslint.org/*",
-    "https://greasyfork.org/*/code"
+    "https://mochajs.org/*",
+    "https://greasyfork.org/*/code",
+    "https://developers.weixin.qq.com/miniprogram/*"
   ],
   "run-at": "document-idle",
   "resource": "font_css https://cdn.jsdelivr.net/npm/firacode@6.2.0/distr/fira_code.css",

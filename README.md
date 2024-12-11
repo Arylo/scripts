@@ -202,7 +202,9 @@ Support websites:
 - https://axios-http.com
 - https://nextjs.org
 - https://eslint.org
+- https://mochajs.org
 - https://greasyfork.org
+- https://developers.weixin.qq.com/miniprogram
 
 #### Compatibility
 
@@ -210,7 +212,7 @@ Support websites:
 |--            |--          |--           |--          |
 |Chrome        |![][pass]   |![][pass]    |            |
 |Firefox       |![][unknown]|![][unknown] |            |
-|Safari        |![][unknown]|             |![][unknown]|
+|Safari        |![][pass]   |             |![][unknown]|
 |Safari(iOS)   |![][unknown]|             |![][unknown]|
 |Edge(Chromium)|![][unknown]|![][unknown] |            |
 
