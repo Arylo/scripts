@@ -202,10 +202,12 @@ Support websites:
 - https://rxjs.dev
 - https://axios-http.com
 - https://nextjs.org
+- https://docs.nestjs.com
 - https://eslint.org
 - https://mochajs.org
 - https://toml.io
 - https://ls-lint.org
+- https://nodemailer.com
 - https://greasyfork.org
 - https://docs.docker.com
 - https://developers.weixin.qq.com/miniprogram
