@@ -3,7 +3,7 @@
 // @name:zh 将Fira Code 作为开发用网站的代码字体
 // @description Unified use of `Fira Code` as the code font to enhance developers' awareness of the code on the page
 // @description:zh 统一将`Fira Code`作为代码字体, 提高开发者对页面中的代码的感知度
-// @version 6
+// @version 7
 // @author Arylo Yeung <arylo.open@gmail.com>
 // @include https://webpack.js.org/*
 // @include https://rollupjs.org/*
@@ -31,10 +31,12 @@
 // @include https://rxjs.dev/*
 // @include https://axios-http.com/*
 // @include https://nextjs.org/*
+// @include https://docs.nestjs.com/*
 // @include https://eslint.org/*
 // @include https://mochajs.org/*
 // @include https://toml.io/*
 // @include https://ls-lint.org/*
+// @include https://nodemailer.com/*
 // @include https://greasyfork.org/*/code
 // @include https://docs.docker.com/*
 // @include https://developers.weixin.qq.com/miniprogram/*
