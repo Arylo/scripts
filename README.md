@@ -184,6 +184,7 @@ Support websites:
 - https://vitest.dev
 - https://lodash.com
 - https://docs.taro.zone
+- https://ajv.js.org
 - https://yargs.js.org
 - https://www.tampermonkey.net
 - <https://*.github.io>
@@ -203,7 +204,10 @@ Support websites:
 - https://nextjs.org
 - https://eslint.org
 - https://mochajs.org
+- https://toml.io
+- https://ls-lint.org
 - https://greasyfork.org
+- https://docs.docker.com
 - https://developers.weixin.qq.com/miniprogram
 
 #### Compatibility
