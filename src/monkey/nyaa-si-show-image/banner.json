@@ -1,6 +1,6 @@
 {
   "name": "Display image right now in nyaa.si",
-  "name:zh": "在nyaa.si 上立即显示图片",
+  "name:zh-CN": "在nyaa.si 上立即显示图片",
   "match": "https://sukebei.nyaa.si/view/*",
   "grant": "none",
   "run-at": "document-end",
