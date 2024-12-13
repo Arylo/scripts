@@ -1,9 +1,10 @@
 // ==UserScript==
 // @name Set Fira Code as font in development websites
+// @namespace https://greasyfork.org/users/1133279
 // @description Unified use of `Fira Code` as the code font to enhance developers' awareness of the code on the page
 // @description:zh-CN 统一将`Fira Code`作为代码字体, 提高开发者对页面中的代码的感知度
 // @version 8
-// @author Arylo Yeung <arylo.open@gmail.com>
+// @author Arylo
 // @include https://webpack.js.org/*
 // @include https://rollupjs.org/*
 // @include https://jestjs.io/*
@@ -42,10 +43,10 @@
 // @license MIT
 // @name:zh-CN 将Fira Code 作为开发用网站的代码字体
 // @resource font_css https://cdn.jsdelivr.net/npm/firacode@6.2.0/distr/fira_code.css
-// @homepage https://github.com/Arylo/scripts#readme
-// @supportURL https://github.com/Arylo/scripts/issues
-// @downloadURL https://raw.githubusercontent.com/Arylo/scripts/monkey/set-fira-code-development-websites.user.js
-// @updateURL https://raw.githubusercontent.com/Arylo/scripts/monkey/set-fira-code-development-websites.meta.js
+// @homepage https://greasyfork.org/zh-CN/scripts/519936
+// @supportURL https://greasyfork.org/zh-CN/scripts/519936/feedback
+// @downloadURL https://update.greasyfork.org/scripts/519936/Set%20Fira%20Code%20as%20font%20in%20development%20websites.user.js
+// @updateURL https://update.greasyfork.org/scripts/519936/Set%20Fira%20Code%20as%20font%20in%20development%20websites.meta.js
 // @run-at document-idle
 // @grant GM_addStyle
 // @grant GM_getResourceText
