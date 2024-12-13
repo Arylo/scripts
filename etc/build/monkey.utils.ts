@@ -1,36 +1,16 @@
-import fs from 'fs'
 import path from 'path'
-import os from 'os'
 import * as esbuild from 'esbuild'
 import md5file from 'md5-file'
 import md5 from 'md5'
 import yn from 'yn'
 import download from 'download'
-import logger from './logger'
 import { bannerOrderMap, githubRawPrefix } from './monkey.const'
 import { POLYFILL_PATH, ROOT_PATH } from '../consts'
 import CSSMinifyTextPlugin from '../esbuild-plugins/css-minify-text'
 import HTMLMinifyTextPlugin from '../esbuild-plugins/html-minify-text'
-
-export const parseFilenames = (filepath: string) => {
-  const filename = path.basename(filepath)
-  return {
-    // Raw
-    raw: path.basename(filename),
-    // Input
-    bannerJson: 'banner.json',
-    // Output
-    name: 'index.ts',
-    meta: `${filename}.meta.js`,
-    user: `${filename}.user.js`,
-    min: `${filename}.min.js`,
-    deployJson: `${filename}.deploy.json`,
-  }
-}
-
-export const parseJsonPath = (mainFilepath: string) => path.resolve(path.dirname(mainFilepath), parseFilenames(mainFilepath).bannerJson)
-
-const pkgInfo = require(path.resolve(ROOT_PATH, 'package.json'))
+import { ScriptInfo } from './utils/parseScriptInfo'
+import buildFS from '../../packages/buildFS'
+import logger from '../../packages/logger'
 
 const parseMetaItem = (key: string, value: any) => {
   if (typeof value === 'string') {
@@ -50,33 +30,34 @@ const findIndex = (val: string, rules: Array<string|RegExp> = []) => {
   })
 }
 
-export const exportInjectFiles = (mainFilepath: string) => {
-  const { grant = [] } = parseBanner(mainFilepath)
+export const exportInjectFiles = (bannerFilePath: string) => {
+  const { grant = [] } = parseBanner(bannerFilePath)
   return (Array.isArray(grant) ? grant : [grant])
     .map((name) => path.resolve(POLYFILL_PATH, `${name}.ts`))
-    .filter((filepath) => isFile(filepath))
+    .filter((filepath) => buildFS.isFile(filepath))
 }
 
-export const parseBanner = (mainFilepath: string) =>{
-  const jsonPath = parseJsonPath(mainFilepath)
-  const jsonContent = JSON.parse(fs.readFileSync(jsonPath, 'utf-8'))
+export const parseBanner = (bannerFilePath: string) =>{
+  const jsonContent = buildFS.readJSONFileSync(bannerFilePath)
   return jsonContent
 }
 
-export const stringifyBanner = (mainFilepath: string, appendInfo = {}) => {
-  const jsonContent = parseBanner(mainFilepath)
-  const { user, meta } = parseFilenames(path.dirname(mainFilepath))
+export const stringifyBanner = (bannerFilepath: string, appendInfo = {}) => {
+  const isCI = yn(process.env.CI, { default: false })
+  const jsonContent = parseBanner(bannerFilepath)
+  const pkgInfo = buildFS.readJSONFileSync(path.resolve(ROOT_PATH, 'package.json'))
 
   const metaData = {
-    downloadURL: `${githubRawPrefix}/${user}`,
-    updateURL: `${githubRawPrefix}/${meta}`,
     ...jsonContent,
+    author: pkgInfo.author,
     version: undefined,
     ...appendInfo,
-    author: pkgInfo.author,
     license: pkgInfo.license,
-    homepage: pkgInfo.homepage,
-    supportURL: pkgInfo.bugs.url,
+  }
+  if (!isCI) {
+    Object.keys(metaData)
+      .filter((key) => /^name(:.+)?$/.test(key))
+      .forEach((key) => (metaData[key] = `[Dev] ${metaData[key]}`))
   }
   const content = Object
     .entries(metaData)
@@ -110,44 +91,64 @@ export const stringifyBanner = (mainFilepath: string, appendInfo = {}) => {
   return bannerContent.map((content) => `// ${content}`).join('\n')
 }
 
-export const exportLatestDeployInfo = async (filepath: string) => {
+export const exportLatestDeployInfo = (() => {
   const isCI = yn(process.env.CI, { default: false })
-  const { name, min, bannerJson, deployJson } = parseFilenames(filepath)
-  const sourcePath = path.resolve(filepath, name)
-  await buildScript(sourcePath, {
-    minify: true,
-    outfile: path.resolve(os.tmpdir(), min),
-    inject: exportInjectFiles(sourcePath),
-  })
-  const contentHash = md5file.sync(path.resolve(os.tmpdir(), min))
-  const bannerHash = md5(stringifyBanner(path.resolve(filepath, bannerJson)))
-  let version = 1
-  const latestDeployUrl = `${githubRawPrefix}/${deployJson}`
-  if (isCI)  {
-    try {
-      logger.info(`Download the latest deploy info: ${latestDeployUrl} ...`)
-      await download(latestDeployUrl, os.tmpdir(), { filename: deployJson })
-      logger.log(`Download the latest deploy info: ${latestDeployUrl} ... Done`)
-      const downloadDeployJson = JSON.parse(fs.readFileSync(path.resolve(os.tmpdir(), deployJson), 'utf-8'))
-      if (downloadDeployJson.contentHash !== contentHash || downloadDeployJson.bannerHash !== bannerHash) {
-        version = Number(downloadDeployJson.version) + 1
-        logger.info(`Version increased: ${downloadDeployJson.version} => ${version}`)
-      } else {
-        version = Number(downloadDeployJson.version)
+  const cacheMap: Record<string, { version: number, contentHash: string, bannerHash: string }> = {}
+  return async (scriptInfo: ScriptInfo) => {
+    if (cacheMap[scriptInfo.scriptName]) return cacheMap[scriptInfo.scriptName]
+    let version = 1
+    let contentHash = ''
+    let bannerHash = ''
+    if (isCI) {
+      // #region content hash
+      const tmpScriptPath = buildFS.createTempPath()
+      await buildScript(scriptInfo.entryFilePath, {
+        minify: true,
+        outfile: tmpScriptPath,
+        inject: exportInjectFiles(scriptInfo.bannerFilePath),
+      })
+      contentHash = md5file.sync(tmpScriptPath)
+      // #endregion content hash
+      // #region banner hash
+      bannerHash = md5(stringifyBanner(scriptInfo.bannerFilePath))
+      // #endregion banner hash
+      // #region version
+      const latestDeployUrl = `${githubRawPrefix}/${scriptInfo.output.deployJson}`
+      try {
+        logger.info(`Download the latest deploy info: ${latestDeployUrl} ...`)
+        const tmpJsonPath = buildFS.createTempPath('json')
+        await download(latestDeployUrl, path.dirname(tmpJsonPath), { filename: path.basename(tmpJsonPath) })
+        logger.info(`Download the latest deploy info: ${latestDeployUrl} ... Done`)
+        const downloadDeployJson = buildFS.readJSONFileSync(tmpJsonPath)
+
+        const isDiffContent = downloadDeployJson.contentHash !== contentHash
+        const isDiffBanner = downloadDeployJson.bannerHash !== bannerHash
+
+        logger.info('ContentHash:', `[current:${contentHash}]`, `${isDiffContent ? '!' : '='}=`, `[remote:${downloadDeployJson.contentHash}]`)
+        logger.info('BannerHash: ', `[current:${bannerHash}]`, `${isDiffBanner ? '!' : '='}=`, `[remote:${downloadDeployJson.bannerHash}]`)
+
+        if (isDiffBanner || isDiffContent) {
+          version = Number(downloadDeployJson.version) + 1
+          logger.info(`Version increased: ${downloadDeployJson.version} => ${version}`)
+        } else {
+          version = Number(downloadDeployJson.version)
+        }
+      } catch (e) {
+        logger.error(`Download the latest deploy info: ${latestDeployUrl} ... Failed`)
+        logger.info(`Version use: ${version}`)
       }
-    } catch (e) {
-      logger.error(`Download the latest deploy info: ${latestDeployUrl} ... Failed`)
-      logger.info(`Version use: ${version}`)
+      // #endregion version
+    } else {
+      logger.warn('Current Environment is not CI, use default version 1')
     }
-  } else {
-    logger.info('Current Environment is not CI, use default version 1')
+    cacheMap[scriptInfo.scriptName] = {
+      version,
+      contentHash,
+      bannerHash,
+    }
+    return cacheMap[scriptInfo.scriptName]
   }
-  return {
-    contentHash,
-    bannerHash,
-    version,
-  }
-}
+})()
 
 export const buildScript = (filepath: string, extraConfig: esbuild.BuildOptions= {}) => {
   const isCI = yn(process.env.CI, { default: false })
@@ -168,8 +169,4 @@ export const buildScript = (filepath: string, extraConfig: esbuild.BuildOptions=
       },
     }),
   })
-}
-
-export function isFile (filepath: string) {
-  return fs.existsSync(filepath) && fs.statSync(filepath).isFile()
 }

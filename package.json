@@ -23,8 +23,10 @@
     "@js-sh/js-sh": "^0.1.1"
   },
   "devDependencies": {
+    "@iarna/toml": "^2.2.5",
     "@types/download": "^8.0.5",
     "@types/jquery": "^3.5.30",
+    "@types/lodash": "^4.17.13",
     "@types/md5": "^2.3.5",
     "@vitest/coverage-v8": "^1.6.0",
     "concurrently": "^8.2.2",
@@ -32,8 +34,10 @@
     "download": "^8.0.0",
     "esbuild": "^0.21.5",
     "htmlnano": "^2.1.1",
+    "lodash": "^4.17.21",
     "md5": "^2.3.0",
     "md5-file": "^5.0.0",
+    "nanoid": "^3.3.8",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.5",
     "vitest": "^1.6.0",

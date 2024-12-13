@@ -1,8 +1,11 @@
 import path from 'path'
-import fs from 'fs'
-import logger, { inject as loggerInject } from './logger'
+import lodash from 'lodash'
 import { ROOT_PATH } from '../consts'
-import { buildScript, exportLatestDeployInfo, isFile, stringifyBanner, parseFilenames, exportInjectFiles } from './monkey.utils'
+import { buildScript, exportLatestDeployInfo, stringifyBanner, exportInjectFiles } from './monkey.utils'
+import hasBannerFile from './utils/hasBannerFile'
+import parseScriptInfo, { ScriptInfo } from './utils/parseScriptInfo'
+import buildFS, { LS_TYPE } from '../../packages/buildFS'
+import logger from '../../packages/logger'
 
 const srcPath = path.resolve(ROOT_PATH, 'src/monkey')
 const outPath = path.resolve(ROOT_PATH, 'dist/monkey')
@@ -14,37 +17,40 @@ if (matchValueIndex > 0) {
 }
 
 ;(async () => {
-  const filepaths = fs.readdirSync(srcPath)
-    .map((filename) => path.resolve(srcPath, filename))
-    .filter((filepath) => fs.statSync(filepath).isDirectory())
-    .filter((filepath) => [
-      isFile(path.resolve(filepath, parseFilenames(filepath).name)),
-      isFile(path.resolve(filepath, parseFilenames(filepath).bannerJson)),
-    ].some(Boolean))
+  const scriptInfos = buildFS.ls(srcPath, { types: [LS_TYPE.FOLDER], raw: true })
+    .filter((folderPath) => hasBannerFile(folderPath))
+    .filter((folderPath) => !matchValue || path.basename(folderPath).includes(matchValue))
+    .reduce<ScriptInfo[]>((list, folderPath) => {
+      list.push(...parseScriptInfo(folderPath))
+      return list
+    }, [])
 
-  for (const filepath of filepaths) {
-    const {
-      raw,
-      meta,
-      user,
-      deployJson,
-    } = parseFilenames(filepath)
-    if (matchValue && !raw.includes(matchValue)) continue
-    await loggerInject(raw, async () => {
-      const sourcePath = path.resolve(filepath, parseFilenames(filepath).name)
-      const targetPath = path.resolve(outPath, user)
-      logger.log(`Building ${path.relative(ROOT_PATH, sourcePath)} --outfile ${path.relative(ROOT_PATH, targetPath)} ...`)
-      const deployInfo = await exportLatestDeployInfo(filepath)
-      const banner = stringifyBanner(sourcePath, { version: deployInfo.version })
-      await buildScript(sourcePath, {
-        banner: { js: banner },
-        outfile: targetPath,
-        inject: exportInjectFiles(sourcePath),
-      })
-      const metaPath = path.resolve(outPath, meta)
-      fs.writeFileSync(path.resolve(outPath, deployJson), JSON.stringify(deployInfo, null, 2), 'utf-8')
-      fs.writeFileSync(metaPath, banner, 'utf-8')
-      logger.log(`Building ${path.relative(ROOT_PATH, sourcePath)} --outfile=${path.relative(ROOT_PATH, targetPath)} ... Done!`)
+  for (const scriptInfo of scriptInfos) {
+    await logger.inject(scriptInfo.scriptName, async () => {
+      lodash.merge(scriptInfo, { deployInfo: await exportLatestDeployInfo(scriptInfo) })
     })
+  }
+
+  for (const scriptInfo of lodash.orderBy(scriptInfos, ['source'], ['asc'])) {
+    await logger.inject([scriptInfo.source, scriptInfo.scriptName], async () => {
+      logger.log(`Building ${path.relative(ROOT_PATH, scriptInfo.rootPath)} --outfile ${path.relative(ROOT_PATH, scriptInfo.outPath)} ...`)
+      const banner = stringifyBanner(scriptInfo.bannerFilePath, {
+        version: scriptInfo.deployInfo.version,
+        ...scriptInfo.extraInfo,
+      })
+      await buildScript(scriptInfo.entryFilePath, {
+        banner: { js: banner },
+        outfile: path.resolve(scriptInfo.outPath, scriptInfo.output.user),
+        inject: exportInjectFiles(scriptInfo.bannerFilePath),
+      })
+      buildFS.writeFileSync(path.resolve(scriptInfo.outPath, scriptInfo.output.meta), banner)
+      buildFS.writeJSONFileSync(path.resolve(scriptInfo.outPath, scriptInfo.output.deployJson), scriptInfo.deployInfo)
+      logger.log(`Building ${path.relative(ROOT_PATH, scriptInfo.rootPath)} --outfile ${path.relative(ROOT_PATH, scriptInfo.outPath)} ... Done`)
+    })
+  }
+  for (const scriptInfo of lodash.groupBy(scriptInfos, 'source')['github']) {
+    for (const filepath of buildFS.ls(scriptInfo.outPath, { raw: true })) {
+      buildFS.copyFile(filepath, path.resolve(outPath, path.basename(filepath)), { force: true })
+    }
   }
 })()
