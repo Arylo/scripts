@@ -5,3 +5,11 @@ homepage = "https://greasyfork.org/zh-CN/scripts/519026"
 supportURL = "https://greasyfork.org/zh-CN/scripts/519026/feedback"
 downloadURL = "https://update.greasyfork.org/scripts/519026/Enhance%20some%20features%20of%20the%20Self-managed%20Gitlab.user.js"
 updateURL = "https://update.greasyfork.org/scripts/519026/Enhance%20some%20features%20of%20the%20Self-managed%20Gitlab.meta.js"
+
+[openuserjs]
+namespace = "https://openuserjs.org/users/arylo"
+author = "Arylo"
+homepage = "https://openuserjs.org/scripts/arylo/Enhance_some_features_of_the_Self-managed_Gitlab"
+supportURL = "https://openuserjs.org/scripts/arylo/Enhance_some_features_of_the_Self-managed_Gitlab/issues"
+downloadURL = "https://openuserjs.org/install/arylo/Enhance_some_features_of_the_Self-managed_Gitlab.user.js"
+updateURL = "https://openuserjs.org/install/arylo/Enhance_some_features_of_the_Self-managed_Gitlab.user.js"
