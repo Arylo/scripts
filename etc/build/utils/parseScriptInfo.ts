@@ -7,6 +7,8 @@ import buildFS from '../../../packages/buildFS'
 
 const pkgInfo = buildFS.readJSONFileSync(path.resolve(ROOT_PATH, 'package.json'))
 
+const cacheMap: Record<string, Record<string, object | string>> = {}
+
 export default function parseScriptInfo(scriptRootPath: string) {
   const scriptName = path.basename(scriptRootPath)
   const obj = {
@@ -28,7 +30,7 @@ export default function parseScriptInfo(scriptRootPath: string) {
     },
   }
   const configPath = path.resolve(scriptRootPath, 'config.toml')
-  let configContent: Record<string, object> = {
+  let configContent: Record<string, object | string> = cacheMap[scriptName] ?? {
     github: {
       downloadURL: `${githubRawPrefix}/${obj.output.user}`,
       updateURL: `${githubRawPrefix}/${obj.output.meta}`,
@@ -36,18 +38,29 @@ export default function parseScriptInfo(scriptRootPath: string) {
       supportURL: pkgInfo.bugs.url,
     },
   }
-  if (buildFS.isFile(configPath)) {
+  if (!cacheMap[scriptName] && buildFS.isFile(configPath)) {
     try {
-      configContent = lodash.merge(configContent, TOML.parse(buildFS.readFileSync(configPath)))
+      cacheMap[scriptName] = configContent = lodash.merge(configContent, TOML.parse(buildFS.readFileSync(configPath)))
     } catch (e) {}
   }
-  return Object.keys(configContent).map((sourceKey) => {
-    return lodash.merge({}, obj, {
-      source: sourceKey,
-      extraInfo: configContent[sourceKey],
-      outPath: path.resolve(obj.outPath, sourceKey),
+  const commonExtraInfo = Object.keys(configContent)
+    .filter((key) => typeof configContent[key] !== 'object')
+    .reduce<Record<string, string>>((newObj, key) => {
+      newObj[key] = configContent[key] as string
+      return newObj
+    }, {})
+  return Object.keys(configContent)
+    .filter((key) => typeof configContent[key] === 'object')
+    .map((sourceKey) => {
+      return lodash.merge({}, obj, {
+        source: sourceKey,
+        extraInfo: {
+          ...commonExtraInfo,
+          ...configContent[sourceKey] as object,
+        },
+        outPath: path.resolve(obj.outPath, sourceKey),
+      })
     })
-  })
 }
 
 export type ScriptInfo = ReturnType<typeof parseScriptInfo>[number]
