@@ -1,4 +1,6 @@
 import { AsyncLocalStorage } from 'async_hooks'
+import lodash from 'lodash'
+import { headParams } from '../functionControl';
 
 type CustomConsole = {
   log: typeof console.log,
@@ -9,12 +11,13 @@ type CustomConsole = {
 
 const storage = new AsyncLocalStorage<CustomConsole>();
 
-export function inject<F extends (...args: any[]) => any>(name: string, cb: F) {
+function inject<F extends (...args: any[]) => any>(names: string | string[], cb: F) {
+  const flag = lodash.castArray(names).map((name) => `[${name}]`).join('')
   return storage.run({
-    log: (...args: any[]) => console.log(`[${name}]`, ...args),
-    info: (...args: any[]) => console.info(`[${name}]`, ...args),
-    warn: (...args: any[]) => console.warn(`[${name}]`, ...args),
-    error: (...args: any[]) => console.error(`[${name}]`, ...args),
+    log: headParams(console.log, flag),
+    info: headParams(console.info, flag),
+    warn: headParams(console.warn, flag),
+    error: headParams(console.error, flag),
   }, cb)
 }
 
@@ -23,6 +26,7 @@ export const logger = {
   info: (...args: any[]) => (storage.getStore()?.log ?? console.info)(...args),
   warn: (...args: any[]) => (storage.getStore()?.log ?? console.warn)(...args),
   error: (...args: any[]) => (storage.getStore()?.log ?? console.error)(...args),
+  inject,
 }
 
 export default logger

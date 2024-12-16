@@ -6,13 +6,14 @@ This project contains scripts that are useful for Arylo's daily tasks.
 
 ## Monkey Scripts
 
-|Script                      |Description                                        |Install                                                                  |
-|--                          |--                                                 |--                                                                       |
-|gitlab-font-family          |Replace the font family in the merge request page  |[Jump](#change-gitlab-font)|
-|~~gitlab-settings-max-size~~|~~Expand the page size in the CI/CD settings page~~|~~[Jump](#max-size-for-gitlab-setting-page)~~                            |
-|gitlab-enhance              |Enhance some features of the Self-managed Gitlab   |[Jump](#enhance-ux-for-the-self-managed-gitlab)|
-|nyaa-si-show-image          |In some scenarios show image on the `nyaa.si`      |[Jump](#auto-show-the-source-image-for-nyaasi)|
-|copymanga-enhance           |Enhance UX for copy manga comic page               |[Jump](#enhance-ux-for-copy-manga-comic-sites)|
+|Script                            |Description                                        |Install                                               |
+|--                                |--                                                 |--                                                    |
+|gitlab-font-family                |Replace the font family in the merge request page  |[Jump](#change-gitlab-font)                           |
+|~~gitlab-settings-max-size~~      |~~Expand the page size in the CI/CD settings page~~|~~[Jump](#max-size-for-gitlab-setting-page)~~         |
+|gitlab-enhance                    |Enhance some features of the Self-managed Gitlab   |[Jump](#enhance-ux-for-the-self-managed-gitlab)       |
+|nyaa-si-show-image                |In some scenarios show image on the `nyaa.si`      |[Jump](#auto-show-the-source-image-for-nyaasi)        |
+|copymanga-enhance                 |Enhance UX for copy manga comic page               |[Jump](#enhance-ux-for-copy-manga-comic-sites)        |
+|set-fira-code-development-websites|Set Fira Code as font in development websites      |[Jump](#set-fira-code-as-font-in-development-websites)|
 
 ### Change Gitlab Font
 
@@ -152,6 +153,72 @@ Enhance UX for copy manga comic page
 |Chrome        |![][pass]   |![][pass]    |            |
 |Firefox       |![][unknown]|![][unknown] |            |
 |Safari        |![][unknown]|             |![][unknown]|
+|Safari(iOS)   |![][unknown]|             |![][unknown]|
+|Edge(Chromium)|![][unknown]|![][unknown] |            |
+
+### Set Fira Code as font in development websites
+
+[Top](#monkey-scripts)
+
+#### Install Addresses
+
+[Github][set-fira-code-development-websites_github]
+
+[set-fira-code-development-websites_github]: https://raw.githubusercontent.com/Arylo/scripts/monkey/set-fira-code-development-websites.user.js
+
+#### Description
+
+![GitHub last commit][set-fira-code-development-websites_github-last-update]
+
+[set-fira-code-development-websites_github-last-update]: https://img.shields.io/github/last-commit/arylo/scripts/monkey?path=set-fira-code-development-websites.user.js&style=flat&label=Last%20Update
+
+Unified use of `Fira Code` as the code font to enhance developers' awareness of the code on the page
+
+Support websites:
+
+- https://webpack.js.org
+- https://rollupjs.org
+- https://jestjs.io
+- https://turbo.build
+- https://vite.dev
+- https://vitest.dev
+- https://lodash.com
+- https://docs.taro.zone
+- https://ajv.js.org
+- https://yargs.js.org
+- https://www.tampermonkey.net
+- <https://*.github.io>
+- https://docs.gitlab.com
+- https://www.w3schools.com
+- https://www.typescriptlang.org
+- https://yarnpkg.com
+- https://pnpm.io
+- https://npmjs.com
+- https://docs.npmjs.com
+- https://nodejs.org/docs
+- https://vuejs.org/api
+- https://vueuse.org
+- https://react.dev
+- https://rxjs.dev
+- https://axios-http.com
+- https://nextjs.org
+- https://docs.nestjs.com
+- https://eslint.org
+- https://mochajs.org
+- https://toml.io
+- https://ls-lint.org
+- https://nodemailer.com
+- https://greasyfork.org
+- https://docs.docker.com
+- https://developers.weixin.qq.com/miniprogram
+
+#### Compatibility
+
+|              |TamperMonkey|ViolentMonkey|Userscripts |
+|--            |--          |--           |--          |
+|Chrome        |![][pass]   |![][pass]    |            |
+|Firefox       |![][unknown]|![][unknown] |            |
+|Safari        |![][pass]   |             |![][unknown]|
 |Safari(iOS)   |![][unknown]|             |![][unknown]|
 |Edge(Chromium)|![][unknown]|![][unknown] |            |
 

@@ -2,7 +2,8 @@ import path from 'path'
 import fs from 'fs'
 import * as esbuild from 'esbuild'
 import { ROOT_PATH } from '../consts'
-import logger, { inject as loggerInject } from './logger'
+import buildFS from '../../packages/buildFS'
+import logger from '../../packages/logger'
 
 const buildinDependencies = [
   'fs',
@@ -19,13 +20,13 @@ const buildinDependencies = [
 
   const filepaths = fs.readdirSync(srcPath)
     .map((filename) => path.resolve(srcPath, filename))
-    .filter((filepath) => fs.statSync(filepath).isFile() && filepath.endsWith('.ts'))
+    .filter((filepath) => buildFS.isFile(filepath) && filepath.endsWith('.ts'))
 
   const dependencies = Object.keys(require(path.resolve(ROOT_PATH, 'package.json')).dependencies)
 
   for (const filepath of filepaths) {
-    loggerInject(path.basename(filepath), () => {
-      logger.log(`esbuild ${path.relative(ROOT_PATH, filepath)} --outdir ${path.relative(ROOT_PATH, outPath)} ...`)
+    logger.inject(path.basename(filepath), () => {
+      logger.info(`esbuild ${path.relative(ROOT_PATH, filepath)} --outdir ${path.relative(ROOT_PATH, outPath)} ...`)
       esbuild.buildSync({
         entryPoints: [filepath],
         bundle: true,
@@ -33,7 +34,7 @@ const buildinDependencies = [
         external: [...buildinDependencies, ...dependencies],
         outdir: outPath,
       })
-      logger.log(`esbuild ${path.relative(ROOT_PATH, filepath)} --outdir=${path.relative(ROOT_PATH, outPath)} ... Done!`)
+      logger.info(`esbuild ${path.relative(ROOT_PATH, filepath)} --outdir=${path.relative(ROOT_PATH, outPath)} ... Done!`)
     })
   }
 })()

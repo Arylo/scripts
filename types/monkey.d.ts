@@ -3,6 +3,7 @@ declare function GM_setValue(key: string, value: T): undefined;
 declare function GM_getValue<T>(key: string, defaultValue: T): T
 declare const GM_info: typeof console['info']
 declare function GM_setClipboard(content: string, type: 'text' | 'html', callback: () => void): Promise<never>;
+declare function GM_getResourceText(name: string): string;
 
 declare interface Window {
   GM: {
@@ -14,4 +15,5 @@ declare interface Window {
   GM_setValue: GM_setValue,
   GM_getValue: GM_getValue,
   GM_setClipboard: GM_setClipboard,
+  GM_getResourceText: GM_getResourceText,
 }
