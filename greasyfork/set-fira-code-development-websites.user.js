@@ -1,9 +1,10 @@
 // ==UserScript==
 // @name Set Fira Code as font in development websites
+// @name:zh-CN 将Fira Code 作为开发用网站的代码字体
 // @namespace https://greasyfork.org/users/1133279
 // @description Unified use of `Fira Code` as the code font to enhance developers' awareness of the code on the page
 // @description:zh-CN 统一将`Fira Code`作为代码字体, 提高开发者对页面中的代码的感知度
-// @version 8
+// @version 9
 // @author Arylo
 // @include https://webpack.js.org/*
 // @include https://rollupjs.org/*
@@ -41,7 +42,6 @@
 // @include https://docs.docker.com/*
 // @include https://developers.weixin.qq.com/miniprogram/*
 // @license MIT
-// @name:zh-CN 将Fira Code 作为开发用网站的代码字体
 // @resource font_css https://cdn.jsdelivr.net/npm/firacode@6.2.0/distr/fira_code.css
 // @homepage https://greasyfork.org/zh-CN/scripts/519936
 // @supportURL https://greasyfork.org/zh-CN/scripts/519936/feedback

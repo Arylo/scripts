@@ -1,10 +1,10 @@
 // ==UserScript==
 // @name Display image right now in nyaa.si
-// @version 6
+// @name:zh-CN 在nyaa.si 上立即显示图片
+// @version 7
 // @author Arylo Yeung <arylo.open@gmail.com>
 // @license MIT
 // @match https://sukebei.nyaa.si/view/*
-// @name:zh-CN 在nyaa.si 上立即显示图片
 // @require https://code.jquery.com/jquery-3.6.0.min.js
 // @homepage https://github.com/Arylo/scripts#readme
 // @supportURL https://github.com/Arylo/scripts/issues
