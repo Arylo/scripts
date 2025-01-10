@@ -1,5 +1,5 @@
-import { genScrollTo } from "../common";
-import { ActionZones, ClickAction, ComicDirection } from "../constant";
+import { genScrollToFn } from "../../utils/genScrollToFn";
+import { ActionZones, ClickAction, ComicDirection } from "../../pages/manga-detail/constant";
 import { MixinThis } from "../types";
 
 const ActionMixin = () => ({
@@ -15,7 +15,7 @@ const ActionMixin = () => ({
       const that = (this as any)
       const element = document.body
       const containerElement = document.getElementsByClassName('images')[0]
-      const containerScrollTo = genScrollTo(containerElement)
+      const containerScrollTo = genScrollToFn(containerElement)
       const headerHeight = document.getElementsByClassName("header")[0].clientHeight
 
       if ([ComicDirection.LTR, ComicDirection.RTL].includes(that.mode)) {
@@ -55,7 +55,7 @@ const ActionMixin = () => ({
     },
     onActionZoneWheel (event: any) {
       const containerElement = document.getElementsByClassName('images')[0]
-      const containerScrollTo = genScrollTo(containerElement)
+      const containerScrollTo = genScrollToFn(containerElement)
       containerScrollTo(containerElement.scrollTop - event.wheelDeltaY * 2, true)
     },
   },

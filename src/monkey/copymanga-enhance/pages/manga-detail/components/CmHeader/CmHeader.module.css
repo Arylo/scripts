@@ -1,0 +1,12 @@
+.cmHeader {
+  height: var(--header-height);
+}
+
+.link {
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.title {
+  margin-left: 10px;
+  margin-right: 10px;
+}

@@ -1,9 +1,9 @@
-import { genScrollTo } from "./common"
+import { genScrollToFn } from "../utils/genScrollToFn"
 import { PageInfo } from "./types"
 
 const getCurrentCount = () => $('.comicContent-list > li > img').length
 const getTotalCount = () => Number((document.getElementsByClassName('comicCount')[0] as HTMLDivElement).innerText)
-export const windowScrollTo = genScrollTo(window)
+export const windowScrollTo = genScrollToFn(window)
 
 export const refreshImage = (cb: Function) => {
   const nextTime = 15

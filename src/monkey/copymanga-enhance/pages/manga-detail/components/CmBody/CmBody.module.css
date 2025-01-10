@@ -1,0 +1,4 @@
+.cmBody {
+  height: var(--body-height);
+  overflow-y: auto;
+}

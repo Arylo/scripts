@@ -1,0 +1,13 @@
+:root {
+  --header-label-color: rgba(255, 255, 255, 0.95);
+  --header-height: 30px;
+  --body-height: calc(100vh - var(--header-height));
+  --image-max-height: calc(100vh - var(--header-height));
+  --action-btn-label-color: rgba(255, 255, 255, 0.95);
+  --action-btn-bg-color: rgba(0, 0, 0, 0.2);
+  --action-btn-height: 100px;
+  --action-btn-width: 100px;
+  --action-btn-border-radius: 100px;
+  --action-btn-only-height: 30vh;
+  --action-btn-only-width: 95px;
+}

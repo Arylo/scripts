@@ -1,5 +1,5 @@
 import { chapter, comic, findIndex, group } from "../common";
-import { ComicDirection, PageType } from "../constant";
+import { ComicDirection, PageType } from "../../pages/manga-detail/constant";
 import { MixinThis, PageInfo } from "../types";
 
 const ImageMixin = (info: PageInfo) => ({
