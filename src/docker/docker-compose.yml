@@ -1,0 +1,22 @@
+x-common: &common
+  deploy:
+    replicas: 0
+
+services:
+  cron-exec:
+    <<: *common
+    image: arylo/cron-exec
+    build:
+      context: ./cron-exec
+
+  restart-after-change:
+    <<: *common
+    image: arylo/restart-after-change
+    build:
+      context: ./restart-after-change
+      args:
+        FROM_IMAGE: arylo/cron-exec
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    depends_on:
+      - cron-exec
