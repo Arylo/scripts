@@ -1,4 +1,4 @@
-ARG FROM_IMAGE
+ARG FROM_IMAGE="arylo/cron-exec"
 
 FROM ${FROM_IMAGE}
 
