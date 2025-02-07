@@ -69,10 +69,10 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
         with:
           name: dist
+          path: dist
       - name: Deploy Monkey scripts
         uses: JamesIves/github-pages-deploy-action@v4
         with:
@@ -87,10 +87,10 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
         with:
           name: dist
+          path: dist
       - name: Deploy Qinglong scripts
         uses: JamesIves/github-pages-deploy-action@v4
         with:
@@ -115,6 +115,7 @@ jobs:
           tags: |
             arylo/cron-exec:latest
             arylo/cron-exec:alpine
+            arylo/cron-exec:alpine-3.9
           cache-from: type=registry,ref=arylo/cron-exec:github-action-buildcache
           cache-to: type=inline
       - name: Build restart-after-change
@@ -125,6 +126,7 @@ jobs:
           tags: |
             arylo/restart-after-change:latest
             arylo/restart-after-change:alpine
+            arylo/restart-after-change:alpine-3.9
           cache-from: type=registry,ref=arylo/restart-after-change:github-action-buildcache
           cache-to: type=inline
   docker_push:
