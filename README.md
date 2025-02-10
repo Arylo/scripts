@@ -6,155 +6,19 @@ This project contains scripts that are useful for Arylo's daily tasks.
 
 ## Monkey Scripts
 
-|Script                            |Description                                        |Install                                               |
-|--                                |--                                                 |--                                                    |
-|gitlab-font-family                |Replace the font family in the merge request page  |[Jump](#change-gitlab-font)                           |
-|~~gitlab-settings-max-size~~      |~~Expand the page size in the CI/CD settings page~~|~~[Jump](#max-size-for-gitlab-setting-page)~~         |
-|gitlab-enhance                    |Enhance some features of the Self-managed Gitlab   |[Jump](#enhance-ux-for-the-self-managed-gitlab)       |
-|nyaa-si-show-image                |In some scenarios show image on the `nyaa.si`      |[Jump](#auto-show-the-source-image-for-nyaasi)        |
-|copymanga-enhance                 |Enhance UX for copy manga comic page               |[Jump](#enhance-ux-for-copy-manga-comic-sites)        |
-|set-fira-code-development-websites|Set Fira Code as font in development websites      |[Jump](#set-fira-code-as-font-in-development-websites)|
+|Script|Description|Install|
+|--|--|--|
 
-### Change Gitlab Font
+## Monkey Scripts
 
-[Top](#monkey-scripts)
-
-#### Install Addresses
-
-[Github][gitlab-font-family_github]
-
-[gitlab-font-family_github]: https://raw.githubusercontent.com/Arylo/scripts/monkey/gitlab-font-family.user.js
-
-#### Description
-
-![GitHub last commit][gitlab-font-family_github-last-update]
-
-[gitlab-font-family_github-last-update]: https://img.shields.io/github/last-commit/arylo/scripts/monkey?path=gitlab-font-family.user.js&style=flat&label=Last%20Update
-
-Replace the font family in the merge request page
-
-#### Compatibility
-
-|              |TamperMonkey|ViolentMonkey|Userscripts |
-|--            |--          |--           |--          |
-|Chrome        |![][pass]   |![][unknown] |            |
-|Firefox       |![][unknown]|![][unknown] |            |
-|Safari        |![][unknown]|             |![][unknown]|
-|Safari(iOS)   |![][unknown]|             |![][unknown]|
-|Edge(Chromium)|![][unknown]|![][unknown] |            |
-
-### Max Size for Gitlab setting page
-
-[Top](#monkey-scripts)
-
-#### Install Addresses
-
-[Github][gitlab-settings-max-size_github]
-
-[gitlab-settings-max-size_github]: https://raw.githubusercontent.com/Arylo/scripts/monkey/gitlab-settings-max-size.user.js
-
-#### Description
-
-![GitHub last commit][gitlab-settings-max-size_github-last-update]
-
-[gitlab-settings-max-size_github-last-update]: https://img.shields.io/github/last-commit/arylo/scripts/monkey?path=gitlab-settings-max-size.user.js&style=flat&label=Last%20Update
-
-Expand the page size in the CI/CD settings page
-
-#### Compatibility
-
-|              |TamperMonkey|ViolentMonkey|Userscripts |
-|--            |--          |--           |--          |
-|Chrome        |![][pass]   |![][pass]    |            |
-|Firefox       |![][unknown]|![][unknown] |            |
-|Safari        |![][unknown]|             |![][unknown]|
-|Safari(iOS)   |![][unknown]|             |![][unknown]|
-|Edge(Chromium)|![][unknown]|![][unknown] |            |
-
-### Enhance UX for the self-managed Gitlab
-
-[Top](#monkey-scripts)
-
-#### Install Addresses
-
-[GreasyFork][gitlab-enhance_greasyfork] | [Github][gitlab-enhance_github]
-
-[gitlab-enhance_greasyfork]: https://update.greasyfork.org/scripts/519026/Enhance%20some%20features%20of%20the%20Self-managed%20Gitlab.user.js
-[gitlab-enhance_github]: https://raw.githubusercontent.com/Arylo/scripts/monkey/gitlab-enhance.user.js
-
-#### Description
-
-![GitHub last commit][gitlab-enhance_github-last-update]
-
-[gitlab-enhance_github-last-update]: https://img.shields.io/github/last-commit/arylo/scripts/monkey?path=gitlab-enhance.user.js&style=flat&label=Last%20Update
-
-Enhance some features of the Self-managed Gitlab
-
-#### Compatibility
-
-|              |TamperMonkey|ViolentMonkey|Userscripts |
-|--            |--          |--           |--          |
-|Chrome        |![][pass]   |![][pass]    |            |
-|Firefox       |![][unknown]|![][unknown] |            |
-|Safari        |![][unknown]|             |![][unknown]|
-|Safari(iOS)   |![][unknown]|             |![][unknown]|
-|Edge(Chromium)|![][unknown]|![][unknown] |            |
-
-### Auto show the source image for nyaa.si
-
-[Top](#monkey-scripts)
-
-#### Install Addresses
-
-[Github][nyaa-si-show-image_github]
-
-[nyaa-si-show-image_github]: https://raw.githubusercontent.com/Arylo/scripts/monkey/nyaa-si-show-image.user.js
-
-#### Description
-
-![GitHub last commit][nyaa-si-show-image_github-last-update]
-
-[nyaa-si-show-image_github-last-update]: https://img.shields.io/github/last-commit/arylo/scripts/monkey?path=nyaa-si-show-image.user.js&style=flat&label=Last%20Update
-
-In some scenarios show image on the `nyaa.si`
-
-#### Compatibility
-
-|              |TamperMonkey|ViolentMonkey|Userscripts |
-|--            |--          |--           |--          |
-|Chrome        |![][pass]   |![][pass]    |            |
-|Firefox       |![][unknown]|![][unknown] |            |
-|Safari        |![][unknown]|             |![][unknown]|
-|Safari(iOS)   |![][unknown]|             |![][unknown]|
-|Edge(Chromium)|![][unknown]|![][unknown] |            |
-
-### Enhance UX for copy manga comic sites
-
-[Top](#monkey-scripts)
-
-#### Install Addresses
-
-[Github][copymanga-enhance_github]
-
-[copymanga-enhance_github]: https://raw.githubusercontent.com/Arylo/scripts/monkey/copymanga-enhance.user.js
-
-#### Description
-
-![GitHub last commit][copymanga-enhance_github-last-update]
-
-[copymanga-enhance_github-last-update]: https://img.shields.io/github/last-commit/arylo/scripts/monkey?path=copymanga-enhance.user.js&style=flat&label=Last%20Update
-
-Enhance UX for copy manga comic page
-
-#### Compatibility
-
-|              |TamperMonkey|ViolentMonkey|Userscripts |
-|--            |--          |--           |--          |
-|Chrome        |![][pass]   |![][pass]    |            |
-|Firefox       |![][unknown]|![][unknown] |            |
-|Safari        |![][unknown]|             |![][unknown]|
-|Safari(iOS)   |![][unknown]|             |![][unknown]|
-|Edge(Chromium)|![][unknown]|![][unknown] |            |
+|Script|Description|Install|
+|--|--|--|
+|set-fira-code-development-websites|Unified use of `Fira Code` as the code font to enhance developers' awareness of the code on the page|[Jump](#set-fira-code-as-font-in-development-websites)|
+|nyaa-si-show-image||[Jump](#auto-show-the-source-image-for-nyaa-si)|
+|~~gitlab-settings-max-size~~|~~(Deprecated)(Please use the gitlab-enhance script) Maximize the size of the CI/CD setting~~|~~[Jump](#max-size-for-gitlab-setting-page)~~|
+|gitlab-font-family||[Jump](#change-gitlab-font)|
+|gitlab-enhance|Enhance some features of the Self-managed Gitlab, such as the CI/CD settings page, the merge request create/edit page etc.|[Jump](#enhance-ux-for-the-self-managed-gitlab)|
+|copymanga-enhance||[Jump](#enhance-ux-for-copy-manga-comic-sites)|
 
 ### Set Fira Code as font in development websites
 
@@ -162,15 +26,11 @@ Enhance UX for copy manga comic page
 
 #### Install Addresses
 
-[Github][set-fira-code-development-websites_github]
-
-[set-fira-code-development-websites_github]: https://raw.githubusercontent.com/Arylo/scripts/monkey/set-fira-code-development-websites.user.js
+[Github][set-fira-code-development-websites_github_download_url] | [Greasyfork][set-fira-code-development-websites_greasyfork_download_url]
 
 #### Description
 
 ![GitHub last commit][set-fira-code-development-websites_github-last-update]
-
-[set-fira-code-development-websites_github-last-update]: https://img.shields.io/github/last-commit/arylo/scripts/monkey?path=set-fira-code-development-websites.user.js&style=flat&label=Last%20Update
 
 Unified use of `Fira Code` as the code font to enhance developers' awareness of the code on the page
 
@@ -221,6 +81,147 @@ Support websites:
 |Safari        |![][pass]   |             |![][unknown]|
 |Safari(iOS)   |![][unknown]|             |![][unknown]|
 |Edge(Chromium)|![][unknown]|![][unknown] |            |
+
+[set-fira-code-development-websites_github_download_url]: https://raw.githubusercontent.com/Arylo/scripts/monkey/set-fira-code-development-websites.user.js
+[set-fira-code-development-websites_greasyfork_download_url]: https://update.greasyfork.org/scripts/519936/Set%20Fira%20Code%20as%20font%20in%20development%20websites.user.js
+[set-fira-code-development-websites_github-last-update]: https://img.shields.io/github/last-commit/arylo/scripts/monkey?path=set-fira-code-development-websites.user.js&style=flat&label=Last%20Update
+
+### Auto show the source image for nyaa.si
+
+[Top](#monkey-scripts)
+
+#### Install Addresses
+
+[Github][nyaa-si-show-image_github_download_url]
+
+#### Description
+
+![GitHub last commit][nyaa-si-show-image_github-last-update]
+
+In some scenarios show image on the `nyaa.si`
+
+#### Compatibility
+
+|              |TamperMonkey|ViolentMonkey|Userscripts |
+|--            |--          |--           |--          |
+|Chrome        |![][pass]   |![][pass]    |            |
+|Firefox       |![][unknown]|![][unknown] |            |
+|Safari        |![][unknown]|             |![][unknown]|
+|Safari(iOS)   |![][unknown]|             |![][unknown]|
+|Edge(Chromium)|![][unknown]|![][unknown] |            |
+
+[nyaa-si-show-image_github_download_url]: https://raw.githubusercontent.com/Arylo/scripts/monkey/nyaa-si-show-image.user.js
+[nyaa-si-show-image_github-last-update]: https://img.shields.io/github/last-commit/arylo/scripts/monkey?path=nyaa-si-show-image.user.js&style=flat&label=Last%20Update
+
+### Max Size for Gitlab setting page
+
+[Top](#monkey-scripts)
+
+#### Install Addresses
+
+[Github][gitlab-settings-max-size_github_download_url]
+
+#### Description
+
+![GitHub last commit][gitlab-settings-max-size_github-last-update]
+
+Expand the page size in the CI/CD settings page
+
+#### Compatibility
+
+|              |TamperMonkey|ViolentMonkey|Userscripts |
+|--            |--          |--           |--          |
+|Chrome        |![][pass]   |![][pass]    |            |
+|Firefox       |![][unknown]|![][unknown] |            |
+|Safari        |![][unknown]|             |![][unknown]|
+|Safari(iOS)   |![][unknown]|             |![][unknown]|
+|Edge(Chromium)|![][unknown]|![][unknown] |            |
+
+[gitlab-settings-max-size_github_download_url]: https://raw.githubusercontent.com/Arylo/scripts/monkey/gitlab-settings-max-size.user.js
+[gitlab-settings-max-size_github-last-update]: https://img.shields.io/github/last-commit/arylo/scripts/monkey?path=gitlab-settings-max-size.user.js&style=flat&label=Last%20Update
+
+### Change Gitlab Font
+
+[Top](#monkey-scripts)
+
+#### Install Addresses
+
+[Github][gitlab-font-family_github_download_url]
+
+#### Description
+
+![GitHub last commit][gitlab-font-family_github-last-update]
+
+Replace the font family in the merge request page
+
+#### Compatibility
+
+|              |TamperMonkey|ViolentMonkey|Userscripts |
+|--            |--          |--           |--          |
+|Chrome        |![][pass]   |![][unknown] |            |
+|Firefox       |![][unknown]|![][unknown] |            |
+|Safari        |![][unknown]|             |![][unknown]|
+|Safari(iOS)   |![][unknown]|             |![][unknown]|
+|Edge(Chromium)|![][unknown]|![][unknown] |            |
+
+[gitlab-font-family_github_download_url]: https://raw.githubusercontent.com/Arylo/scripts/monkey/gitlab-font-family.user.js
+[gitlab-font-family_github-last-update]: https://img.shields.io/github/last-commit/arylo/scripts/monkey?path=gitlab-font-family.user.js&style=flat&label=Last%20Update
+
+### Enhance UX for the self-managed Gitlab
+
+[Top](#monkey-scripts)
+
+#### Install Addresses
+
+[Github][gitlab-enhance_github_download_url] | [Greasyfork][gitlab-enhance_greasyfork_download_url] | [Openuserjs][gitlab-enhance_openuserjs_download_url]
+
+#### Description
+
+![GitHub last commit][gitlab-enhance_github-last-update]
+
+Enhance some features of the Self-managed Gitlab
+
+#### Compatibility
+
+|              |TamperMonkey|ViolentMonkey|Userscripts |
+|--            |--          |--           |--          |
+|Chrome        |![][pass]   |![][pass]    |            |
+|Firefox       |![][unknown]|![][unknown] |            |
+|Safari        |![][unknown]|             |![][unknown]|
+|Safari(iOS)   |![][unknown]|             |![][unknown]|
+|Edge(Chromium)|![][unknown]|![][unknown] |            |
+
+[gitlab-enhance_github_download_url]: https://raw.githubusercontent.com/Arylo/scripts/monkey/gitlab-enhance.user.js
+[gitlab-enhance_greasyfork_download_url]: https://update.greasyfork.org/scripts/519026/Enhance%20some%20features%20of%20the%20Self-managed%20Gitlab.user.js
+[gitlab-enhance_openuserjs_download_url]: https://openuserjs.org/install/arylo/Enhance_some_features_of_the_Self-managed_Gitlab.user.js
+[gitlab-enhance_github-last-update]: https://img.shields.io/github/last-commit/arylo/scripts/monkey?path=gitlab-enhance.user.js&style=flat&label=Last%20Update
+
+### Enhance UX for copy manga comic sites
+
+[Top](#monkey-scripts)
+
+#### Install Addresses
+
+[Github][copymanga-enhance_github_download_url]
+
+#### Description
+
+![GitHub last commit][copymanga-enhance_github-last-update]
+
+Enhance UX for copy manga comic page
+
+##### Compatibility
+
+|              |TamperMonkey|ViolentMonkey|Userscripts |
+|--            |--          |--           |--          |
+|Chrome        |![][pass]   |![][pass]    |            |
+|Firefox       |![][unknown]|![][unknown] |            |
+|Safari        |![][unknown]|             |![][unknown]|
+|Safari(iOS)   |![][unknown]|             |![][unknown]|
+|Edge(Chromium)|![][unknown]|![][unknown] |            |
+
+[copymanga-enhance_github_download_url]: https://raw.githubusercontent.com/Arylo/scripts/monkey/copymanga-enhance.user.js
+[copymanga-enhance_github-last-update]: https://img.shields.io/github/last-commit/arylo/scripts/monkey?path=copymanga-enhance.user.js&style=flat&label=Last%20Update
 
 [pass]: https://img.shields.io/badge/-pass-green.svg?&logoColor=000&style=for-the-badge&cacheSeconds=7200
 [unknown]: https://img.shields.io/badge/-unknown-silver.svg?&logoColor=000&style=for-the-badge&cacheSeconds=7200
