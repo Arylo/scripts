@@ -8,11 +8,6 @@ This project contains scripts that are useful for Arylo's daily tasks.
 
 |Script|Description|Install|
 |--|--|--|
-
-## Monkey Scripts
-
-|Script|Description|Install|
-|--|--|--|
 |set-fira-code-development-websites|Unified use of `Fira Code` as the code font to enhance developers' awareness of the code on the page|[Jump](#set-fira-code-as-font-in-development-websites)|
 |nyaa-si-show-image||[Jump](#auto-show-the-source-image-for-nyaa-si)|
 |~~gitlab-settings-max-size~~|~~(Deprecated)(Please use the gitlab-enhance script) Maximize the size of the CI/CD setting~~|~~[Jump](#max-size-for-gitlab-setting-page)~~|
