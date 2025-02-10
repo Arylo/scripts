@@ -111,7 +111,6 @@ buildFS.writeFileSync(
   path.resolve(ROOT_PATH, 'README.md'),
   [
     CONSTANT.GENERAL.HEADER,
-    CONSTANT.MONKEY.HEADER,
     parseMonkeys(),
     CONSTANT.MONKEY.FOOTER,
     CONSTANT.QINGLONG.HEADER,

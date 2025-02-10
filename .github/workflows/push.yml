@@ -189,3 +189,4 @@ jobs:
         with:
           folder: .
           branch: ${{ github.event.repository.default_branch }}
+          commit-message: 'chore: update README.md'
