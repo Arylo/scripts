@@ -1,5 +1,5 @@
 import { test, expect, describe } from 'vitest'
-import { genTemplate } from './templateUtils'
+import { genTemplate } from './index'
 
 describe(genTemplate.name, () => {
   test('Reusing utils', () => {

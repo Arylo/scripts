@@ -223,10 +223,10 @@ Enhance UX for copy manga comic page
 
 ## Qinglong Scripts
 
-|Script    |Description                               |
-|--        |--                                        |
+|Script|Description|
+|--|--|
 |groupVideo|Classification and storage for video files|
-|moveVideo |Move video files to the target folder     |
+|moveVideo|Move video files to the target folder|
 
 ## License
 

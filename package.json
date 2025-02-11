@@ -8,6 +8,7 @@
     "build": "concurrently npm:build:*",
     "build:qinglong": "ts-node ./etc/build/qinglong.ts",
     "build:monkey": "ts-node ./etc/build/monkey.ts",
+    "build:readme": "ts-node ./etc/build/readme.ts",
     "lint": "concurrently npm:lint:*",
     "lint:type-check": "tsc --noEmit",
     "test": "vitest"

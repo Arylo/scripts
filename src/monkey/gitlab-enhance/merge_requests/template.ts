@@ -1,4 +1,4 @@
-import * as templateUtils from './templateUtils'
+import * as templateUtils from '../../../../packages/MdGenerator/index'
 import templateCss from './template.css'
 import { getButtonElement } from '../utils'
 

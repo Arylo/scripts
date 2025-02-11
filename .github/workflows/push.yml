@@ -17,9 +17,9 @@ jobs:
         uses: tj-actions/changed-files@v45
         with:
           files: |
-            .github/**
             src/qinglong/**
             etc/**
+            !etc/build/readme*.ts
             packages/**
             .nvmrc
             package*.json
@@ -28,9 +28,9 @@ jobs:
         uses: tj-actions/changed-files@v45
         with:
           files: |
-            .github/**
             src/monkey/**
             etc/**
+            !etc/build/readme*.ts
             packages/**
             .nvmrc
             package*.json
@@ -156,6 +156,7 @@ jobs:
           tags: |
             arylo/cron-exec:latest
             arylo/cron-exec:alpine
+            arylo/cron-exec:alpine-3.9
           cache-from: type=registry,ref=arylo/cron-exec:github-action-buildcache
           cache-to: type=registry,ref=arylo/cron-exec:github-action-buildcache,mode=max
       - name: Build restart-after-change
@@ -167,6 +168,7 @@ jobs:
           tags: |
             arylo/restart-after-change:latest
             arylo/restart-after-change:alpine
+            arylo/restart-after-change:alpine-3.9
           cache-from: type=registry,ref=arylo/restart-after-change:github-action-buildcache
           cache-to: type=registry,ref=arylo/restart-after-change:github-action-buildcache,mode=max
 
@@ -183,7 +185,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
       - name: Generate Readme files
-        run: npx ts-node ./etc/build/readme.ts
+        run: npm run build:readme
       - name: Deploy Readme files
         uses: JamesIves/github-pages-deploy-action@v4
         with:
