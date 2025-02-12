@@ -5,7 +5,7 @@
 // @description Enhance some features of the Self-managed Gitlab, such as the CI/CD settings page, the merge request create/edit page etc.
 // @description:zh-CN 强化自托管 Gitlab 的一些功能，如 CI/CD 设置页面、合并请求创建/编辑页面等。
 // @icon data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/PjwhRE9DVFlQRSBzdmcgIFBVQkxJQyAnLS8vVzNDLy9EVEQgU1ZHIDEuMS8vRU4nICAnaHR0cDovL3d3dy53My5vcmcvR3JhcGhpY3MvU1ZHLzEuMS9EVEQvc3ZnMTEuZHRkJz48c3ZnIGhlaWdodD0iNTEycHgiIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMCAwIDUxMiA1MTI7IiB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCA1MTIgNTEyIiB3aWR0aD0iNTEycHgiIHhtbDpzcGFjZT0icHJlc2VydmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPjxnIGlkPSJfeDMxXzQ0LWdpdGxhYiI+PGc+PGcgaWQ9IlhNTElEXzZfIj48Zz48Zz48cGF0aCBkPSJNNTIuNzUyLDIwNS41MDFsMjAzLjE4LDI2NC4wN2wtMjIyLjctMTY1LjI5Yy02LjExLTQuNTktOC43Mi0xMi41OC02LjM4LTE5Ljc3MWwyNS44Ny03OS4wNSAgICAgICBMNTIuNzUyLDIwNS41MDF6IiBzdHlsZT0iZmlsbDojRkNBMzI2OyIvPjwvZz48Zz48cG9seWdvbiBwb2ludHM9IjE3MS4zMDIsMjA1LjQ2MSAyNTYuMDEyLDQ2OS41NDEgMjU1LjkzMiw0NjkuNTcxIDUyLjc1MiwyMDUuNTAxIDUyLjgxMiwyMDUuNDYxICAgICAgICAgICAgICIgc3R5bGU9ImZpbGw6I0ZDNkQyNjsiLz48L2c+PGc+PHBvbHlnb24gcG9pbnRzPSIzNDAuNzMxLDIwNS40NjEgMjU2LjAyMSw0NjkuNTcxIDI1Ni4wMTIsNDY5LjU0MSAxNzEuMzAyLDIwNS40NjEgMTcxLjM5MiwyMDUuNDYxICAgICAgICAzNDAuNjQyLDIwNS40NjEgICAgICAiIHN0eWxlPSJmaWxsOiNFMjQzMjk7Ii8+PC9nPjxnPjxwb2x5Z29uIHBvaW50cz0iNDU5LjI5MiwyMDUuNTAxIDI1Ni4wMjEsNDY5LjU3MSAzNDAuNzMxLDIwNS40NjEgNDU5LjIzMSwyMDUuNDYxICAgICAgIiBzdHlsZT0iZmlsbDojRkM2RDI2OyIvPjwvZz48Zz48cGF0aCBkPSJNNDg1LjE5MSwyODQuNTExYzIuMjQsNy4xOS0wLjI3LDE1LjE4MS02LjQ3LDE5Ljc3MWwtMjIyLjcsMTY1LjI5bDIwMy4yNzEtMjY0LjA3bDAuMDI5LTAuMDQgICAgICAgTDQ4NS4xOTEsMjg0LjUxMXoiIHN0eWxlPSJmaWxsOiNGQ0EzMjY7Ii8+PC9nPjxnPjxwYXRoIGQ9Ik00MDguNDcyLDQ4LjQyMWw1MC43NiwxNTcuMDRoLTExOC41aC0wLjA5bDUwLjg1LTE1Ny4wNCAgICAgICBDMzk0LjM2MSw0MC40MzEsNDA1LjY4Miw0MC40MzEsNDA4LjQ3Miw0OC40MjF6IiBzdHlsZT0iZmlsbDojRTI0MzI5OyIvPjwvZz48Zz48cGF0aCBkPSJNMTcxLjM5MiwyMDUuNDYxaC0wLjA5SDUyLjgxMmw1MC43Ni0xNTcuMDRjMi44Ny03Ljk5LDE0LjE5LTcuOTksMTYuOTgsMCAgICAgICBDMTIwLjU1Miw0OC40MjEsMTcxLjMwMiwyMDUuNDYxLDE3MS4zOTIsMjA1LjQ2MXoiIHN0eWxlPSJmaWxsOiNFMjQzMjk7Ii8+PC9nPjwvZz48L2c+PC9nPjwvZz48ZyBpZD0iTGF5ZXJfMSIvPjwvc3ZnPg==
-// @version 9
+// @version 10
 // @author Arylo
 // @include /^https:\/\/(git(lab)?|code)\.[^/]+\/.*\/-\/settings\/ci_cd$/
 // @include /^https:\/\/(git(lab)?|code)\.[^/]+\/.*\/-\/merge_requests\/new\b/
@@ -812,10 +812,10 @@
           }();
           var ctxClearTimeout = context.clearTimeout !== root.clearTimeout && context.clearTimeout, ctxNow = Date && Date.now !== root.Date.now && Date.now, ctxSetTimeout = context.setTimeout !== root.setTimeout && context.setTimeout;
           var nativeCeil = Math2.ceil, nativeFloor = Math2.floor, nativeGetSymbols = Object2.getOwnPropertySymbols, nativeIsBuffer = Buffer2 ? Buffer2.isBuffer : undefined, nativeIsFinite = context.isFinite, nativeJoin = arrayProto.join, nativeKeys = overArg(Object2.keys, Object2), nativeMax = Math2.max, nativeMin = Math2.min, nativeNow = Date.now, nativeParseInt = context.parseInt, nativeRandom = Math2.random, nativeReverse = arrayProto.reverse;
-          var DataView = getNative(context, "DataView"), Map2 = getNative(context, "Map"), Promise2 = getNative(context, "Promise"), Set = getNative(context, "Set"), WeakMap = getNative(context, "WeakMap"), nativeCreate = getNative(Object2, "create");
+          var DataView = getNative(context, "DataView"), Map = getNative(context, "Map"), Promise2 = getNative(context, "Promise"), Set = getNative(context, "Set"), WeakMap = getNative(context, "WeakMap"), nativeCreate = getNative(Object2, "create");
           var metaMap = WeakMap && new WeakMap();
           var realNames = {};
-          var dataViewCtorString = toSource(DataView), mapCtorString = toSource(Map2), promiseCtorString = toSource(Promise2), setCtorString = toSource(Set), weakMapCtorString = toSource(WeakMap);
+          var dataViewCtorString = toSource(DataView), mapCtorString = toSource(Map), promiseCtorString = toSource(Promise2), setCtorString = toSource(Set), weakMapCtorString = toSource(WeakMap);
           var symbolProto = Symbol2 ? Symbol2.prototype : undefined, symbolValueOf = symbolProto ? symbolProto.valueOf : undefined, symbolToString = symbolProto ? symbolProto.toString : undefined;
           function lodash2(value) {
             if (isObjectLike(value) && !isArray(value) && !(value instanceof LazyWrapper)) {
@@ -1060,7 +1060,7 @@
             this.size = 0;
             this.__data__ = {
               "hash": new Hash(),
-              "map": new (Map2 || ListCache)(),
+              "map": new (Map || ListCache)(),
               "string": new Hash()
             };
           }
@@ -1125,7 +1125,7 @@
             var data = this.__data__;
             if (data instanceof ListCache) {
               var pairs = data.__data__;
-              if (!Map2 || pairs.length < LARGE_ARRAY_SIZE - 1) {
+              if (!Map || pairs.length < LARGE_ARRAY_SIZE - 1) {
                 pairs.push([key, value]);
                 this.size = ++data.size;
                 return this;
@@ -2869,7 +2869,7 @@
             return result2;
           };
           var getTag = baseGetTag;
-          if (DataView && getTag(new DataView(new ArrayBuffer(1))) != dataViewTag || Map2 && getTag(new Map2()) != mapTag || Promise2 && getTag(Promise2.resolve()) != promiseTag || Set && getTag(new Set()) != setTag || WeakMap && getTag(new WeakMap()) != weakMapTag) {
+          if (DataView && getTag(new DataView(new ArrayBuffer(1))) != dataViewTag || Map && getTag(new Map()) != mapTag || Promise2 && getTag(Promise2.resolve()) != promiseTag || Set && getTag(new Set()) != setTag || WeakMap && getTag(new WeakMap()) != weakMapTag) {
             getTag = function(value) {
               var result2 = baseGetTag(value), Ctor = result2 == objectTag ? value.constructor : undefined, ctorString = Ctor ? toSource(Ctor) : "";
               if (ctorString) {
@@ -5624,32 +5624,68 @@
   // packages/MdGenerator/index.ts
   init_GM_addStyle();
   var import_lodash = __toESM(require_lodash());
+
+  // packages/MdGenerator/MdTools.ts
+  init_GM_addStyle();
   var INDENT_SPACE_LENGTH = 2;
-  var indent = (level) => Array(level * INDENT_SPACE_LENGTH).fill(" ").join("");
-  var enter = () => "\n";
-  var header = (level) => (text2) => {
-    return `${Array(level).fill("#").join("")} ${text2}`;
-  };
-  var h1 = header(1);
-  var h2 = header(2);
-  var h3 = header(3);
-  var h4 = header(4);
-  var h5 = header(5);
-  var text = (content = "", { level = 1 } = {}) => `${indent(level - 1)}${content}${enter()}`;
-  var anchor = (key, url) => `[${key}]: ${url}`;
-  var hyperlink = (label, url) => `[${label}](${url})`;
-  var hyperlinkWithKey = (label, key) => `[${label}][${key}]`;
-  var image = (url, alt = "") => `!${hyperlink(alt, url)}`;
-  var imageByKey = (key, alt = "") => `!${hyperlinkWithKey(alt, key)}`;
+  function indent(level, content = "") {
+    return `${Array((level - 1) * INDENT_SPACE_LENGTH).fill(" ").join("")}${content}`;
+  }
+  function enter() {
+    return "\n";
+  }
+  var header = (level) => (text2 = "") => `${Array(level).fill("#").join("")} ${text2}`.trim();
+  function h1(...args) {
+    return header(1)(...args);
+  }
+  function h2(...args) {
+    return header(2)(...args);
+  }
+  function h3(...args) {
+    return header(3)(...args);
+  }
+  function h4(...args) {
+    return header(4)(...args);
+  }
+  function h5(...args) {
+    return header(5)(...args);
+  }
+  function text(content = "") {
+    return content;
+  }
+  function anchor(key, url) {
+    return `[${key}]: ${url}`;
+  }
+  function hyperlink(label, url) {
+    return `[${label}](${url})`;
+  }
+  function hyperlinkWithKey(label, key) {
+    return `[${label}][${key}]`;
+  }
+  function image(url, alt = "") {
+    return `!${hyperlink(alt, url)}`;
+  }
+  function imageByKey(key, alt = "") {
+    return `!${hyperlinkWithKey(alt, key)}`;
+  }
+  function listItem(text2 = "") {
+    return `- ${text2}`.trimEnd();
+  }
+  function taskItem(text2 = "", { selected = false } = {}) {
+    return `[${selected ? "x" : " "}] ${text2}`.trimEnd();
+  }
+
+  // packages/MdGenerator/index.ts
+  function getOption(options, key, defaultValue) {
+    return options[key] ?? defaultValue;
+  }
+  function getLevelFromOptions(options = {}) {
+    const { level = 1 } = options;
+    return level;
+  }
   var Template = class {
     constructor(text2) {
       this.anchorMap = {};
-      this.header = (level) => (text2) => {
-        this.templateContent += header(level)(text2);
-        this.templateContent += `${enter()}${enter()}`;
-        return this.headerNextUtils;
-      };
-      this.tableMap = /* @__PURE__ */ new Map();
       this.templateContent = text2;
       this.headerNextUtils = {
         text: this.text.bind(this),
@@ -5664,19 +5700,29 @@
       };
     }
     h1(text2) {
-      return this.header(1)(text2);
+      this.text(h1(text2));
+      this.emptyLine();
+      return this.headerNextUtils;
     }
     h2(text2) {
-      return this.header(2)(text2);
+      this.text(h2(text2));
+      this.emptyLine();
+      return this.headerNextUtils;
     }
     h3(text2) {
-      return this.header(3)(text2);
+      this.text(h3(text2));
+      this.emptyLine();
+      return this.headerNextUtils;
     }
     h4(text2) {
-      return this.header(4)(text2);
+      this.text(h4(text2));
+      this.emptyLine();
+      return this.headerNextUtils;
     }
     h5(text2) {
-      return this.header(5)(text2);
+      this.text(h5(text2));
+      this.emptyLine();
+      return this.headerNextUtils;
     }
     [Symbol.toStringTag]() {
       return [
@@ -5687,80 +5733,74 @@
         Object.keys(this.anchorMap).length && enter()
       ].filter(Boolean).join("").replace(/\n(\s*\n){2,}/g, "\n\n");
     }
-    text(content = "", { level = 1 } = {}) {
-      this.templateContent += text(content, { level });
+    text(content = "", opts) {
+      this.templateContent += indent(getLevelFromOptions(opts), `${text(content)}${enter()}`);
       return this.contentNextUtils;
     }
-    listItem(text2 = "", { level = 1 } = {}) {
-      return this.text(`- ${text2}`, { level });
+    listItem(text2 = "", opts) {
+      return this.text(listItem(text2), { level: getLevelFromOptions(opts) });
     }
-    taskItem(text2 = "", { selected = false, level = 1 } = {}) {
-      return this.listItem(`[${selected ? "x" : " "}] ${text2}`, { level });
+    taskItem(text2 = "", opts) {
+      return this.listItem(taskItem(text2, { selected: getOption(opts || {}, "selected", false) }), { level: getLevelFromOptions(opts) });
     }
-    hyperlink(text2, link, { anchorKey = "", level = 1 } = {}) {
+    hyperlink(text2, link, opts) {
       let content;
+      const anchorKey = getOption(opts || {}, "anchorKey", "");
       if (typeof anchorKey === "string" && anchorKey.length) {
-        this.anchor(anchorKey, link);
+        anchor(anchorKey, link);
         content = hyperlinkWithKey(text2, anchorKey);
       } else {
         content = hyperlink(text2, link);
       }
-      return this.text(content, { level });
+      return this.text(content, { level: getLevelFromOptions(opts) });
     }
-    image(url, { alt = "", anchorKey = "", level = 1 } = {}) {
+    image(url, opts) {
       let content;
+      const anchorKey = getOption(opts || {}, "anchorKey", "");
+      const alt = getOption(opts || {}, "alt", "");
       if (typeof anchorKey === "string" && anchorKey.length) {
         this.anchor(anchorKey, url);
         content = imageByKey(alt, anchorKey);
       } else {
         content = image(alt, url);
       }
-      return this.text(content, { level });
+      return this.text(content, { level: getLevelFromOptions(opts) });
     }
-    appendTableHeader(flag, key, title) {
-      if (!this.tableMap.has(flag)) {
-        this.tableMap.set(flag, { header: [], body: [] });
-      }
-      this.tableMap.get(flag).header.push({ key, title });
-    }
-    appendTableBody(flag, row) {
-      if (!this.tableMap.has(flag)) {
-        this.tableMap.set(flag, { header: [], body: [] });
-      }
-      this.tableMap.get(flag).body.push(row);
-    }
-    table({ level = 1 } = {}) {
-      const flag = Symbol("");
-      const action = {
+    table(opts) {
+      const tableMap = { header: [], body: [] };
+      const actionMap = {
         header: (row) => {
           row.forEach(({ key, title }) => {
-            this.appendTableHeader(flag, key, title);
+            tableMap.header.push({ key, title });
           });
-          return action;
+          return actionMap;
         },
         body: (row) => {
-          this.appendTableBody(flag, row);
-          return action;
+          tableMap.body.push(row);
+          return actionMap;
         },
         end: () => {
-          if (!this.tableMap.has(flag) || !this.tableMap.get(flag).header.length) return "";
-          const headerContent = this.tableMap.get(flag).header.map(({ title }) => `|${title}`).join("") + "|";
-          this.text(headerContent, { level });
-          const separator = this.tableMap.get(flag).header.map(() => "|--").join("") + "|";
-          this.text(separator, { level });
-          this.tableMap.get(flag).body.forEach((row) => {
-            const content = this.tableMap.get(flag).header.map(({ key }) => `|${(row[key] ?? "").toString().replace(/\|/g, "|")}`).join("") + "|";
-            this.text(content, { level });
+          if (!tableMap.header.length) return "";
+          const { header: header2, body } = tableMap;
+          const headerContent = header2.map(({ title }) => `|${title}`).join("") + "|";
+          this.text(headerContent, { level: getLevelFromOptions(opts) });
+          const separator = header2.map(() => "|--").join("") + "|";
+          this.text(separator, { level: getLevelFromOptions(opts) });
+          body.forEach((row) => {
+            const content = header2.map(({ key }) => `|${(row[key] ?? "").toString().replace(/\|/g, "|")}`).join("") + "|";
+            this.text(content, { level: getLevelFromOptions(opts) });
           });
-          this.tableMap.delete(flag);
         }
       };
-      return action;
+      return actionMap;
     }
     anchor(key, link) {
       this.anchorMap[key] = link;
     }
     emptyLine() {
+      if (!this.templateContent.endsWith(enter())) {
+        this.templateContent += enter();
+      }
       this.templateContent += enter();
     }
     modify(callback) {
