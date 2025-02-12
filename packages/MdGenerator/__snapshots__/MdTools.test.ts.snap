@@ -1,0 +1,84 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Markdown Tools > anchor 1`] = `"[key]: https://example.com/pathname"`;
+
+exports[`Markdown Tools > enter 1`] = `
+"
+"
+`;
+
+exports[`Markdown Tools > h1 > Exist title 1`] = `"# Text"`;
+
+exports[`Markdown Tools > h1 > No title 1`] = `"#"`;
+
+exports[`Markdown Tools > h2 > Exist title 1`] = `"## Text"`;
+
+exports[`Markdown Tools > h2 > No title 1`] = `"##"`;
+
+exports[`Markdown Tools > h3 > Exist title 1`] = `"### Text"`;
+
+exports[`Markdown Tools > h3 > No title 1`] = `"###"`;
+
+exports[`Markdown Tools > h4 > Exist title 1`] = `"#### Text"`;
+
+exports[`Markdown Tools > h4 > No title 1`] = `"####"`;
+
+exports[`Markdown Tools > h5 > Exist title 1`] = `"##### Text"`;
+
+exports[`Markdown Tools > h5 > No title 1`] = `"#####"`;
+
+exports[`Markdown Tools > hyperlink 1`] = `"[label](https://example.com/pathname)"`;
+
+exports[`Markdown Tools > hyperlinkWithKey 1`] = `"[label][key]"`;
+
+exports[`Markdown Tools > image > Exist alt 1`] = `"![alt](https://example.com/pathname)"`;
+
+exports[`Markdown Tools > image > No alt 1`] = `"![](https://example.com/pathname)"`;
+
+exports[`Markdown Tools > imageByKey > Exist alt 1`] = `"![alt][key]"`;
+
+exports[`Markdown Tools > imageByKey > No alt 1`] = `"![][key]"`;
+
+exports[`Markdown Tools > indent > Level 1 1`] = `""`;
+
+exports[`Markdown Tools > indent > Level 1 with text 1`] = `"text"`;
+
+exports[`Markdown Tools > indent > Level 2 1`] = `"  "`;
+
+exports[`Markdown Tools > indent > Level 2 with text 1`] = `"  text"`;
+
+exports[`Markdown Tools > indent > Level 3 1`] = `"    "`;
+
+exports[`Markdown Tools > indent > Level 3 with text 1`] = `"    text"`;
+
+exports[`Markdown Tools > indent > Level 4 1`] = `"      "`;
+
+exports[`Markdown Tools > indent > Level 4 with text 1`] = `"      text"`;
+
+exports[`Markdown Tools > indent > Level 5 1`] = `"        "`;
+
+exports[`Markdown Tools > indent > Level 5 with text 1`] = `"        text"`;
+
+exports[`Markdown Tools > listItem > Exist content 1`] = `"- Text"`;
+
+exports[`Markdown Tools > listItem > No content 1`] = `"-"`;
+
+exports[`Markdown Tools > taskItem > Exist content 1`] = `"[ ] Text"`;
+
+exports[`Markdown Tools > taskItem > Exist content and selected 1`] = `"[x] Text"`;
+
+exports[`Markdown Tools > taskItem > Exist content and unselect 1`] = `"[ ] Text"`;
+
+exports[`Markdown Tools > taskItem > Exist content with empty options 1`] = `"[ ] Text"`;
+
+exports[`Markdown Tools > taskItem > No content 1`] = `"[ ]"`;
+
+exports[`Markdown Tools > taskItem > No content and selected 1`] = `"[x]"`;
+
+exports[`Markdown Tools > taskItem > No content and unselect 1`] = `"[ ]"`;
+
+exports[`Markdown Tools > taskItem > No content with empty options 1`] = `"[ ]"`;
+
+exports[`Markdown Tools > text > Exist content 1`] = `"text"`;
+
+exports[`Markdown Tools > text > No content 1`] = `""`;

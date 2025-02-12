@@ -1,24 +1,27 @@
 import lodash from 'lodash'
+import * as MdTools from './MdTools'
+export { MdTools }
 
-const INDENT_SPACE_LENGTH = 2
-
-const indent = (level: number) => Array(level * INDENT_SPACE_LENGTH).fill(' ').join('')
-export const enter = () => '\n'
-
-const header = (level: number) => (text: string) => {
-  return `${Array(level).fill('#').join('')} ${text}`
+interface LevelOptions {
+  level: number,
 }
-export const h1 = header(1)
-export const h2 = header(2)
-export const h3 = header(3)
-export const h4 = header(4)
-export const h5 = header(5)
-export const text = (content = '', { level = 1 } = {}) => `${indent(level - 1)}${content}${enter()}`
-export const anchor = (key: string, url: string) => `[${key}]: ${url}`
-export const hyperlink = (label: string, url: string) => `[${label}](${url})`
-export const hyperlinkWithKey = (label: string, key: string) => `[${label}][${key}]`
-export const image = (url: string, alt: string = '') => `!${hyperlink(alt, url)}`
-export const imageByKey = (key: string, alt: string = '') => `!${hyperlinkWithKey(alt, key)}`
+
+function getOption<O extends Record<string, any>, K extends keyof O>(options: O, key: K, defaultValue: O[K]): O[K];
+function getOption<O extends Record<string, any>, K extends keyof O>(options: O, key: K, defaultValue?: O[K]) {
+  return options[key] ?? defaultValue
+}
+
+function getLevelFromOptions(options: Partial<LevelOptions> = {}) {
+  const { level = 1 } = options
+  return level
+}
+
+type TextOptions = Partial<LevelOptions>
+type ListItemOptions = Partial<LevelOptions>
+type TaskItemOptions = Partial<LevelOptions & { selected: boolean }>
+type TableOptions = Partial<LevelOptions>
+type HyperlinkOptions = Partial<LevelOptions & { anchorKey: string }>
+type ImageOptions = Partial<LevelOptions & { anchorKey: string, alt: string }>
 
 class Template {
   protected templateContent: string
@@ -40,114 +43,114 @@ class Template {
     }
   }
 
-  private header = (level: number) => (text: string) => {
-    this.templateContent += header(level)(text)
-    this.templateContent += `${enter()}${enter()}`
+  public h1(text: string) {
+    this.text(MdTools.h1(text))
+    this.emptyLine()
     return this.headerNextUtils
   }
-  public h1(text: string) {
-    return this.header(1)(text)
-  }
   public h2(text: string) {
-    return this.header(2)(text)
+    this.text(MdTools.h2(text))
+    this.emptyLine()
+    return this.headerNextUtils
   }
   public h3(text: string) {
-    return this.header(3)(text)
+    this.text(MdTools.h3(text))
+    this.emptyLine()
+    return this.headerNextUtils
   }
   public h4(text: string) {
-    return this.header(4)(text)
+    this.text(MdTools.h4(text))
+    this.emptyLine()
+    return this.headerNextUtils
   }
   public h5(text: string) {
-    return this.header(5)(text)
+    this.text(MdTools.h5(text))
+    this.emptyLine()
+    return this.headerNextUtils
   }
   public [Symbol.toStringTag]() {
     return [
       this.templateContent,
-      this.templateContent && !/\n$/.test(this.templateContent) && enter(),
-      Object.keys(this.anchorMap).length && enter(),
-      Object.entries(this.anchorMap).map(([key, value]) => anchor(key, value)).join(enter()),
-      Object.keys(this.anchorMap).length && enter(),
+      this.templateContent && !/\n$/.test(this.templateContent) && MdTools.enter(),
+      Object.keys(this.anchorMap).length && MdTools.enter(),
+      Object.entries(this.anchorMap).map(([key, value]) => MdTools.anchor(key, value)).join(MdTools.enter()),
+      Object.keys(this.anchorMap).length && MdTools.enter(),
     ].filter(Boolean).join('').replace(/\n(\s*\n){2,}/g, '\n\n')
   }
 
-  public text(content = '', { level = 1 } = {}) {
-    this.templateContent += text(content, { level })
+  public text(content = '', opts?: TextOptions) {
+    this.templateContent += MdTools.indent(getLevelFromOptions(opts), `${MdTools.text(content)}${MdTools.enter()}`)
     return this.contentNextUtils
   }
-  public listItem(text = '', { level = 1 } = {}) {
-    return this.text(`- ${text}`, { level })
+  public listItem(text = '', opts?: ListItemOptions) {
+    return this.text(MdTools.listItem(text), { level: getLevelFromOptions(opts) })
   }
-  public taskItem(text = '', { selected = false, level = 1 } = {}) {
-    return this.listItem(`[${selected ? 'x' : ' '}] ${text}`, { level })
+  public taskItem(text = '', opts?: TaskItemOptions) {
+    return this.listItem(MdTools.taskItem(text, { selected: getOption(opts || {}, 'selected', false) }), { level: getLevelFromOptions(opts) })
   }
-  public hyperlink(text: string, link: string, { anchorKey = '', level = 1 } = {}) {
+  public hyperlink(text: string, link: string, opts?: HyperlinkOptions) {
     let content!: string
+    const anchorKey = getOption(opts || {}, 'anchorKey', '')
     if (typeof anchorKey === 'string' && anchorKey.length) {
-      this.anchor(anchorKey, link)
-      content = hyperlinkWithKey(text, anchorKey)
+      MdTools.anchor(anchorKey, link)
+      content = MdTools.hyperlinkWithKey(text, anchorKey)
     } else {
-      content = hyperlink(text, link)
+      content = MdTools.hyperlink(text, link)
     }
-    return this.text(content, { level })
+    return this.text(content, { level: getLevelFromOptions(opts) })
   }
-  public image(url: string, { alt = '', anchorKey = '', level = 1 } = {}) {
+  public image(url: string, opts?: ImageOptions) {
     let content!: string
+    const anchorKey = getOption(opts || {}, 'anchorKey', '')
+    const alt = getOption(opts || {}, 'alt', '') as string
     if (typeof anchorKey === 'string' && anchorKey.length) {
       this.anchor(anchorKey, url)
-      content = imageByKey(alt, anchorKey)
+      content = MdTools.imageByKey(alt, anchorKey)
     } else {
-      content = image(alt, url)
+      content = MdTools.image(alt, url)
     }
-    return this.text(content, { level })
+    return this.text(content, { level: getLevelFromOptions(opts) })
   }
 
-  private tableMap = new Map<Symbol, { header: { key: string, title: string }[], body: Record<string, string | number>[]}>()
-  private appendTableHeader(flag: Symbol, key: string, title: string) {
-    if (!this.tableMap.has(flag)) {
-      this.tableMap.set(flag, { header: [], body: [] })
-    }
-    this.tableMap.get(flag)!.header.push({ key, title })
-  }
-  private appendTableBody(flag: Symbol, row: Record<string, string | number>) {
-    if (!this.tableMap.has(flag)) {
-      this.tableMap.set(flag, { header: [], body: [] })
-    }
-    this.tableMap.get(flag)!.body.push(row)
-  }
-  public table ({ level = 1 } = {}) {
-    const flag = Symbol('')
-    const action = {
+  public table(opts?: TableOptions) {
+    const tableMap: { header: { key: string, title: string }[], body: Record<string, string | number>[]} = { header: [], body: [] }
+    const actionMap = {
       header: (row: { key: string, title: string }[]) => {
         row.forEach(({ key, title }) => {
-          this.appendTableHeader(flag, key, title)
+          tableMap.header.push({ key, title })
         })
-        return action
+        return actionMap
       },
       body: (row: Record<string, string | number>) => {
-        this.appendTableBody(flag, row)
-        return action
+        tableMap.body.push(row)
+        return actionMap
       },
       end: () => {
-        if (!this.tableMap.has(flag) || !this.tableMap.get(flag)!.header.length) return ''
-        const headerContent = this.tableMap.get(flag)!.header.map(({ title }) => `|${title}`).join('') + '|'
-        this.text(headerContent, { level })
-        const separator = this.tableMap.get(flag)!.header.map(() => '|--').join('') + '|'
-        this.text(separator, { level })
-        this.tableMap.get(flag)!.body.forEach((row) => {
-          const content = this.tableMap.get(flag)!.header.map(({ key }) => `|${(row[key] ?? '').toString().replace(/\|/g, '\|')}`).join('') + '|'
-          this.text(content, { level })
+        if (!tableMap.header.length) return ''
+
+        const { header, body } = tableMap
+
+        const headerContent = header.map(({ title }) => `|${title}`).join('') + '|'
+        this.text(headerContent, { level: getLevelFromOptions(opts) })
+        const separator = header.map(() => '|--').join('') + '|'
+        this.text(separator, { level: getLevelFromOptions(opts) })
+        body.forEach((row) => {
+          const content = header.map(({ key }) => `|${(row[key] ?? '').toString().replace(/\|/g, '\|')}`).join('') + '|'
+          this.text(content, { level: getLevelFromOptions(opts) })
         })
-        this.tableMap.delete(flag)
       }
     }
-    return action
+    return actionMap
   }
 
   public anchor(key: string, link: string) {
     this.anchorMap[key] = link
   }
   public emptyLine() {
-    this.templateContent += enter()
+    if (!this.templateContent.endsWith(MdTools.enter())) {
+      this.templateContent += MdTools.enter()
+    }
+    this.templateContent += MdTools.enter()
   }
   public modify(callback: (content: string) => string) {
     this.templateContent = callback(lodash.cloneDeep(this.templateContent))
