@@ -159,6 +159,12 @@ jobs:
             arylo/cron-exec:alpine-3.9
           cache-from: type=registry,ref=arylo/cron-exec:github-action-buildcache
           cache-to: type=registry,ref=arylo/cron-exec:github-action-buildcache,mode=max
+      - name: Push cron-exec readme
+        uses: peter-evans/dockerhub-description@v4
+        with:
+          username: ${{ vars.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          readme-filepath: ./src/docker/cron-exec/README.md
       - name: Build restart-after-change
         uses: docker/build-push-action@v6
         with:
@@ -171,6 +177,12 @@ jobs:
             arylo/restart-after-change:alpine-3.9
           cache-from: type=registry,ref=arylo/restart-after-change:github-action-buildcache
           cache-to: type=registry,ref=arylo/restart-after-change:github-action-buildcache,mode=max
+      - name: Push cron-exec readme
+        uses: peter-evans/dockerhub-description@v4
+        with:
+          username: ${{ vars.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          readme-filepath: ./src/docker/restart-after-change/README.md
 
   readme-push:
     runs-on: ubuntu-latest
