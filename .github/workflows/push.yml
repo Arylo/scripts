@@ -24,4 +24,4 @@ jobs:
           username: ${{ vars.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
           repository: arylo/restart-after-change
-          readme-filepath: /workspace/scripts/src/docker/restart-after-change/README.md
+          readme-filepath: ./src/docker/restart-after-change/README.md
