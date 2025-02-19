@@ -5,23 +5,105 @@ on:
   - pull_request
 
 jobs:
-  docker_push:
+  change_files:
     runs-on: ubuntu-latest
+    outputs:
+      dockerChange: ${{ steps.docker-changed-files.outputs.any_changed }}
+      qinglongChange: ${{ steps.qinglong-changed-files.outputs.any_changed }}
+      monkeyChange: ${{ steps.monkey-changed-files.outputs.any_changed }}
+      readmeChange: ${{ steps.readme-changed-files.outputs.any_changed }}
     steps:
       - uses: actions/checkout@v4
-      - name: Login to Docker Hub
-        uses: docker/login-action@v3
+      - id: qinglong-changed-files
+        uses: tj-actions/changed-files@v45
         with:
-          username: ${{ vars.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-      - name: Push cron-exec readme
-        uses: peter-evans/dockerhub-description@v4
+          files: |
+            src/qinglong/**
+            etc/**
+            !etc/build/readme*
+            packages/**
+            .nvmrc
+            package*.json
+            tsconfig.json
+      - id: monkey-changed-files
+        uses: tj-actions/changed-files@v45
         with:
-          username: ${{ vars.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-          repository: arylo/restart-after-change
-          readme-filepath: ./src/docker/restart-after-change/README.md
+          files: |
+            src/monkey/**
+            etc/**
+            !etc/build/readme*
+            packages/**
+            .nvmrc
+            package*.json
+            tsconfig.json
+      - id: docker-changed-files
+        uses: tj-actions/changed-files@v45
+        with:
+          files: |
+            .github/**
+            src/docker/**
+      - id: readme-changed-files
+        uses: tj-actions/changed-files@v45
+        with:
+          files: |
+            !etc/build/readme*
+            src/**/README.md
+  code_check:
+    runs-on: ubuntu-latest
+    needs:
+      - change_files
+    if: needs.change_files.outputs.qinglongChange == 'true' || needs.change_files.outputs.monkeyChange == 'true'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install dependencies
+        run: npm ci
+      - name: TS Type Check
+        run: npm run lint:type-check
+      - name: unit test
+        run: npm run test
+  monkey_actions:
+    needs:
+      - change_files
+      - code_check
+    if: needs.change_files.outputs.monkeyChange == 'true'
+    uses: ./.github/workflows/monkey_push.yml
+  qinglong_actions:
+    needs:
+      - change_files
+      - code_check
+    if: needs.change_files.outputs.qinglongChange == 'true'
+    uses: ./.github/workflows/qinglong_push.yml
+  docker_actions:
+    needs:
+      - change_files
+      - code_check
+    if: needs.change_files.outputs.dockerChange == 'true'
+    uses: ./.github/workflows/docker_push.yml
+    with:
+      DOCKERHUB_USERNAME: ${{ vars.DOCKERHUB_USERNAME }}
+    secrets:
+      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+
+  readme-push:
+    runs-on: ubuntu-latest
+    needs:
+      - change_files
+      - monkey_actions
+      - qinglong_actions
+      - docker_actions
+    if: needs.change_files.outputs.readmeChange == 'true'
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install dependencies
+        run: npm ci
+      - name: Generate Readme files
+        run: npm run build:readme
+      - name: Deploy Readme files
+        if: github.event_name == 'push' && github.ref_name == github.event.repository.default_branch
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: .
+          branch: ${{ github.event.repository.default_branch }}
+          commit-message: 'chore: update README.md'
