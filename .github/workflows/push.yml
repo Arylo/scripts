@@ -5,12 +5,13 @@ on:
   - pull_request
 
 jobs:
-  common:
+  change_files:
     runs-on: ubuntu-latest
     outputs:
       dockerChange: ${{ steps.docker-changed-files.outputs.any_changed }}
       qinglongChange: ${{ steps.qinglong-changed-files.outputs.any_changed }}
       monkeyChange: ${{ steps.monkey-changed-files.outputs.any_changed }}
+      readmeChange: ${{ steps.readme-changed-files.outputs.any_changed }}
     steps:
       - uses: actions/checkout@v4
       - id: qinglong-changed-files
@@ -19,33 +20,68 @@ jobs:
           files: |
             src/qinglong/**
             etc/**
-            !etc/build/readme*.ts
+            !etc/build/readme*
             packages/**
-            .nvmrc
             package*.json
             tsconfig.json
+      - name: List all changed files
+        if: steps.qinglong-changed-files.outputs.any_changed == 'true'
+        env:
+          ALL_CHANGED_FILES: ${{ steps.qinglong-changed-files.outputs.all_changed_files }}
+        run: |
+          for file in ${ALL_CHANGED_FILES}; do
+            echo "$file was changed"
+          done
       - id: monkey-changed-files
         uses: tj-actions/changed-files@v45
         with:
           files: |
             src/monkey/**
             etc/**
-            !etc/build/readme*.ts
+            !etc/build/readme*
             packages/**
-            .nvmrc
             package*.json
             tsconfig.json
+      - name: List all changed files
+        if: steps.monkey-changed-files.outputs.any_changed == 'true'
+        env:
+          ALL_CHANGED_FILES: ${{ steps.monkey-changed-files.outputs.all_changed_files }}
+        run: |
+          for file in ${ALL_CHANGED_FILES}; do
+            echo "$file was changed"
+          done
       - id: docker-changed-files
         uses: tj-actions/changed-files@v45
         with:
           files: |
-            .github/**
             src/docker/**
+      - name: List all changed files
+        if: steps.docker-changed-files.outputs.any_changed == 'true'
+        env:
+          ALL_CHANGED_FILES: ${{ steps.docker-changed-files.outputs.all_changed_files }}
+        run: |
+          for file in ${ALL_CHANGED_FILES}; do
+            echo "$file was changed"
+          done
+      - id: readme-changed-files
+        uses: tj-actions/changed-files@v45
+        with:
+          files: |
+            etc/build/readme*
+            src/**/README.md
+      - name: List all changed files
+        if: steps.readme-changed-files.outputs.any_changed == 'true'
+        env:
+          ALL_CHANGED_FILES: ${{ steps.readme-changed-files.outputs.all_changed_files }}
+        run: |
+          for file in ${ALL_CHANGED_FILES}; do
+            echo "$file was changed"
+          done
   code_check:
     runs-on: ubuntu-latest
     needs:
-      - common
-    if: needs.common.outputs.qinglongChange == 'true' || needs.common.outputs.monkeyChange == 'true'
+      - change_files
+    if: needs.change_files.outputs.qinglongChange == 'true' || needs.change_files.outputs.monkeyChange == 'true'
     steps:
       - uses: actions/checkout@v4
       - name: Install dependencies
@@ -54,142 +90,35 @@ jobs:
         run: npm run lint:type-check
       - name: unit test
         run: npm run test
-      - name: Build Scripts
-        run: npm run build
-      - uses: actions/upload-artifact@v4
-        with:
-          name: dist
-          path: dist
-  monkey-push:
-    runs-on: ubuntu-latest
+  monkey_actions:
     needs:
-      - common
+      - change_files
       - code_check
-    if: needs.common.outputs.monkeyChange == 'true' && github.event_name == 'push' && github.ref_name == github.event.repository.default_branch
-    permissions:
-      contents: write
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
-        with:
-          name: dist
-          path: dist
-      - name: Deploy Monkey scripts
-        uses: JamesIves/github-pages-deploy-action@v4
-        with:
-          folder: dist/monkey
-          branch: monkey
-  qinglong-push:
-    runs-on: ubuntu-latest
+    if: needs.change_files.outputs.monkeyChange == 'true'
+    uses: ./.github/workflows/monkey_push.yml
+  qinglong_actions:
     needs:
-      - common
+      - change_files
       - code_check
-    if: needs.common.outputs.qinglongChange == 'true' && github.event_name == 'push' && github.ref_name == github.event.repository.default_branch
-    permissions:
-      contents: write
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
-        with:
-          name: dist
-          path: dist
-      - name: Deploy Qinglong scripts
-        uses: JamesIves/github-pages-deploy-action@v4
-        with:
-          folder: dist/qinglong
-          branch: qinglong
-
-  docker_check:
-    runs-on: ubuntu-latest
+    if: needs.change_files.outputs.qinglongChange == 'true'
+    uses: ./.github/workflows/qinglong_push.yml
+  docker_actions:
     needs:
-      - common
-    if: needs.common.outputs.dockerChange == 'true'
-    steps:
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-      - name: Build cron-exec
-        uses: docker/build-push-action@v6
-        with:
-          load: true
-          context: "{{defaultContext}}:./src/docker/cron-exec/"
-          tags: |
-            arylo/cron-exec:latest
-            arylo/cron-exec:alpine
-            arylo/cron-exec:alpine-3.9
-          cache-from: type=registry,ref=arylo/cron-exec:github-action-buildcache
-          cache-to: type=inline
-      - name: Build restart-after-change
-        uses: docker/build-push-action@v6
-        with:
-          load: true
-          context: "{{defaultContext}}:./src/docker/restart-after-change/"
-          tags: |
-            arylo/restart-after-change:latest
-            arylo/restart-after-change:alpine
-            arylo/restart-after-change:alpine-3.9
-          cache-from: type=registry,ref=arylo/restart-after-change:github-action-buildcache
-          cache-to: type=inline
-  docker_push:
-    runs-on: ubuntu-latest
-    needs:
-      - common
-      - docker_check
-    if: needs.common.outputs.dockerChange == 'true' && github.event_name == 'push' && github.ref_name == github.event.repository.default_branch
-    steps:
-      - name: Login to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ vars.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-      - name: Build cron-exec
-        uses: docker/build-push-action@v6
-        with:
-          push: true
-          load: true
-          context: "{{defaultContext}}:./src/docker/cron-exec/"
-          tags: |
-            arylo/cron-exec:latest
-            arylo/cron-exec:alpine
-            arylo/cron-exec:alpine-3.9
-          cache-from: type=registry,ref=arylo/cron-exec:github-action-buildcache
-          cache-to: type=registry,ref=arylo/cron-exec:github-action-buildcache,mode=max
-      - name: Push cron-exec readme
-        uses: peter-evans/dockerhub-description@v4
-        with:
-          username: ${{ vars.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-          readme-filepath: ./src/docker/cron-exec/README.md
-      - name: Build restart-after-change
-        uses: docker/build-push-action@v6
-        with:
-          push: true
-          load: true
-          context: "{{defaultContext}}:./src/docker/restart-after-change/"
-          tags: |
-            arylo/restart-after-change:latest
-            arylo/restart-after-change:alpine
-            arylo/restart-after-change:alpine-3.9
-          cache-from: type=registry,ref=arylo/restart-after-change:github-action-buildcache
-          cache-to: type=registry,ref=arylo/restart-after-change:github-action-buildcache,mode=max
-      - name: Push cron-exec readme
-        uses: peter-evans/dockerhub-description@v4
-        with:
-          username: ${{ vars.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-          readme-filepath: ./src/docker/restart-after-change/README.md
+      - change_files
+    if: needs.change_files.outputs.dockerChange == 'true'
+    uses: ./.github/workflows/docker_push.yml
+    with:
+      DOCKERHUB_USERNAME: ${{ vars.DOCKERHUB_USERNAME }}
+    secrets:
+      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
 
   readme-push:
     runs-on: ubuntu-latest
     needs:
-      - common
-      - code_check
-    if: github.event_name == 'push' && github.ref_name == github.event.repository.default_branch
+      - change_files
+      - monkey_actions
+      - qinglong_actions
+    if: always() && needs.change_files.outputs.readmeChange == 'true' && ((needs.monkey_actions.result == 'success' || needs.monkey_actions.result == 'skipped') || (needs.qinglong_actions.result == 'success' || needs.qinglong_actions.result == 'skipped'))
     permissions:
       contents: write
     steps:
@@ -199,6 +128,7 @@ jobs:
       - name: Generate Readme files
         run: npm run build:readme
       - name: Deploy Readme files
+        if: github.event_name == 'push' && github.ref_name == github.event.repository.default_branch
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           folder: .
