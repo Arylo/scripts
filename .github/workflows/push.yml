@@ -22,9 +22,16 @@ jobs:
             etc/**
             !etc/build/readme*
             packages/**
-            .nvmrc
             package*.json
             tsconfig.json
+      - name: List all changed files
+        if: steps.qinglong-changed-files.outputs.any_changed == 'true'
+        env:
+          ALL_CHANGED_FILES: ${{ steps.qinglong-changed-files.outputs.all_changed_files }}
+        run: |
+          for file in ${ALL_CHANGED_FILES}; do
+            echo "$file was changed"
+          done
       - id: monkey-changed-files
         uses: tj-actions/changed-files@v45
         with:
@@ -33,21 +40,43 @@ jobs:
             etc/**
             !etc/build/readme*
             packages/**
-            .nvmrc
             package*.json
             tsconfig.json
+      - name: List all changed files
+        if: steps.monkey-changed-files.outputs.any_changed == 'true'
+        env:
+          ALL_CHANGED_FILES: ${{ steps.monkey-changed-files.outputs.all_changed_files }}
+        run: |
+          for file in ${ALL_CHANGED_FILES}; do
+            echo "$file was changed"
+          done
       - id: docker-changed-files
         uses: tj-actions/changed-files@v45
         with:
           files: |
-            .github/**
             src/docker/**
+      - name: List all changed files
+        if: steps.docker-changed-files.outputs.any_changed == 'true'
+        env:
+          ALL_CHANGED_FILES: ${{ steps.docker-changed-files.outputs.all_changed_files }}
+        run: |
+          for file in ${ALL_CHANGED_FILES}; do
+            echo "$file was changed"
+          done
       - id: readme-changed-files
         uses: tj-actions/changed-files@v45
         with:
           files: |
-            !etc/build/readme*
+            etc/build/readme*
             src/**/README.md
+      - name: List all changed files
+        if: steps.readme-changed-files.outputs.any_changed == 'true'
+        env:
+          ALL_CHANGED_FILES: ${{ steps.readme-changed-files.outputs.all_changed_files }}
+        run: |
+          for file in ${ALL_CHANGED_FILES}; do
+            echo "$file was changed"
+          done
   code_check:
     runs-on: ubuntu-latest
     needs:
@@ -76,7 +105,6 @@ jobs:
   docker_actions:
     needs:
       - change_files
-      - code_check
     if: needs.change_files.outputs.dockerChange == 'true'
     uses: ./.github/workflows/docker_push.yml
     with:
@@ -90,8 +118,7 @@ jobs:
       - change_files
       - monkey_actions
       - qinglong_actions
-      - docker_actions
-    if: needs.change_files.outputs.readmeChange == 'true'
+    if: always() && needs.change_files.outputs.readmeChange == 'true' && ((needs.monkey_actions.result == 'success' || needs.monkey_actions.result == 'skipped') || (needs.qinglong_actions.result == 'success' || needs.qinglong_actions.result == 'skipped'))
     permissions:
       contents: write
     steps:

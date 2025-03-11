@@ -84,7 +84,7 @@ jobs:
     needs:
       - change_files
       - cron-exec-image
-    if: needs.change_files.outputs.cronExecReadmeChange == 'true' && ((needs.cron-exec-image.result == 'success' || needs.cron-exec-image.result == 'skipped')) && needs.change_files.outputs.needPush == 'true'
+    if: always() && needs.change_files.outputs.cronExecReadmeChange == 'true' && github.event_name == 'push' && (needs.cron-exec-image.result == 'success' || needs.cron-exec-image.result == 'skipped') && github.ref_name == github.event.repository.default_branch
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -103,7 +103,7 @@ jobs:
     needs:
       - change_files
       - cron-exec-image
-    if: needs.change_files.outputs.restartAfterChangeCodeChange == 'true' && (needs.cron-exec-image.result == 'success' || needs.cron-exec-image.result == 'skipped')
+    if: always() && needs.change_files.outputs.restartAfterChangeCodeChange == 'true' && (needs.cron-exec-image.result == 'success' || needs.cron-exec-image.result == 'skipped')
     runs-on: ubuntu-latest
     steps:
       - name: Login to Docker Hub
@@ -134,7 +134,7 @@ jobs:
     needs:
       - change_files
       - restart-after-change-image
-    if: needs.change_files.outputs.restartAfterChangeReadmeChange == 'true' && (needs.restart-after-change-image.result == 'success' || needs.restart-after-change-image.result == 'skipped') && github.event_name == 'push' && github.ref_name == github.event.repository.default_branch
+    if: always() && needs.change_files.outputs.restartAfterChangeReadmeChange == 'true' && github.event_name == 'push' && (needs.restart-after-change-image.result == 'success' || needs.restart-after-change-image.result == 'skipped') && github.ref_name == github.event.repository.default_branch
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
