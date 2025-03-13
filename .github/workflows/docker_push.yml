@@ -1,147 +1,33 @@
 on:
   workflow_call:
     inputs:
-      DOCKERHUB_USERNAME:
+      DOCKER_HUB_USERNAME:
         required: true
         type: string
     secrets:
-      DOCKERHUB_TOKEN:
+      DOCKER_HUB_TOKEN:
         required: true
 
-env:
-  DOCKERHUB_ZONE: arylo
-  DOCKER_ROOT_PATH: ./src/docker
-  DOCKER_BUILD_CACHE_TAG: github-action-buildcache
-
 jobs:
-  change_files:
-    runs-on: ubuntu-latest
-    outputs:
-      needPush: ${{ github.event_name == 'push' && github.ref_name == github.event.repository.default_branch }}
-      cronExecCodeChange: ${{ steps.cron-exec-code-changed-files.outputs.any_changed }}
-      cronExecReadmeChange: ${{ steps.cron-exec-readme-changed-files.outputs.any_changed }}
-      restartAfterChangeCodeChange: ${{ steps.restart-after-change-code-changed-files.outputs.any_changed }}
-      restartAfterChangeReadmeChange: ${{ steps.restart-after-change-readme-changed-files.outputs.any_changed }}
-    steps:
-      - uses: actions/checkout@v4
-      - id: cron-exec-code-changed-files
-        uses: tj-actions/changed-files@v45
-        with:
-            files: |
-              ${{ env.DOCKER_ROOT_PATH }}/cron-exec/**
-              !${{ env.DOCKER_ROOT_PATH }}/cron-exec/README.md
-      - id: cron-exec-readme-changed-files
-        uses: tj-actions/changed-files@v45
-        with:
-          files: |
-            ${{ env.DOCKER_ROOT_PATH }}/cron-exec/README.md
-      - id: restart-after-change-code-changed-files
-        uses: tj-actions/changed-files@v45
-        with:
-          files: |
-            ${{ env.DOCKER_ROOT_PATH }}/restart-after-change/**
-            !${{ env.DOCKER_ROOT_PATH }}/restart-after-change/README.md
-      - id: restart-after-change-readme-changed-files
-        uses: tj-actions/changed-files@v45
-        with:
-          files: |
-            ${{ env.DOCKER_ROOT_PATH }}/restart-after-change/README.md
-
-  cron-exec-image:
-    env:
-      IMAGE_NAME: cron-exec
+  cron-exec:
+    uses: ./.github/workflows/docker_image_action.yml
+    with:
       FOLDER_NAME: cron-exec
-    needs:
-      - change_files
-    if: needs.change_files.outputs.cronExecCodeChange == 'true'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Login to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ inputs.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-      - name: Build and push image
-        uses: docker/build-push-action@v6
-        with:
-          push: ${{ needs.change_files.outputs.needPush == 'true' }}
-          load: true
-          context: "{{defaultContext}}:${{ env.DOCKER_ROOT_PATH }}/${{ env.FOLDER_NAME }}/"
-          tags: |
-            ${{ env.DOCKERHUB_ZONE }}/${{ env.IMAGE_NAME }}:latest
-            ${{ env.DOCKERHUB_ZONE }}/${{ env.IMAGE_NAME }}:alpine
-            ${{ env.DOCKERHUB_ZONE }}/${{ env.IMAGE_NAME }}:alpine-3.9
-          cache-from: type=registry,ref=${{ env.DOCKERHUB_ZONE }}/${{ env.IMAGE_NAME }}:${{ env.DOCKER_BUILD_CACHE_TAG }}
-          cache-to: ${{ needs.change_files.outputs.needPush == 'true' && 'type=inline' || 'type=registry,ref=${{ env.DOCKERHUB_ZONE }}/${{ env.IMAGE_NAME }}:${{ env.DOCKER_BUILD_CACHE_TAG }},mode=max' }}
-  cron-exec-readme:
-    env:
       IMAGE_NAME: cron-exec
-      FOLDER_NAME: cron-exec
+      IMAGE_TAGS: latest
+      DOCKER_HUB_USERNAME: ${{ inputs.DOCKER_HUB_USERNAME }}
+    secrets:
+      DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
+  restart-after-change:
     needs:
-      - change_files
-      - cron-exec-image
-    if: always() && needs.change_files.outputs.cronExecReadmeChange == 'true' && github.event_name == 'push' && (needs.cron-exec-image.result == 'success' || needs.cron-exec-image.result == 'skipped') && github.ref_name == github.event.repository.default_branch
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Update readme
-        uses: peter-evans/dockerhub-description@v4
-        with:
-          username: ${{ inputs.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-          repository: ${{ env.DOCKERHUB_ZONE }}/${{ env.IMAGE_NAME }}
-          readme-filepath: ${{ env.DOCKER_ROOT_PATH }}/${{ env.FOLDER_NAME }}/README.md
-
-  restart-after-change-image:
-    env:
-      IMAGE_NAME: restart-after-change
+      - cron-exec
+    if: always()
+    uses: ./.github/workflows/docker_image_action.yml
+    with:
       FOLDER_NAME: restart-after-change
-    needs:
-      - change_files
-      - cron-exec-image
-    if: always() && needs.change_files.outputs.restartAfterChangeCodeChange == 'true' && (needs.cron-exec-image.result == 'success' || needs.cron-exec-image.result == 'skipped')
-    runs-on: ubuntu-latest
-    steps:
-      - name: Login to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ inputs.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-      - name: Build and push image
-        uses: docker/build-push-action@v6
-        with:
-          push: ${{ needs.change_files.outputs.needPush == 'true' }}
-          load: true
-          context: "{{defaultContext}}:${{ env.DOCKER_ROOT_PATH }}/${{ env.FOLDER_NAME }}/"
-          tags: |
-            ${{ env.DOCKERHUB_ZONE }}/${{ env.IMAGE_NAME }}:latest
-            ${{ env.DOCKERHUB_ZONE }}/${{ env.IMAGE_NAME }}:alpine
-            ${{ env.DOCKERHUB_ZONE }}/${{ env.IMAGE_NAME }}:alpine-3.9
-          cache-from: type=registry,ref=${{ env.DOCKERHUB_ZONE }}/${{ env.IMAGE_NAME }}:${{ env.DOCKER_BUILD_CACHE_TAG }}
-          cache-to: ${{ needs.change_files.outputs.needPush == 'true' && 'type=inline' || 'type=registry,ref=${{ env.DOCKERHUB_ZONE }}/${{ env.IMAGE_NAME }}:${{ env.DOCKER_BUILD_CACHE_TAG }},mode=max' }}
-  restart-after-change-readme:
-    env:
       IMAGE_NAME: restart-after-change
-      FOLDER_NAME: restart-after-change
-    needs:
-      - change_files
-      - restart-after-change-image
-    if: always() && needs.change_files.outputs.restartAfterChangeReadmeChange == 'true' && github.event_name == 'push' && (needs.restart-after-change-image.result == 'success' || needs.restart-after-change-image.result == 'skipped') && github.ref_name == github.event.repository.default_branch
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Update readme
-        uses: peter-evans/dockerhub-description@v4
-        with:
-          username: ${{ inputs.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-          repository: ${{ env.DOCKERHUB_ZONE }}/${{ env.IMAGE_NAME }}
-          readme-filepath: ${{ env.DOCKER_ROOT_PATH }}/${{ env.FOLDER_NAME }}/README.md
+      IMAGE_TAGS: latest
+      FORCE_BUILD: ${{ needs.cron-exec.outputs.codeChange }}
+      DOCKER_HUB_USERNAME: ${{ inputs.DOCKER_HUB_USERNAME }}
+    secrets:
+      DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}

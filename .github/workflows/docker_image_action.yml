@@ -1,0 +1,105 @@
+on:
+  workflow_call:
+    inputs:
+      DOCKER_HUB_USERNAME:
+        required: true
+        type: string
+      FOLDER_NAME:
+        required: true
+        type: string
+      IMAGE_NAME:
+        required: true
+        type: string
+      IMAGE_TAGS:
+        required: true
+        type: string
+      DOCKER_HUB_ZONE:
+        type: string
+        default: arylo
+      DOCKER_ROOT_PATH:
+        type: string
+        default: ./src/docker
+      FORCE_BUILD:
+        type: boolean
+        default: false
+    outputs:
+      codeChange:
+        value: ${{ inputs.FORCE_BUILD == 'true' || jobs.image_action.outputs.codeChange == 'true' }}
+      readmeChange:
+        value: ${{ jobs.image_action.outputs.readmeChange }}
+    secrets:
+      DOCKER_HUB_TOKEN:
+        required: true
+
+env:
+  DOCKER_BUILD_CACHE_TAG: github-action-buildcache
+
+jobs:
+  image_action:
+    runs-on: ubuntu-latest
+    env:
+      needPush: ${{ github.event_name == 'push' && github.ref_name == github.event.repository.default_branch }}
+      dockerFolderPath: ${{ inputs.DOCKER_ROOT_PATH }}/${{ inputs.FOLDER_NAME }}
+    outputs:
+      codeChange: ${{ steps.code-changed-files.outputs.any_changed }}
+      readmeChange: ${{ steps.readme-changed-files.outputs.any_changed }}
+    steps:
+      - run: echo "inputs = ${{ toJson(inputs) }}"
+      - uses: actions/checkout@v4
+      - id: code-changed-files
+        uses: tj-actions/changed-files@v45
+        with:
+          files: |
+            ${{ env.dockerFolderPath }}/**
+            !${{ env.dockerFolderPath }}/README.md
+      - id: readme-changed-files
+        uses: tj-actions/changed-files@v45
+        with:
+          files: |
+            ${{ env.dockerFolderPath }}/README.md
+      - name: Login to Docker Hub
+        if: env.needPush == 'true' && (inputs.FORCE_BUILD == 'true' || steps.code-changed-files.outputs.any_changed == 'true')
+        uses: docker/login-action@v3
+        with:
+          username: ${{ inputs.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
+      - name: Set up QEMU
+        if: (inputs.FORCE_BUILD == 'true' || steps.code-changed-files.outputs.any_changed == 'true')
+        uses: docker/setup-qemu-action@v3
+      - name: Set up Docker Buildx
+        if: (inputs.FORCE_BUILD == 'true' || steps.code-changed-files.outputs.any_changed == 'true')
+        uses: docker/setup-buildx-action@v3
+      - name: Generate Docker Tags
+        id: generate_tags
+        if: (inputs.FORCE_BUILD == 'true' || steps.code-changed-files.outputs.any_changed == 'true')
+        run: |
+          TAGS_STR="${{ inputs.IMAGE_TAGS }}"
+          read -ra TAGS_LIST <<< "${TAGS_STR}"
+          TAGS=""
+          for tag in "${TAGS_LIST[@]}"; do
+            TAGS+="${{ inputs.DOCKER_HUB_ZONE }}/${{ inputs.IMAGE_NAME }}:${tag}"$'\n'
+          done
+          TAGS="${TAGS%$'\n'}"
+          echo "TAGS=$TAGS"
+          echo "TAGS<<EOF" >> $GITHUB_ENV
+          echo "$TAGS" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+      - name: Build and push image
+        id: build-push-image
+        if: (inputs.FORCE_BUILD == 'true' || steps.code-changed-files.outputs.any_changed == 'true')
+        uses: docker/build-push-action@v6
+        with:
+          push: ${{ env.needPush == 'true' }}
+          load: true
+          context: "{{defaultContext}}:${{ env.dockerFolderPath }}/"
+          tags: ${{ env.TAGS }}
+          cache-from: type=registry,ref=${{ inputs.DOCKER_HUB_ZONE }}/${{ inputs.IMAGE_NAME }}:${{ env.DOCKER_BUILD_CACHE_TAG }}
+          cache-to: ${{ env.needPush == 'false' && 'type=inline' || 'type=registry,ref=${{ inputs.DOCKER_HUB_ZONE }}/${{ inputs.IMAGE_NAME }}:${{ env.DOCKER_BUILD_CACHE_TAG }},mode=max' }}
+      - name: Update readme
+        if: steps.readme-changed-files.outputs.any_changed == 'true'
+        uses: peter-evans/dockerhub-description@v4
+        with:
+          username: ${{ inputs.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
+          repository: ${{ inputs.DOCKER_HUB_ZONE }}/${{ inputs.IMAGE_NAME }}
+          readme-filepath: ${{ env.dockerFolderPath }}/README.md
