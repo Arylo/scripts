@@ -69,6 +69,7 @@ jobs:
           files: |
             etc/build/readme*
             src/**/README.md
+            !src/docker/**
       - name: List all changed files
         if: steps.readme-changed-files.outputs.any_changed == 'true'
         env:

@@ -27,7 +27,7 @@ jobs:
       FOLDER_NAME: restart-after-change
       IMAGE_NAME: restart-after-change
       IMAGE_TAGS: latest
-      FORCE_BUILD: ${{ needs.cron-exec.outputs.codeChange }}
+      FORCE_BUILD: ${{ needs.cron-exec.outputs.codeChange == 'true' }}
       DOCKER_HUB_USERNAME: ${{ inputs.DOCKER_HUB_USERNAME }}
     secrets:
       DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
