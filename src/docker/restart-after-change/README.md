@@ -15,6 +15,8 @@ In some scenarios, we only need to run some shell scripts periodically without r
 
 ## Sample
 
+### Caddy
+
 ```shell
-docker run -v /var/run/docker.sock:/var/run/docker.sock -e DOCKER_CONTAINER_NAME='caddy-1' -v /tmp/caddy.toml:/tmp/caddy.toml:ro -e CHANGE_FILES='/tmp/caddy.toml:ro' arylo/restart-after-change:latest
+docker run -v /var/run/docker.sock:/var/run/docker.sock -e DOCKER_CONTAINER_NAME='caddy-1' -v /tmp/caddy.toml:/tmp/caddy.toml:ro -e CHANGE_FILES='/tmp/caddy.toml' arylo/restart-after-change:latest
 ```
