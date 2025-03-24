@@ -8,8 +8,7 @@ ENV COMMAND="sh /app/restart.sh"
 ENV DOCKER_CONTAINER_NAME=''
 ENV CHANGE_FILES=''
 
-RUN apk add docker
-RUN apk add openrc
+RUN apk add --no-cache docker && apk add --no-cache openrc
 
 ADD ./restart.sh /app/restart.sh
 RUN chmod +x /app/restart.sh
