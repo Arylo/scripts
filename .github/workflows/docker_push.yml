@@ -10,15 +10,20 @@ on:
 
 jobs:
   cron-exec:
+    name: cron-exec
     uses: ./.github/workflows/docker_image_action.yml
     with:
       FOLDER_NAME: cron-exec
       IMAGE_NAME: cron-exec
-      IMAGE_TAGS: latest
+      IMAGE_TAGS: |
+        latest
+        alpine
+        alpine-3.9
       DOCKER_HUB_USERNAME: ${{ inputs.DOCKER_HUB_USERNAME }}
     secrets:
       DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
   restart-after-change:
+    name: restart-after-change
     needs:
       - cron-exec
     if: always()
@@ -26,7 +31,10 @@ jobs:
     with:
       FOLDER_NAME: restart-after-change
       IMAGE_NAME: restart-after-change
-      IMAGE_TAGS: latest
+      IMAGE_TAGS: |
+        latest
+        alpine
+        alpine-3.9
       FORCE_BUILD: ${{ needs.cron-exec.outputs.codeChange == 'true' }}
       DOCKER_HUB_USERNAME: ${{ inputs.DOCKER_HUB_USERNAME }}
     secrets:

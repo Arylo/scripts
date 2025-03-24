@@ -45,14 +45,17 @@ jobs:
       readmeChange: ${{ steps.readme-changed-files.outputs.any_changed }}
     steps:
       - run: echo "inputs = ${{ toJson(inputs) }}"
+      - run: echo "env = ${{ toJson(env) }}"
       - uses: actions/checkout@v4
-      - id: code-changed-files
+      - name: Code has changed
+        id: code-changed-files
         uses: tj-actions/changed-files@v45
         with:
           files: |
             ${{ env.dockerFolderPath }}/**
             !${{ env.dockerFolderPath }}/README.md
-      - id: readme-changed-files
+      - name: Readme has changed
+        id: readme-changed-files
         uses: tj-actions/changed-files@v45
         with:
           files: |
@@ -84,6 +87,20 @@ jobs:
           echo "TAGS<<EOF" >> $GITHUB_ENV
           echo "$TAGS" >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
+      - name: Generate Docker Cache Args
+        id: generate_cache_args
+        if: (inputs.FORCE_BUILD == 'true' || steps.code-changed-files.outputs.any_changed == 'true')
+        run: |
+          DOCKER_IMAGE_CACHE="${{ inputs.DOCKER_HUB_ZONE }}/${{ inputs.IMAGE_NAME }}:${{ env.DOCKER_BUILD_CACHE_TAG }}"
+          DOCKER_CACHE_FROM="type=registry,ref=${DOCKER_IMAGE_CACHE}"
+          DOCKER_CACHE_TO="type=inline"
+          if [[ "${{ env.needPush }}" == "true" ]]; then
+            DOCKER_CACHE_TO="type=registry,ref=${DOCKER_IMAGE_CACHE},mode=max"
+          fi
+          echo "DOCKER_CACHE_FROM=$DOCKER_CACHE_FROM"
+          echo "DOCKER_CACHE_TO=$DOCKER_CACHE_TO"
+          echo "DOCKER_CACHE_FROM=$DOCKER_CACHE_FROM" >> $GITHUB_ENV
+          echo "DOCKER_CACHE_TO=$DOCKER_CACHE_TO" >> $GITHUB_ENV
       - name: Build and push image
         id: build-push-image
         if: (inputs.FORCE_BUILD == 'true' || steps.code-changed-files.outputs.any_changed == 'true')
@@ -93,8 +110,8 @@ jobs:
           load: true
           context: "{{defaultContext}}:${{ env.dockerFolderPath }}/"
           tags: ${{ env.TAGS }}
-          cache-from: type=registry,ref=${{ inputs.DOCKER_HUB_ZONE }}/${{ inputs.IMAGE_NAME }}:${{ env.DOCKER_BUILD_CACHE_TAG }}
-          cache-to: ${{ env.needPush == 'false' && 'type=inline' || 'type=registry,ref=${{ inputs.DOCKER_HUB_ZONE }}/${{ inputs.IMAGE_NAME }}:${{ env.DOCKER_BUILD_CACHE_TAG }},mode=max' }}
+          cache-from: ${{ env.DOCKER_CACHE_FROM }}
+          cache-to: ${{ env.DOCKER_CACHE_TO }}
       - name: Update readme
         if: steps.readme-changed-files.outputs.any_changed == 'true'
         uses: peter-evans/dockerhub-description@v4
