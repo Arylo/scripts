@@ -10,7 +10,7 @@ This project contains scripts that are useful for Arylo's daily tasks.
 |--|--|--|
 |set-fira-code-development-websites|Unified use of `Fira Code` as the code font to enhance developers' awareness of the code on the page|[Jump](#set-fira-code-as-font-in-development-websites)|
 |nyaa-si-show-image||[Jump](#auto-show-the-source-image-for-nyaa-si)|
-|~~gitlab-settings-max-size~~|~~(Deprecated)(Please use the gitlab-enhance script) Maximize the size of the CI/CD setting~~|~~[Jump](#max-size-for-gitlab-setting-page)~~|
+|~~gitlab-settings-max-size~~|~~(Deprecated)(Please use the gitlab-enhance script) Maximize the size of the CI/CD setting~~||
 |gitlab-font-family||[Jump](#change-gitlab-font)|
 |gitlab-enhance|Enhance some features of the Self-managed Gitlab, such as the CI/CD settings page, the merge request create/edit page etc.|[Jump](#enhance-ux-for-the-self-managed-gitlab)|
 |copymanga-enhance||[Jump](#enhance-ux-for-copy-manga-comic-sites)|
@@ -108,21 +108,21 @@ In some scenarios show image on the `nyaa.si`
 [nyaa-si-show-image_github_download_url]: https://raw.githubusercontent.com/Arylo/scripts/monkey/nyaa-si-show-image.user.js
 [nyaa-si-show-image_github-last-update]: https://img.shields.io/github/last-commit/arylo/scripts/monkey?path=nyaa-si-show-image.user.js&style=flat&label=Last%20Update
 
-### Max Size for Gitlab setting page
+### ~~Max Size for Gitlab setting page~~
 
 [Top](#monkey-scripts)
 
-#### Install Addresses
+#### ~~Install Addresses~~
 
 [Github][gitlab-settings-max-size_github_download_url]
 
-#### Description
+#### ~~Description~~
 
 ![GitHub last commit][gitlab-settings-max-size_github-last-update]
 
-Expand the page size in the CI/CD settings page
+~~Expand the page size in the CI/CD settings page~~
 
-#### Compatibility
+#### ~~Compatibility~~
 
 |              |TamperMonkey|ViolentMonkey|Userscripts |
 |--            |--          |--           |--          |
