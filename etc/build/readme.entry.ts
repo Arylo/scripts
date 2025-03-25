@@ -125,6 +125,11 @@ function parseMonkeyMd (folderPath: string) {
     })
   })
 
+  const isDeprecated = buildFS.readJSONFileSync(infos[0].bannerFilePath)?.description?.startsWith('(Deprecated)')
+  if (isDeprecated) {
+    content = content.split(/\n/).map((line) => isDeprecated && /^[\w#]/.test(line) ? line.replace(/^(#{1,5}\s+)?(.+)$/, '$1~~$2~~') : line).join('\n')
+  }
+
   return content
 }
 
@@ -140,12 +145,18 @@ const parseMonkeys = () => {
     monkeyReadmePaths.forEach((p) => {
       const [info] = parseScriptInfo(path.dirname(p))
 
-      const infos: string[] = [
+      let infos: string[] = [
         info.scriptName,
         buildFS.readJSONFileSync(info.bannerFilePath).description ?? '',
         MdTools.hyperlink('Jump', `#${lodash.kebabCase(buildFS.readFileSync(path.resolve(p)).match(/^# (.+?)\n/)?.[1])}`),
       ]
-        .map((c, _, list) => list[1].startsWith('(Deprecated)') ? `~~${c}~~` : c)
+      const isDeprecated = infos[1].startsWith('(Deprecated)')
+      if (isDeprecated) {
+        infos[2] = ''
+      }
+
+      infos = infos
+        .map((c) => isDeprecated && c.trim().length !== 0 ? `~~${c}~~` : c)
         .map((c) => c.replace(/\|/g, '\\|'))
       tableFns.body({
         title: infos[0],
