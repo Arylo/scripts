@@ -5,13 +5,16 @@ const getCurrentCount = () => $('.comicContent-list > li > img').length
 const getTotalCount = () => Number((document.getElementsByClassName('comicCount')[0] as HTMLDivElement).innerText)
 export const windowScrollTo = genScrollTo(window)
 
+let pre = -1
+
 export const refreshImage = (cb: Function) => {
   const nextTime = 15
   let [cur, total] = [getCurrentCount(), getTotalCount()]
-  console.log('Process:', getCurrentCount(), '/', getTotalCount())
+  pre !== cur && console.log('Process:', getCurrentCount(), '/', getTotalCount())
   if (total === 0 || cur < total) {
     windowScrollTo(document.getElementsByClassName('comicContent')[0].clientHeight, true)
     cur = getCurrentCount()
+    pre = cur
     setTimeout(() => {
       windowScrollTo(0)
       setTimeout(() => refreshImage(cb), nextTime)

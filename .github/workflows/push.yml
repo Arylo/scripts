@@ -96,12 +96,16 @@ jobs:
       - change_files
       - code_check
     if: needs.change_files.outputs.monkeyChange == 'true'
+    permissions:
+      contents: write
     uses: ./.github/workflows/monkey_push.yml
   qinglong_actions:
     needs:
       - change_files
       - code_check
     if: needs.change_files.outputs.qinglongChange == 'true'
+    permissions:
+      contents: write
     uses: ./.github/workflows/qinglong_push.yml
   docker_actions:
     needs:
