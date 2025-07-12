@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name Enhance the copy manga site
-// @version 26
+// @version 27
 // @author Arylo Yeung <arylo.open@gmail.com>
 // @license MIT
 // @match https://copymanga.com/comic/*/chapter/*
@@ -324,13 +324,15 @@
   var getCurrentCount = () => $(".comicContent-list > li > img").length;
   var getTotalCount = () => Number(document.getElementsByClassName("comicCount")[0].innerText);
   var windowScrollTo = genScrollTo(window);
+  var pre = -1;
   var refreshImage = (cb) => {
     const nextTime = 15;
     let [cur, total] = [getCurrentCount(), getTotalCount()];
-    console.log("Process:", getCurrentCount(), "/", getTotalCount());
+    pre !== cur && console.log("Process:", getCurrentCount(), "/", getTotalCount());
     if (total === 0 || cur < total) {
       windowScrollTo(document.getElementsByClassName("comicContent")[0].clientHeight, true);
       cur = getCurrentCount();
+      pre = cur;
       setTimeout(() => {
         windowScrollTo(0);
         setTimeout(() => refreshImage(cb), nextTime);
@@ -368,6 +370,7 @@
   setTimeout(() => {
     let cacheContent = sessionStorage.getItem(sessionStorageKey);
     if (cacheContent) {
+      console.info("Found cache");
       const info = {
         prevUrl: void 0,
         nextUrl: void 0,
@@ -375,6 +378,8 @@
         ...JSON.parse(cacheContent)
       };
       return renderNewPage(info);
+    } else {
+      console.info("Non found cache");
     }
     refreshImage(() => {
       windowScrollTo(0);

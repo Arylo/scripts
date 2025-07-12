@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name Enhance the copy manga site
-// @version 26
+// @version 27
 // @author Arylo Yeung <arylo.open@gmail.com>
 // @license MIT
 // @match https://copymanga.com/comic/*/chapter/*
