@@ -1,4 +1,4 @@
-import { chapter, comic, findIndex, group } from "../common";
+import { chapter, comic, findIndex } from "../common";
 import { ComicDirection, PageType } from "../constant";
 import { MixinThis, PageInfo } from "../types";
 
@@ -26,26 +26,29 @@ const ImageMixin = (info: PageInfo) => ({
       }
       return that.isAllImagesLoaded
     },
-    whitePageIndex () {
+    imageGroups () {
       const that = (this as any)
-      if (!that.hasWhitePage || !that.isAllImagesLoaded) return -1
-      const groupList = group(that.imageInfos, (info: any) => info?.type)
-      if (groupList.length === 1) return 0
-      if (groupList.length >= 2) {
-        const [firstList] = groupList
-        if (firstList.length !== 1 && firstList[0].type === PageType.PORTRAIT) return 0
+      const rawImageList: string[] = that.images || []
+      const curList = rawImageList.map((imageUrl, index) => ({ index, url: imageUrl, type: that.imageInfos[index]?.type ?? PageType.LOADING }))
+      const hasWhitePage = that.canWhitePage
+      let useWhitePage = !hasWhitePage
+      const groups: any[][] = []
+      function addImage (obj: any) {
+        if (
+          groups.length === 0 ||
+          groups[groups.length - 1].length === 2 ||
+          groups[groups.length - 1][0].type === PageType.LANDSCAPE
+        ) groups.push([])
+        groups[groups.length - 1].push(obj)
       }
-      if (groupList.length >= 3) {
-        const [firstList, secondList] = groupList
-        if (firstList.length === 1 && firstList[0].type === PageType.PORTRAIT) {
-          return findIndex(
-            that.imageInfos,
-            (info: any) => info?.type === PageType.PORTRAIT,
-            { startIndex: firstList.length + secondList.length }
-          )
+      curList.forEach((imageObject) => {
+        if (!useWhitePage && imageObject.type === PageType.PORTRAIT) {
+          addImage({ ...imageObject, index: imageObject.index - 0.5, type: PageType.WHITE_PAGE })
+          useWhitePage = true
         }
-      }
-      return findIndex(that.imageInfos, (info: any) => info?.type === PageType.PORTRAIT)
+        addImage(imageObject)
+      })
+      return groups
     },
   },
   methods: {

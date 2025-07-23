@@ -21,22 +21,18 @@
     tabindex="0"
     :class="mode"
   >
-    <template v-for="(image, index) of images">
-      <div v-if="hasWhitePage && whitePageIndex === index">
-        <img
-          :src="image"
-          class="white-page"
-        />
-      </div>
-      <div>
+    <div
+      v-for="(group, index) of imageGroups"
+      :key="`group-${index}`"
+    >
+      <div v-for="obj of group" :class="[obj.type]" :key="`image-${obj.index}`">
         <img
           class="comic"
-          :src="image"
-          :index="index"
-          @load="(e) => imageLoaded(e, index)"
+          :src="obj.url"
+          @load="(e) => !imageInfos[obj.index] && imageLoaded(e, obj.index)"
         />
       </div>
-    </template>
+    </div>
   </div>
   <div
     class="hint-container"

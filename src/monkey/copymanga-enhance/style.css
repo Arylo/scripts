@@ -40,7 +40,7 @@
   visibility: hidden;
 }
 
-#app .images {
+#app .images, #app .images > div {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
@@ -48,20 +48,25 @@
   height: var(--image-max-height);
 }
 
-#app .images.rtl {
+#app .images {
+  width: 100vw;
+  justify-content: space-evenly;
+}
+
+#app .images.rtl > div {
   flex-direction: row-reverse;
 }
 
-#app .images div {
+#app .images div > div {
   height: var(--image-max-height);
 }
 
-#app .images.ttb div {
+#app .images.ttb div > div {
   height: auto;
   width: 90vw;
 }
 
-#app .images .white-page {
+#app .images .white_page {
   visibility: hidden;
 }
 

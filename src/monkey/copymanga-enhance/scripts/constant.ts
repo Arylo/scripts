@@ -12,6 +12,8 @@ export enum ClickAction {
 export enum PageType {
   LANDSCAPE = 'landscape',
   PORTRAIT = 'portrait',
+  LOADING = 'loading',
+  WHITE_PAGE = 'white_page',
 }
 
 export const ActionZones = [{
