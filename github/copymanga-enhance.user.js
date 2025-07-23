@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name Enhance the copy manga site
-// @version 28
+// @version 29
 // @author Arylo Yeung <arylo.open@gmail.com>
 // @license MIT
 // @match https://copymanga.com/comic/*/chapter/*
@@ -66,10 +66,10 @@
   }
 
   // src/monkey/copymanga-enhance/style.css
-  var style_default = ":root{--header-label-color: rgba(255, 255, 255, .95);--header-height: 30px;--image-max-height: calc(100vh - var(--header-height));--action-btn-label-color: rgba(255, 255, 255, .95);--action-btn-bg-color: rgba(0, 0, 0, .2);--action-btn-height: 100px;--action-btn-width: 100px;--action-btn-border-radius: 100px;--action-btn-only-height: 30vh;--action-btn-only-width: 95px}#app{overflow:hidden;height:100vh}#app .header{height:var(--header-height);width:100vw;display:flex;justify-content:center;align-items:center}#app .header:hover~.hint{display:none}#app .header span{color:var(--header-label-color)}#app .header .btn{min-width:80px}#app .header .btn.no-action{visibility:hidden}#app .images{display:flex;flex-wrap:wrap;justify-content:center;overflow:auto;height:var(--image-max-height)}#app .images.rtl{flex-direction:row-reverse}#app .images div{height:var(--image-max-height)}#app .images.ttb div{height:auto;width:90vw}#app .images .white-page{visibility:hidden}#app .hint-container{position:absolute;height:var(--hint-action-zone-height, var(--image-max-height));top:var(--hint-action-zone-top, var(--header-height));display:flex;width:30vw;align-items:center;cursor:pointer;overflow:hidden}#app .hint-container.left{left:0;justify-content:flex-start}#app .hint-container.right{right:0;justify-content:flex-end}#app .hint-container.windows.right{right:16px}#app .hint-container.top{--hint-action-zone-top: var(--header-height);--hint-action-zone-height: calc(var(--image-max-height) * .4);align-items:flex-start}#app .hint-container.bottom{--hint-action-zone-top: calc(var(--header-height) + var(--image-max-height) * .4);--hint-action-zone-height: calc(var(--image-max-height) * .6);align-items:flex-end}#app .hint-container>div{display:none;padding:20px;border-radius:var(--action-btn-border-radius);height:var(--action-btn-height);width:var(--action-btn-width);color:var(--action-btn-label-color);background-color:var(--action-btn-bg-color);box-shadow:var(--action-btn-shadow-x, 0) var(--action-btn-shadow-y, 0) 18px var(--action-btn-bg-color)}#app .hint-container:hover>div{display:flex}#app .hint-container.left>div{--action-btn-shadow-x: 10px;justify-content:flex-start;border-top-left-radius:0;border-bottom-left-radius:0}#app .hint-container.right>div{--action-btn-shadow-x: -10px;justify-content:flex-end;border-top-right-radius:0;border-bottom-right-radius:0}#app .hint-container.top>div{--action-btn-shadow-y: 10px;align-items:flex-start;border-top-left-radius:0;border-top-right-radius:0}#app .hint-container.bottom>div{--action-btn-shadow-y: -10px;align-items:flex-end;border-bottom-left-radius:0;border-bottom-right-radius:0}#app .hint-container:not(.top):not(.bottom)>div{align-items:center;height:var(--action-btn-only-height);width:var(--action-btn-only-width)}\n";
+  var style_default = ":root{--header-label-color: rgba(255, 255, 255, .95);--header-height: 30px;--image-max-height: calc(100vh - var(--header-height));--action-btn-label-color: rgba(255, 255, 255, .95);--action-btn-bg-color: rgba(0, 0, 0, .2);--action-btn-height: 100px;--action-btn-width: 100px;--action-btn-border-radius: 100px;--action-btn-only-height: 30vh;--action-btn-only-width: 95px}#app{overflow:hidden;height:100vh}#app .header{height:var(--header-height);width:100vw;display:flex;justify-content:center;align-items:center}#app .header:hover~.hint{display:none}#app .header span{color:var(--header-label-color)}#app .header .btn{min-width:80px}#app .header .btn.no-action{visibility:hidden}#app .images,#app .images>div{display:flex;flex-wrap:wrap;justify-content:center;overflow:auto;height:var(--image-max-height)}#app .images{width:100vw;justify-content:space-evenly}#app .images.rtl>div{flex-direction:row-reverse}#app .images div>div{height:var(--image-max-height)}#app .images.ttb div>div{height:auto;width:90vw}#app .images .white_page{visibility:hidden}#app .hint-container{position:absolute;height:var(--hint-action-zone-height, var(--image-max-height));top:var(--hint-action-zone-top, var(--header-height));display:flex;width:30vw;align-items:center;cursor:pointer;overflow:hidden}#app .hint-container.left{left:0;justify-content:flex-start}#app .hint-container.right{right:0;justify-content:flex-end}#app .hint-container.windows.right{right:16px}#app .hint-container.top{--hint-action-zone-top: var(--header-height);--hint-action-zone-height: calc(var(--image-max-height) * .4);align-items:flex-start}#app .hint-container.bottom{--hint-action-zone-top: calc(var(--header-height) + var(--image-max-height) * .4);--hint-action-zone-height: calc(var(--image-max-height) * .6);align-items:flex-end}#app .hint-container>div{display:none;padding:20px;border-radius:var(--action-btn-border-radius);height:var(--action-btn-height);width:var(--action-btn-width);color:var(--action-btn-label-color);background-color:var(--action-btn-bg-color);box-shadow:var(--action-btn-shadow-x, 0) var(--action-btn-shadow-y, 0) 18px var(--action-btn-bg-color)}#app .hint-container:hover>div{display:flex}#app .hint-container.left>div{--action-btn-shadow-x: 10px;justify-content:flex-start;border-top-left-radius:0;border-bottom-left-radius:0}#app .hint-container.right>div{--action-btn-shadow-x: -10px;justify-content:flex-end;border-top-right-radius:0;border-bottom-right-radius:0}#app .hint-container.top>div{--action-btn-shadow-y: 10px;align-items:flex-start;border-top-left-radius:0;border-top-right-radius:0}#app .hint-container.bottom>div{--action-btn-shadow-y: -10px;align-items:flex-end;border-bottom-left-radius:0;border-bottom-right-radius:0}#app .hint-container:not(.top):not(.bottom)>div{align-items:center;height:var(--action-btn-only-height);width:var(--action-btn-only-width)}\n";
 
   // src/monkey/copymanga-enhance/template.html
-  var template_default = `<div id="app"> <div class="header"> <a :href="prevUrl" :class="{'no-action': !prevUrl}" class="btn"><span>\u4E0A\u4E00\u8BDD</span></a> <a :href="menuUrl" class="title"><span>{{ title }}</span></a> <a :href="nextUrl" :class="{'no-action': !nextUrl}" class="btn"><span>\u4E0B\u4E00\u8BDD</span></a> <select v-model="mode" @change="selectMode"> <option :value="ComicDirection.LTR">\u6B63\u5E38\u6A21\u5F0F</option> <option :value="ComicDirection.RTL">\u65E5\u6F2B\u6A21\u5F0F</option> <option :value="ComicDirection.TTB">\u6761\u6F2B\u6A21\u5F0F</option> </select> <template v-if="canWhitePage"> <a v-if="!hasWhitePage" class="btn" @click="() => toggleWhitePage()"><span>\u589E\u52A0\u7A7A\u767D\u9875</span></a> <a v-else class="btn" @click="() => toggleWhitePage()"><span>\u79FB\u9664\u7A7A\u767D\u9875</span></a> </template> <template v-else> <span style="margin-left: 15px;color: white;">{{currentImageCount}} / {{ totalImageCount }}</span> </template> </div> <div class="images" tabindex="0" :class="mode"> <template v-for="(image, index) of images"> <div v-if="hasWhitePage && whitePageIndex === index"> <img :src="image" class="white-page"> </div> <div> <img class="comic" :src="image" :index="index" @load="(e) => imageLoaded(e, index)"> </div> </template> </div> <div class="hint-container" :class="zone.names" v-for="zone of ActionZones" @click="() => onActionZoneClick(zone)" @wheel.stop="onActionZoneWheel"> <div v-if="zone.names.includes(ClickAction.PREV_PAGE)">\u4E0A\u4E00\u9875</div> <div v-if="zone.names.includes(ClickAction.NEXT_PAGE)">\u4E0B\u4E00\u9875</div> </div> </div>`;
+  var template_default = '<div id="app"> <div class="header"> <a :href="prevUrl" :class="{\'no-action\': !prevUrl}" class="btn"><span>\u4E0A\u4E00\u8BDD</span></a> <a :href="menuUrl" class="title"><span>{{ title }}</span></a> <a :href="nextUrl" :class="{\'no-action\': !nextUrl}" class="btn"><span>\u4E0B\u4E00\u8BDD</span></a> <select v-model="mode" @change="selectMode"> <option :value="ComicDirection.LTR">\u6B63\u5E38\u6A21\u5F0F</option> <option :value="ComicDirection.RTL">\u65E5\u6F2B\u6A21\u5F0F</option> <option :value="ComicDirection.TTB">\u6761\u6F2B\u6A21\u5F0F</option> </select> <template v-if="canWhitePage"> <a v-if="!hasWhitePage" class="btn" @click="() => toggleWhitePage()"><span>\u589E\u52A0\u7A7A\u767D\u9875</span></a> <a v-else class="btn" @click="() => toggleWhitePage()"><span>\u79FB\u9664\u7A7A\u767D\u9875</span></a> </template> <template v-else> <span style="margin-left: 15px;color: white;">{{currentImageCount}} / {{ totalImageCount }}</span> </template> </div> <div class="images" tabindex="0" :class="mode"> <div v-for="(group, index) of imageGroups" :key="`group-${index}`"> <div v-for="obj of group" :class="[obj.type]" :key="`image-${obj.index}`"> <img class="comic" :src="obj.url" @load="(e) => !imageInfos[obj.index] && imageLoaded(e, obj.index)"> </div> </div> </div> <div class="hint-container" :class="zone.names" v-for="zone of ActionZones" @click="() => onActionZoneClick(zone)" @wheel.stop="onActionZoneWheel"> <div v-if="zone.names.includes(ClickAction.PREV_PAGE)">\u4E0A\u4E00\u9875</div> <div v-if="zone.names.includes(ClickAction.NEXT_PAGE)">\u4E0B\u4E00\u9875</div> </div> </div>';
 
   // src/monkey/copymanga-enhance/scripts/common.ts
   var genScrollTo = (el) => (top, isSmooth = false) => el.scrollTo({
@@ -79,30 +79,6 @@
   });
   var comic = globalThis.location?.pathname.split("/")[2];
   var chapter = globalThis.location?.pathname.split("/")[4];
-  var findIndex = (list, predicate, opts) => {
-    const { startIndex = 0 } = opts || {};
-    const targetList = list.slice(startIndex);
-    const nextIndex = targetList.findIndex(predicate);
-    if (nextIndex === -1) return nextIndex;
-    return nextIndex + startIndex;
-  };
-  var group = (list, groupFn) => {
-    return list.reduce((acc, item, index) => {
-      if (index === 0) {
-        acc.push([item]);
-        return acc;
-      }
-      const lastList = acc[acc.length - 1];
-      const lastKey = groupFn(lastList[0]);
-      const curKey = groupFn(item);
-      if (lastKey === curKey) {
-        lastList.push(item);
-      } else {
-        acc.push([item]);
-      }
-      return acc;
-    }, []);
-  };
 
   // src/monkey/copymanga-enhance/scripts/constant.ts
   var ComicDirection = /* @__PURE__ */ ((ComicDirection2) => {
@@ -236,26 +212,25 @@
         }
         return that.isAllImagesLoaded;
       },
-      whitePageIndex() {
+      imageGroups() {
         const that = this;
-        if (!that.hasWhitePage || !that.isAllImagesLoaded) return -1;
-        const groupList = group(that.imageInfos, (info2) => info2?.type);
-        if (groupList.length === 1) return 0;
-        if (groupList.length >= 2) {
-          const [firstList] = groupList;
-          if (firstList.length !== 1 && firstList[0].type === "portrait" /* PORTRAIT */) return 0;
+        const rawImageList = that.images || [];
+        const curList = rawImageList.map((imageUrl, index) => ({ index, url: imageUrl, type: that.imageInfos[index]?.type ?? "loading" /* LOADING */ }));
+        const hasWhitePage = that.canWhitePage;
+        let useWhitePage = !hasWhitePage;
+        const groups = [];
+        function addImage(obj) {
+          if (groups.length === 0 || groups[groups.length - 1].length === 2 || groups[groups.length - 1][0].type === "landscape" /* LANDSCAPE */) groups.push([]);
+          groups[groups.length - 1].push(obj);
         }
-        if (groupList.length >= 3) {
-          const [firstList, secondList] = groupList;
-          if (firstList.length === 1 && firstList[0].type === "portrait" /* PORTRAIT */) {
-            return findIndex(
-              that.imageInfos,
-              (info2) => info2?.type === "portrait" /* PORTRAIT */,
-              { startIndex: firstList.length + secondList.length }
-            );
+        curList.forEach((imageObject) => {
+          if (!useWhitePage && imageObject.type === "portrait" /* PORTRAIT */) {
+            addImage({ ...imageObject, index: imageObject.index - 0.5, type: "white_page" /* WHITE_PAGE */ });
+            useWhitePage = true;
           }
-        }
-        return findIndex(that.imageInfos, (info2) => info2?.type === "portrait" /* PORTRAIT */);
+          addImage(imageObject);
+        });
+        return groups;
       }
     },
     methods: {
