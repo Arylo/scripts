@@ -92,5 +92,5 @@ export const appendTemplateButton = () => {
     })
   })
 
-  $('.gl-display-flex:has([for=merge_request_description])').append(btnElement)
+  $('*:has(>[for=merge_request_description])').append(btnElement)
 }

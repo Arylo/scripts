@@ -1,4 +1,3 @@
-import lodash from 'lodash'
 import * as MdTools from './MdTools'
 export { MdTools }
 
@@ -22,6 +21,10 @@ type TaskItemOptions = Partial<LevelOptions & { selected: boolean }>
 type TableOptions = Partial<LevelOptions>
 type HyperlinkOptions = Partial<LevelOptions & { anchorKey: string }>
 type ImageOptions = Partial<LevelOptions & { anchorKey: string, alt: string }>
+
+function cloneDeep <T>(value: T): T {
+  return JSON.parse(JSON.stringify(value)) as T
+}
 
 class Template {
   protected templateContent: string
@@ -153,7 +156,7 @@ class Template {
     this.templateContent += MdTools.enter()
   }
   public modify(callback: (content: string) => string) {
-    this.templateContent = callback(lodash.cloneDeep(this.templateContent))
+    this.templateContent = callback(cloneDeep(this.templateContent))
     return this.contentNextUtils
   }
 }
@@ -163,7 +166,7 @@ export const genTemplate = (callback: (utils: Template) => any = (() => { })) =>
 }
 
 export const readTemplate = (text: string, callback: (utils: Template) => any = (() => { })) => {
-  const templateInst = new Template(lodash.cloneDeep(text))
+  const templateInst = new Template(cloneDeep(text))
   callback(templateInst)
   return templateInst[Symbol.toStringTag]()
 }

@@ -14,7 +14,6 @@ const appendAsTitleButton = () => {
   })
 }
 
-
 if (location.pathname.endsWith('/-/merge_requests/new')) {
   setTimeout(() => {
     appendTemplateButton()
