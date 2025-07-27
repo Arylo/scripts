@@ -51,10 +51,25 @@
 #app .images {
   width: 100vw;
   justify-content: space-evenly;
+  column-gap: 10px;
+}
+
+#app .images > div {
+  min-width: calc((100% - 10px) / 4);
+}
+
+#app .images > div:has(.landscape),
+#app .images > div:has(.portrait + .portrait),
+#app .images > div:has(.white_page + .portrait) {
+  min-width: calc((100% - 10px) / 2);
 }
 
 #app .images.rtl > div {
   flex-direction: row-reverse;
+}
+
+#app .images.rtl img, #app .images.ltr img {
+  height: 100%;
 }
 
 #app .images div > div {

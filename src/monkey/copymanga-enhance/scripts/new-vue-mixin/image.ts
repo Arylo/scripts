@@ -30,14 +30,19 @@ const ImageMixin = (info: PageInfo) => ({
       const that = (this as any)
       const rawImageList: string[] = that.images || []
       const curList = rawImageList.map((imageUrl, index) => ({ index, url: imageUrl, type: that.imageInfos[index]?.type ?? PageType.LOADING }))
-      const hasWhitePage = that.canWhitePage
+      const hasWhitePage = that.hasWhitePage
       let useWhitePage = !hasWhitePage
       const groups: any[][] = []
       function addImage (obj: any) {
         if (
+          // First image group
           groups.length === 0 ||
+          // Last image group is full
           groups[groups.length - 1].length === 2 ||
-          groups[groups.length - 1][0].type === PageType.LANDSCAPE
+          // Last image group has a landscape image
+          groups[groups.length - 1][0].type === PageType.LANDSCAPE ||
+          // Last image group has a some site but the current image is landscape
+          groups[groups.length - 1].length === 1 && obj.type === PageType.LANDSCAPE
         ) groups.push([])
         groups[groups.length - 1].push(obj)
       }
