@@ -1,5 +1,5 @@
-import { genScrollTo } from "./common"
-import { PageInfo } from "./types"
+import genScrollTo from './utils/genScrollTo'
+import { PageInfo } from './types'
 
 const getCurrentCount = () => $('.comicContent-list > li > img').length
 const getTotalCount = () => Number((document.getElementsByClassName('comicCount')[0] as HTMLDivElement).innerText)
@@ -26,9 +26,9 @@ export const refreshImage = (cb: Function) => {
 
 export const getPageInfo = () => {
   const list: string[] = []
-  $(".comicContent-list > li > img").each((_, el) => {
-    list.push($(el).data("src"))
-  });
+  $('.comicContent-list > li > img').each((_, el) => {
+    list.push($(el).data('src'))
+  })
   const footerElements = $<HTMLAnchorElement>('.footer a')
   const info: PageInfo = {
     images: list,
@@ -37,6 +37,5 @@ export const getPageInfo = () => {
     prevUrl: footerElements.get(1)?.className.includes('prev-null') ? undefined : footerElements.get(1)?.href,
     nextUrl: footerElements.get(2)?.className.includes('prev-null') ? undefined : footerElements.get(2)?.href,
   }
-  console.log('PageInfo:', info)
   return info
 }

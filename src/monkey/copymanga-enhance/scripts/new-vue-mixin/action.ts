@@ -1,6 +1,7 @@
-import { genScrollTo } from "../common";
-import { ActionZones, ClickAction, ComicDirection } from "../constant";
-import { MixinThis } from "../types";
+import genScrollTo from '../utils/genScrollTo'
+import { ActionZones, ClickAction, ComicDirection } from './constant'
+import { MixinThis } from '../types'
+import storage from '../storage'
 
 const ActionMixin = () => ({
   computed: {
@@ -16,7 +17,7 @@ const ActionMixin = () => ({
       const element = document.body
       const containerElement = document.getElementsByClassName('images')[0]
       const containerScrollTo = genScrollTo(containerElement)
-      const headerHeight = document.getElementsByClassName("header")[0].clientHeight
+      const headerHeight = document.getElementsByClassName('header')[0].clientHeight
 
       if ([ComicDirection.LTR, ComicDirection.RTL].includes(that.mode)) {
         const offsetTops = [...document.getElementsByClassName('comic')].map(el => (el as HTMLImageElement).offsetTop - headerHeight)
@@ -61,29 +62,30 @@ const ActionMixin = () => ({
   },
   mounted () {
     const that = (this as any)
+    const { prevUrl, nextUrl  } = storage.pageInfo ?? {}
     window.addEventListener('keyup', ({ code }) => {
       switch (code.toLowerCase()) {
         case 'ArrowLeft'.toLowerCase():
-          that.prevUrl && (window.location.href = that.prevUrl)
-          break;
+          prevUrl && (window.location.href = prevUrl)
+          break
         case 'ArrowRight'.toLowerCase():
-          that.nextUrl && (window.location.href = that.nextUrl)
-          break;
+          nextUrl && (window.location.href = nextUrl)
+          break
         case 'ArrowUp'.toLowerCase():
           that.onJumpPage(ClickAction.PREV_PAGE)
-          break;
+          break
         case 'Space'.toLowerCase():
         case 'ArrowDown'.toLowerCase():
           that.onJumpPage(ClickAction.NEXT_PAGE)
-          break;
+          break
         case 'MetaLeft'.toLowerCase():
         case 'ControlLeft'.toLowerCase():
-          that.hasWhitePage = false;
-          break;
+          that.hasWhitePage = false
+          break
         case 'MetaRight'.toLowerCase():
         case 'ControlRight'.toLowerCase():
-          that.hasWhitePage = true;
-          break;
+          that.hasWhitePage = true
+          break
       }
     })
   },

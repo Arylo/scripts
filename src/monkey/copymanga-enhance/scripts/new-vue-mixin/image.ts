@@ -1,10 +1,11 @@
-import { chapter, comic, findIndex } from "../common";
-import { ComicDirection, PageType } from "../constant";
-import { MixinThis, PageInfo } from "../types";
+import { ComicDirection, PageType } from './constant'
+import { MixinThis } from '../types'
+import { imagesToImageGroups } from './utils'
+import storage from '../storage'
 
-const ImageMixin = (info: PageInfo) => ({
+const ImageMixin = () => ({
   data: {
-    hasWhitePage: JSON.parse(sessionStorage.getItem(`${comic}.hasWhitePage.${chapter}`) || 'false'),
+    hasWhitePage: storage.whitePage,
   },
   computed: {
     currentImageCount () {
@@ -28,32 +29,11 @@ const ImageMixin = (info: PageInfo) => ({
     },
     imageGroups () {
       const that = (this as any)
-      const rawImageList: string[] = that.images || []
-      const curList = rawImageList.map((imageUrl, index) => ({ index, url: imageUrl, type: that.imageInfos[index]?.type ?? PageType.LOADING }))
-      const hasWhitePage = that.hasWhitePage
-      let useWhitePage = !hasWhitePage
-      const groups: any[][] = []
-      function addImage (obj: any) {
-        if (
-          // First image group
-          groups.length === 0 ||
-          // Last image group is full
-          groups[groups.length - 1].length === 2 ||
-          // Last image group has a landscape image
-          groups[groups.length - 1][0].type === PageType.LANDSCAPE ||
-          // Last image group has a some site but the current image is landscape
-          groups[groups.length - 1].length === 1 && obj.type === PageType.LANDSCAPE
-        ) groups.push([])
-        groups[groups.length - 1].push(obj)
-      }
-      curList.forEach((imageObject) => {
-        if (!useWhitePage && imageObject.type === PageType.PORTRAIT) {
-          addImage({ ...imageObject, index: imageObject.index - 0.5, type: PageType.WHITE_PAGE })
-          useWhitePage = true
-        }
-        addImage(imageObject)
+      return imagesToImageGroups({
+        imageUrls: that.images || [],
+        imageInfos: that.imageInfos || [],
+        needWhitePage: that.hasWhitePage,
       })
-      return groups
     },
   },
   methods: {
@@ -75,7 +55,7 @@ const ImageMixin = (info: PageInfo) => ({
   },
   watch: {
     hasWhitePage (val: boolean) {
-      sessionStorage.setItem(`${comic}.hasWhitePage.${chapter}`, JSON.stringify(val))
+      storage.whitePage = val
     },
   },
 })

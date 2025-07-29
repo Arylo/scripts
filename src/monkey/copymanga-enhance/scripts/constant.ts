@@ -1,25 +1,4 @@
-export enum ComicDirection {
-  LTR = 'ltr',
-  RTL = 'rtl',
-  TTB = 'ttb',
-}
+import parseConstant from './utils/parseConstant'
 
-export enum ClickAction {
-  PREV_PAGE = 'prev_page',
-  NEXT_PAGE = 'next_page',
-}
-
-export enum PageType {
-  LANDSCAPE = 'landscape',
-  PORTRAIT = 'portrait',
-  LOADING = 'loading',
-  WHITE_PAGE = 'white_page',
-}
-
-export const ActionZones = [{
-  names: ['left', ClickAction.PREV_PAGE]
-}, {
-  names: ['top', 'right', ClickAction.PREV_PAGE]
-}, {
-  names: ['bottom', 'right', ClickAction.NEXT_PAGE]
-}]
+export const comic = parseConstant(globalThis.location?.pathname).comic as string
+export const chapter = parseConstant(globalThis.location?.pathname).chapter as string

@@ -1,6 +1,6 @@
-import { comic } from "../common";
-import { ComicDirection } from "../constant";
-import { MixinThis } from "../types";
+import { comic } from '../constant'
+import { ComicDirection } from './constant'
+import { MixinThis } from '../types'
 
 const ModeMixin = () => ({
   data: {
