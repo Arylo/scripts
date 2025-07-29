@@ -19,7 +19,6 @@ describe(imagesToImageGroups.name, () => {
         { type: PageType.LANDSCAPE, index: 0, url: 'image1.jpg' },
       ],
       [
-        { type: PageType.WHITE_PAGE, index: 0.5, url: 'image2.jpg' },
         { type: PageType.PORTRAIT, index: 1, url: 'image2.jpg' },
       ],
       [
@@ -58,8 +57,10 @@ describe(imagesToImageGroups.name, () => {
     ])
   })
   test('Should handle all portrait images with white page', () => {
-    const imageUrls = ['image1.jpg', 'image2.jpg']
+    const imageUrls = ['image1.jpg', 'image2.jpg', 'image3.jpg', 'image4.jpg']
     const imageInfos = [
+      { type: PageType.PORTRAIT },
+      { type: PageType.PORTRAIT },
       { type: PageType.PORTRAIT },
       { type: PageType.PORTRAIT },
     ]
@@ -71,6 +72,35 @@ describe(imagesToImageGroups.name, () => {
       ],
       [
         { type: PageType.PORTRAIT, index: 1, url: 'image2.jpg' },
+        { type: PageType.PORTRAIT, index: 2, url: 'image3.jpg' },
+      ],
+      [
+        { type: PageType.PORTRAIT, index: 3, url: 'image4.jpg' },
+      ],
+    ])
+  })
+  test('Should handle mixed types with white page', () => {
+    const imageUrls = ['image1.jpg', 'image2.jpg', 'image3.jpg', 'image4.jpg']
+    const imageInfos = [
+      { type: PageType.PORTRAIT },
+      { type: PageType.LANDSCAPE },
+      { type: PageType.PORTRAIT },
+      { type: PageType.PORTRAIT },
+    ]
+    const result = imagesToImageGroups({ imageUrls, imageInfos, needWhitePage: true })
+    expect(result).toEqual([
+      [
+        { type: PageType.PORTRAIT, index: 0, url: 'image1.jpg' },
+      ],
+      [
+        { type: PageType.LANDSCAPE, index: 1, url: 'image2.jpg' },
+      ],
+      [
+        { type: PageType.WHITE_PAGE, index: 1.5, url: 'image3.jpg' },
+        { type: PageType.PORTRAIT, index: 2, url: 'image3.jpg' },
+      ],
+      [
+        { type: PageType.PORTRAIT, index: 3, url: 'image4.jpg' },
       ],
     ])
   })
