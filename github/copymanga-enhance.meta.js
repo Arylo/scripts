@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name Enhance the copy manga site
-// @version 30
+// @version 31
 // @author Arylo Yeung <arylo.open@gmail.com>
 // @license MIT
 // @match https://copymanga.com/comic/*/chapter/*
@@ -25,7 +25,7 @@
 // @match https://*.copy2000.site/comic/*/chapter/*
 // @match https://2025copy.com/comic/*/chapter/*
 // @match https://*.2025copy.com/comic/*/chapter/*
-// @require https://unpkg.com/vue@2.7.14/dist/vue.min.js
+// @require https://unpkg.com/vue@2.7.16/dist/vue.min.js
 // @homepage https://github.com/Arylo/scripts#readme
 // @supportURL https://github.com/Arylo/scripts/issues
 // @downloadURL https://raw.githubusercontent.com/Arylo/scripts/monkey/copymanga-enhance.user.js

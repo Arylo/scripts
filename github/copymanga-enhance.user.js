@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name Enhance the copy manga site
-// @version 30
+// @version 31
 // @author Arylo Yeung <arylo.open@gmail.com>
 // @license MIT
 // @match https://copymanga.com/comic/*/chapter/*
@@ -25,7 +25,7 @@
 // @match https://*.copy2000.site/comic/*/chapter/*
 // @match https://2025copy.com/comic/*/chapter/*
 // @match https://*.2025copy.com/comic/*/chapter/*
-// @require https://unpkg.com/vue@2.7.14/dist/vue.min.js
+// @require https://unpkg.com/vue@2.7.16/dist/vue.min.js
 // @homepage https://github.com/Arylo/scripts#readme
 // @supportURL https://github.com/Arylo/scripts/issues
 // @downloadURL https://raw.githubusercontent.com/Arylo/scripts/monkey/copymanga-enhance.user.js
@@ -71,16 +71,15 @@
   // src/monkey/copymanga-enhance/template.html
   var template_default = '<div id="app"> <div class="header"> <a :href="prevUrl" :class="{\'no-action\': !prevUrl}" class="btn"><span>\u4E0A\u4E00\u8BDD</span></a> <a :href="menuUrl" class="title"><span>{{ title }}</span></a> <a :href="nextUrl" :class="{\'no-action\': !nextUrl}" class="btn"><span>\u4E0B\u4E00\u8BDD</span></a> <select v-model="mode" @change="selectMode"> <option :value="ComicDirection.LTR">\u6B63\u5E38\u6A21\u5F0F</option> <option :value="ComicDirection.RTL">\u65E5\u6F2B\u6A21\u5F0F</option> <option :value="ComicDirection.TTB">\u6761\u6F2B\u6A21\u5F0F</option> </select> <template v-if="canWhitePage"> <a v-if="!hasWhitePage" class="btn" @click="() => toggleWhitePage()"><span>\u589E\u52A0\u7A7A\u767D\u9875</span></a> <a v-else class="btn" @click="() => toggleWhitePage()"><span>\u79FB\u9664\u7A7A\u767D\u9875</span></a> </template> <template v-else> <span style="margin-left: 15px;color: white;">{{currentImageCount}} / {{ totalImageCount }}</span> </template> </div> <div class="images" tabindex="0" :class="mode"> <div v-for="(group, index) of imageGroups" :key="`group-${index}`"> <div v-for="obj of group" :class="[obj.type]" :key="`image-${obj.index}`"> <img class="comic" :src="obj.url" @load="(e) => !imageInfos[obj.index] && imageLoaded(e, obj.index)"> </div> </div> </div> <div class="hint-container" :class="zone.names" v-for="zone of ActionZones" @click="() => onActionZoneClick(zone)" @wheel.stop="onActionZoneWheel"> <div v-if="zone.names.includes(ClickAction.PREV_PAGE)">\u4E0A\u4E00\u9875</div> <div v-if="zone.names.includes(ClickAction.NEXT_PAGE)">\u4E0B\u4E00\u9875</div> </div> </div>';
 
-  // src/monkey/copymanga-enhance/scripts/common.ts
+  // src/monkey/copymanga-enhance/scripts/utils/genScrollTo.ts
   var genScrollTo = (el) => (top, isSmooth = false) => el.scrollTo({
     top,
     left: 0,
     behavior: isSmooth ? "smooth" : "auto"
   });
-  var comic = globalThis.location?.pathname.split("/")[2];
-  var chapter = globalThis.location?.pathname.split("/")[4];
+  var genScrollTo_default = genScrollTo;
 
-  // src/monkey/copymanga-enhance/scripts/constant.ts
+  // src/monkey/copymanga-enhance/scripts/new-vue-mixin/constant.ts
   var ComicDirection = /* @__PURE__ */ ((ComicDirection2) => {
     ComicDirection2["LTR"] = "ltr";
     ComicDirection2["RTL"] = "rtl";
@@ -100,6 +99,61 @@
     names: ["bottom", "right", "next_page" /* NEXT_PAGE */]
   }];
 
+  // src/monkey/copymanga-enhance/scripts/utils/parseConstant.ts
+  var parseConstant = (pathname) => {
+    const match = pathname.match(/\/comic\/(\w+)(?:\/chapter\/(\w+))?/);
+    if (!match) {
+      return {};
+    }
+    return {
+      comic: match[1],
+      chapter: match[2]
+    };
+  };
+  var parseConstant_default = parseConstant;
+
+  // src/monkey/copymanga-enhance/scripts/constant.ts
+  var comic = parseConstant_default(globalThis.location?.pathname).comic;
+  var chapter = parseConstant_default(globalThis.location?.pathname).chapter;
+
+  // src/monkey/copymanga-enhance/scripts/storage.ts
+  var whitePageKey = Object.freeze([comic, chapter, "hasWhitePage"].join("."));
+  var pageInfoKey = Object.freeze([comic, chapter, "info"].join("."));
+  var cacheMap = /* @__PURE__ */ new Map();
+  var storage_default = {
+    get whitePage() {
+      const key = whitePageKey;
+      const result = cacheMap.get(key) ?? JSON.parse(localStorage.getItem(key) || "false");
+      !cacheMap.has(key) && cacheMap.set(key, result);
+      return result;
+    },
+    set whitePage(value) {
+      const key = whitePageKey;
+      const result = JSON.stringify(value);
+      localStorage.setItem(key, result);
+      cacheMap.set(key, result);
+    },
+    get pageInfo() {
+      const defaultValue = {
+        images: [],
+        title: void 0,
+        prevUrl: void 0,
+        nextUrl: void 0,
+        menuUrl: void 0
+      };
+      const key = pageInfoKey;
+      const result = cacheMap.get(key) ?? JSON.parse(sessionStorage.getItem(key) ?? JSON.stringify(defaultValue));
+      !cacheMap.has(key) && cacheMap.set(key, result);
+      return result;
+    },
+    set pageInfo(value) {
+      const key = pageInfoKey;
+      const result = JSON.stringify(value);
+      localStorage.setItem(key, result);
+      cacheMap.set(key, result);
+    }
+  };
+
   // src/monkey/copymanga-enhance/scripts/new-vue-mixin/action.ts
   var ActionMixin = () => ({
     computed: {
@@ -115,7 +169,7 @@
         const that = this;
         const element = document.body;
         const containerElement = document.getElementsByClassName("images")[0];
-        const containerScrollTo = genScrollTo(containerElement);
+        const containerScrollTo = genScrollTo_default(containerElement);
         const headerHeight = document.getElementsByClassName("header")[0].clientHeight;
         if (["ltr" /* LTR */, "rtl" /* RTL */].includes(that.mode)) {
           const offsetTops = [...document.getElementsByClassName("comic")].map((el) => el.offsetTop - headerHeight);
@@ -152,19 +206,20 @@
       },
       onActionZoneWheel(event) {
         const containerElement = document.getElementsByClassName("images")[0];
-        const containerScrollTo = genScrollTo(containerElement);
+        const containerScrollTo = genScrollTo_default(containerElement);
         containerScrollTo(containerElement.scrollTop - event.wheelDeltaY * 2, true);
       }
     },
     mounted() {
       const that = this;
+      const { prevUrl, nextUrl } = storage_default.pageInfo ?? {};
       window.addEventListener("keyup", ({ code }) => {
         switch (code.toLowerCase()) {
           case "ArrowLeft".toLowerCase():
-            that.prevUrl && (window.location.href = that.prevUrl);
+            prevUrl && (window.location.href = prevUrl);
             break;
           case "ArrowRight".toLowerCase():
-            that.nextUrl && (window.location.href = that.nextUrl);
+            nextUrl && (window.location.href = nextUrl);
             break;
           case "ArrowUp".toLowerCase():
             that.onJumpPage("prev_page" /* PREV_PAGE */);
@@ -187,10 +242,36 @@
   });
   var action_default = ActionMixin;
 
+  // src/monkey/copymanga-enhance/scripts/new-vue-mixin/utils.ts
+  function imagesToImageGroups({
+    imageUrls = [],
+    imageInfos = [],
+    needWhitePage = false
+  }) {
+    const groupList = [];
+    let useWhitePage = !needWhitePage;
+    imageUrls.forEach((imageUrl, index) => {
+      const currentImageInfo = imageInfos[index];
+      const currentImageObjects = [{ index, url: imageUrl, type: currentImageInfo?.type ?? "loading" /* LOADING */ }];
+      if (!useWhitePage && currentImageInfo?.type === "portrait" /* PORTRAIT */) {
+        currentImageObjects.unshift({ index: index - 0.5, url: imageUrl, type: "white_page" /* WHITE_PAGE */ });
+        useWhitePage = true;
+      }
+      currentImageObjects.forEach((obj) => {
+        const latestGroup = groupList[groupList.length - 1];
+        if (groupList.length === 0 || latestGroup.length === 2 || ["landscape" /* LANDSCAPE */, "loading" /* LOADING */].includes(latestGroup?.[0].type) || currentImageInfo?.type === "landscape" /* LANDSCAPE */) {
+          groupList.push([]);
+        }
+        groupList[groupList.length - 1].push(obj);
+      });
+    });
+    return groupList;
+  }
+
   // src/monkey/copymanga-enhance/scripts/new-vue-mixin/image.ts
-  var ImageMixin = (info) => ({
+  var ImageMixin = () => ({
     data: {
-      hasWhitePage: JSON.parse(sessionStorage.getItem(`${comic}.hasWhitePage.${chapter}`) || "false")
+      hasWhitePage: storage_default.whitePage
     },
     computed: {
       currentImageCount() {
@@ -214,29 +295,11 @@
       },
       imageGroups() {
         const that = this;
-        const rawImageList = that.images || [];
-        const curList = rawImageList.map((imageUrl, index) => ({ index, url: imageUrl, type: that.imageInfos[index]?.type ?? "loading" /* LOADING */ }));
-        const hasWhitePage = that.hasWhitePage;
-        let useWhitePage = !hasWhitePage;
-        const groups = [];
-        function addImage(obj) {
-          if (
-            // First image group
-            groups.length === 0 || // Last image group is full
-            groups[groups.length - 1].length === 2 || // Last image group has a landscape image
-            groups[groups.length - 1][0].type === "landscape" /* LANDSCAPE */ || // Last image group has a some site but the current image is landscape
-            groups[groups.length - 1].length === 1 && obj.type === "landscape" /* LANDSCAPE */
-          ) groups.push([]);
-          groups[groups.length - 1].push(obj);
-        }
-        curList.forEach((imageObject) => {
-          if (!useWhitePage && imageObject.type === "portrait" /* PORTRAIT */) {
-            addImage({ ...imageObject, index: imageObject.index - 0.5, type: "white_page" /* WHITE_PAGE */ });
-            useWhitePage = true;
-          }
-          addImage(imageObject);
+        return imagesToImageGroups({
+          imageUrls: that.images || [],
+          imageInfos: that.imageInfos || [],
+          needWhitePage: that.hasWhitePage
         });
-        return groups;
       }
     },
     methods: {
@@ -258,17 +321,45 @@
     },
     watch: {
       hasWhitePage(val) {
-        sessionStorage.setItem(`${comic}.hasWhitePage.${chapter}`, JSON.stringify(val));
+        storage_default.whitePage = val;
       }
     }
   });
   var image_default = ImageMixin;
 
   // src/monkey/copymanga-enhance/scripts/new-vue-mixin/init.ts
-  var InitMixin = (info) => ({
+  var InitMixin = () => ({
     data: {
-      ...info,
-      imageInfos: Array(info.images.length).fill(void 0)
+      imageInfos: []
+    },
+    computed: {
+      pageInfo() {
+        return storage_default.pageInfo ?? {};
+      },
+      images() {
+        const that = this;
+        return that.pageInfo?.images || [];
+      },
+      prevUrl() {
+        const that = this;
+        return that.pageInfo?.prevUrl;
+      },
+      menuUrl() {
+        const that = this;
+        return that.pageInfo?.menuUrl;
+      },
+      title() {
+        const that = this;
+        return that.pageInfo?.title;
+      },
+      nextUrl() {
+        const that = this;
+        return that.pageInfo?.nextUrl;
+      }
+    },
+    mounted() {
+      const that = this;
+      that.imageInfos = Array(that.pageInfo?.images.length).fill(void 0);
     }
   });
   var init_default = InitMixin;
@@ -296,15 +387,14 @@
   var mode_default = ModeMixin;
 
   // src/monkey/copymanga-enhance/scripts/new.ts
-  var render = ({ info, preFn = Function }) => {
-    preFn();
+  var render = () => {
     new Vue({
       el: "#app",
       mixins: [
-        init_default(info),
+        init_default(),
         mode_default(),
         action_default(),
-        image_default(info)
+        image_default()
       ]
     });
   };
@@ -312,7 +402,7 @@
   // src/monkey/copymanga-enhance/scripts/old.ts
   var getCurrentCount = () => $(".comicContent-list > li > img").length;
   var getTotalCount = () => Number(document.getElementsByClassName("comicCount")[0].innerText);
-  var windowScrollTo = genScrollTo(window);
+  var windowScrollTo = genScrollTo_default(window);
   var pre = -1;
   var refreshImage = (cb) => {
     const nextTime = 15;
@@ -343,38 +433,32 @@
       prevUrl: footerElements.get(1)?.className.includes("prev-null") ? void 0 : footerElements.get(1)?.href,
       nextUrl: footerElements.get(2)?.className.includes("prev-null") ? void 0 : footerElements.get(2)?.href
     };
-    console.log("PageInfo:", info);
     return info;
   };
 
   // src/monkey/copymanga-enhance/index.ts
-  var sessionStorageKey = `${comic}.info.${chapter}`;
-  var renderNewPage = (info) => render({
-    info,
-    preFn: () => {
-      document.body.innerHTML = template_default;
-      GM_addStyle(style_default);
-    }
-  });
+  var renderNewPage = () => {
+    console.log("PageInfo:", storage_default.pageInfo);
+    windowScrollTo(0);
+    document.body.innerHTML = template_default;
+    GM_addStyle(style_default);
+    render();
+  };
   setTimeout(() => {
-    let cacheContent = sessionStorage.getItem(sessionStorageKey);
+    let cacheContent = storage_default.pageInfo;
     if (cacheContent) {
       console.info("Found cache");
-      const info = {
+      return renderNewPage();
+    }
+    console.info("Non found cache");
+    refreshImage(() => {
+      const info = getPageInfo();
+      storage_default.pageInfo = Object.assign({
         prevUrl: void 0,
         nextUrl: void 0,
-        menuUrl: void 0,
-        ...JSON.parse(cacheContent)
-      };
-      return renderNewPage(info);
-    } else {
-      console.info("Non found cache");
-    }
-    refreshImage(() => {
-      windowScrollTo(0);
-      const info = getPageInfo();
-      sessionStorage.setItem(sessionStorageKey, JSON.stringify(info));
-      renderNewPage(info);
+        menuUrl: void 0
+      }, info);
+      renderNewPage();
     });
   }, 25);
 })();
