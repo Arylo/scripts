@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name Enhance the copy manga site
-// @version 31
+// @version 32
 // @author Arylo Yeung <arylo.open@gmail.com>
 // @license MIT
 // @match https://copymanga.com/comic/*/chapter/*
@@ -250,20 +250,31 @@
   }) {
     const groupList = [];
     let useWhitePage = !needWhitePage;
-    imageUrls.forEach((imageUrl, index) => {
+    const currentImageList = imageUrls.map((imageUrl, index) => {
       const currentImageInfo = imageInfos[index];
-      const currentImageObjects = [{ index, url: imageUrl, type: currentImageInfo?.type ?? "loading" /* LOADING */ }];
-      if (!useWhitePage && currentImageInfo?.type === "portrait" /* PORTRAIT */) {
-        currentImageObjects.unshift({ index: index - 0.5, url: imageUrl, type: "white_page" /* WHITE_PAGE */ });
-        useWhitePage = true;
-      }
-      currentImageObjects.forEach((obj) => {
-        const latestGroup = groupList[groupList.length - 1];
-        if (groupList.length === 0 || latestGroup.length === 2 || ["landscape" /* LANDSCAPE */, "loading" /* LOADING */].includes(latestGroup?.[0].type) || currentImageInfo?.type === "landscape" /* LANDSCAPE */) {
-          groupList.push([]);
+      const currentImageObject = { index, url: imageUrl, type: currentImageInfo?.type ?? "loading" /* LOADING */ };
+      return currentImageObject;
+    });
+    if (needWhitePage) {
+      currentImageList.forEach((imageObject, index) => {
+        if (useWhitePage) return;
+        if (imageObject.type !== "portrait" /* PORTRAIT */) return;
+        if (currentImageList[index + 1]?.type === "portrait" /* PORTRAIT */) {
+          currentImageList.splice(index, 0, {
+            ...imageObject,
+            index: index - 0.5,
+            type: "white_page" /* WHITE_PAGE */
+          });
+          useWhitePage = true;
         }
-        groupList[groupList.length - 1].push(obj);
       });
+    }
+    currentImageList.forEach((imageObject) => {
+      const latestGroup = groupList[groupList.length - 1];
+      if (groupList.length === 0 || latestGroup.length === 2 || ["landscape" /* LANDSCAPE */, "loading" /* LOADING */].includes(latestGroup?.[0].type) || imageObject.type === "landscape" /* LANDSCAPE */) {
+        groupList.push([]);
+      }
+      groupList[groupList.length - 1].push(imageObject);
     });
     return groupList;
   }
