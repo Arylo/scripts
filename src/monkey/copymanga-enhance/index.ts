@@ -14,7 +14,7 @@ const renderNewPage = () => {
 
 setTimeout(() => {
   let cacheContent = storage.pageInfo
-  if (cacheContent) {
+  if (cacheContent?.images.length) {
     console.info('Found cache')
     return renderNewPage()
   }
