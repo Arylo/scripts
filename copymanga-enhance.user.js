@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name Enhance the copy manga site
-// @version 32
+// @version 33
 // @author Arylo Yeung <arylo.open@gmail.com>
 // @license MIT
 // @match https://copymanga.com/comic/*/chapter/*
@@ -119,6 +119,7 @@
   // src/monkey/copymanga-enhance/scripts/storage.ts
   var whitePageKey = Object.freeze([comic, chapter, "hasWhitePage"].join("."));
   var pageInfoKey = Object.freeze([comic, chapter, "info"].join("."));
+  var directionModeKey = Object.freeze([comic, "direction", "mode"].join("."));
   var cacheMap = /* @__PURE__ */ new Map();
   var storage_default = {
     get whitePage() {
@@ -131,7 +132,7 @@
       const key = whitePageKey;
       const result = JSON.stringify(value);
       localStorage.setItem(key, result);
-      cacheMap.set(key, result);
+      cacheMap.set(key, value);
     },
     get pageInfo() {
       const defaultValue = {
@@ -150,7 +151,18 @@
       const key = pageInfoKey;
       const result = JSON.stringify(value);
       localStorage.setItem(key, result);
-      cacheMap.set(key, result);
+      cacheMap.set(key, value);
+    },
+    get directionMode() {
+      const key = directionModeKey;
+      const result = cacheMap.get(key) ?? GM_getValue(key, "rtl" /* RTL */);
+      !cacheMap.has(key) && cacheMap.set(key, result);
+      return result;
+    },
+    set directionMode(value) {
+      const key = pageInfoKey;
+      GM_setValue(key, value);
+      cacheMap.set(key, value);
     }
   };
 
@@ -378,7 +390,7 @@
   // src/monkey/copymanga-enhance/scripts/new-vue-mixin/mode.ts
   var ModeMixin = () => ({
     data: {
-      mode: GM_getValue(`${comic}.direction.mode`, "rtl" /* RTL */)
+      mode: "rtl" /* RTL */
     },
     computed: {
       ComicDirection: () => ComicDirection
@@ -387,12 +399,16 @@
       selectMode(evt) {
         const value = evt.target?.value;
         this.switchMode(value);
-        GM_setValue(`${comic}.direction.mode`, value);
+        storage_default.directionMode = value;
       },
       switchMode(mode) {
         const that = this;
         that.mode = mode;
       }
+    },
+    mounted() {
+      const that = this;
+      that.mode = storage_default.directionMode;
     }
   });
   var mode_default = ModeMixin;
@@ -457,7 +473,7 @@
   };
   setTimeout(() => {
     let cacheContent = storage_default.pageInfo;
-    if (cacheContent) {
+    if (cacheContent?.images.length) {
       console.info("Found cache");
       return renderNewPage();
     }
