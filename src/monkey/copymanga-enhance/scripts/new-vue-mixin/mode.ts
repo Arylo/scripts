@@ -1,10 +1,10 @@
-import { comic } from '../constant'
 import { ComicDirection } from './constant'
 import { MixinThis } from '../types'
+import storage from '../storage'
 
 const ModeMixin = () => ({
   data: {
-    mode: GM_getValue(`${comic}.direction.mode`, ComicDirection.RTL),
+    mode: ComicDirection.RTL,
   },
   computed: {
     ComicDirection: () => ComicDirection,
@@ -13,12 +13,16 @@ const ModeMixin = () => ({
     selectMode (evt: InputEvent) {
       const value = (evt.target as HTMLSelectElement)?.value
       this.switchMode(value)
-      GM_setValue(`${comic}.direction.mode`, value)
+      storage.directionMode = value as ComicDirection
     },
     switchMode (mode: string) {
       const that = (this as any)
       that.mode = mode
     },
+  },
+  mounted () {
+    const that = (this as any)
+    that.mode = storage.directionMode
   }
 })
 
