@@ -20,6 +20,9 @@
     "url": "https://github.com/Arylo/scripts/issues"
   },
   "license": "MIT",
+  "engines": {
+    "node": "24.12.0"
+  },
   "dependencies": {
     "@js-sh/js-sh": "^0.1.1"
   },
