@@ -1,11 +1,11 @@
 
-function fallback(elem, imgUrl) {
+function fallback(elem: JQuery<HTMLElement>, imgUrl: string) {
   setTimeout(function () {
     elem.attr("src", imgUrl + (imgUrl.indexOf("?") === -1 ? "?" : "&") + "refresh=" + Date.now());
   }, Number(Math.random() * 2000));
 }
 
-function newProcess(elem, imgUrl, linkUrl) {
+function newProcess(elem: JQuery<HTMLElement>, imgUrl: string, linkUrl: string) {
   const linkList = linkUrl.split("/");
   const imgList = imgUrl.split("/");
   if (/^(\w+\.){2,}\w{2,}$/.test(imgList[3]) && imgList[4] === 'th') {
@@ -21,7 +21,7 @@ function newProcess(elem, imgUrl, linkUrl) {
   }
 }
 
-function oldProcess(elem, imgUrl, linkUrl) {
+function oldProcess(elem: JQuery<HTMLElement>, imgUrl: string, linkUrl: string) {
   if (!imgUrl.includes('//th')) return newProcess(elem, imgUrl, linkUrl);
   let newImgUrl = imgUrl.replace('//th', '/i');
   const list = linkUrl.split('/');
