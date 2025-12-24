@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name Display image right now in nyaa.si
 // @name:zh-CN 在nyaa.si 上立即显示图片
-// @version 7
+// @version 8
 // @author Arylo Yeung <arylo.open@gmail.com>
 // @license MIT
 // @match https://sukebei.nyaa.si/view/*
