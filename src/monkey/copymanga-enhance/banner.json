@@ -24,9 +24,11 @@
     "https://2025copy.com/comic/*/chapter/*",
     "https://*.2025copy.com/comic/*/chapter/*"
   ],
-  "require": "https://unpkg.com/vue@2.7.16/dist/vue.min.js",
+  "connect": "unpkg.com",
+  "require": "https://unpkg.com/vue@3/dist/vue.global.prod.js",
   "run-at": "document-end",
   "grant": [
+    "GM_xmlhttpRequest",
     "GM_addStyle",
     "GM_setValue",
     "GM_getValue"

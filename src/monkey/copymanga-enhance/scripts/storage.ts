@@ -1,5 +1,5 @@
 import { chapter, comic } from "./constant"
-import { ComicDirection } from "./new-vue-mixin/constant"
+import { DirectionMode } from "./newPage/constant"
 import { PageInfo } from "./types"
 
 const whitePageKey = Object.freeze([comic, chapter, 'hasWhitePage'].join('.'))
@@ -37,17 +37,17 @@ export default {
   set pageInfo (value: PageInfo) {
     const key = pageInfoKey
     const result = JSON.stringify(value)
-    localStorage.setItem(key, result)
+    sessionStorage.setItem(key, result)
     cacheMap.set(key, value)
   },
-  get directionMode (): ComicDirection {
+  get directionMode (): DirectionMode {
     const key = directionModeKey
-    const result = cacheMap.get(key) ?? GM_getValue(key, ComicDirection.RTL)
+    const result = cacheMap.get(key) ?? GM_getValue(key, DirectionMode.RTL)
     !cacheMap.has(key) && cacheMap.set(key, result)
     return result
   },
-  set directionMode (value: ComicDirection) {
-    const key = pageInfoKey
+  set directionMode (value: DirectionMode) {
+    const key = directionModeKey
     GM_setValue(key, value)
     cacheMap.set(key, value)
   },

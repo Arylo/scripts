@@ -1,16 +1,18 @@
 declare function GM_addStyle(content: string): any;
 declare function GM_setValue(key: string, value: T): undefined;
 declare function GM_getValue<T>(key: string, defaultValue: T): T
-declare function GM_setClipboard(content: string, type: 'text' | 'html', callback: () => void): Promise<never>;
+declare function GM_setClipboard(content: string, type: 'text' | 'html', callback: () => any): Promise<never>;
 declare function GM_getResourceText(name: string): string;
 
-declare interface Window {
-  GM: {
-    addStyle: GM_addStyle,
-  },
-  GM_addStyle: GM_addStyle,
-  GM_setValue: GM_setValue,
-  GM_getValue: GM_getValue,
-  GM_setClipboard: GM_setClipboard,
-  GM_getResourceText: GM_getResourceText,
+declare global {
+  interface Window {
+    GM: {
+      addStyle: GM_addStyle,
+    },
+    GM_addStyle: GM_addStyle,
+    GM_setValue: GM_setValue,
+    GM_getValue: GM_getValue,
+    GM_setClipboard: GM_setClipboard,
+    GM_getResourceText: GM_getResourceText,
+  }
 }

@@ -1,0 +1,56 @@
+.direction-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  width: 100%;
+  max-height: var(--body-height);
+  overflow-y: scroll;
+}
+
+.wrapper {
+  display: flex;
+  flex-basis: 100%;
+  justify-content: center;
+  padding-top: 1px;
+  padding-bottom: 1px;
+  order: attr(data-index number)
+}
+
+:is(.ltr, .rtl).direction-wrapper {
+  scroll-snap-type: y mandatory;
+}
+:is(.ltr, .rtl) .wrapper {
+  scroll-snap-align: center;
+}
+
+/* #region 单行时 */
+@media (max-aspect-ratio: 5 / 3) {
+  .wrapper:has(> .white-page) {
+    display: none;
+  }
+}
+/* #endregion 单行时 */
+
+/* #region 多行时 */
+@media (min-aspect-ratio: 5 / 3) {
+  :is(.ltr, .rtl) .wrapper:has(> .portrait) {
+    flex-basis: 50%;
+  }
+  .ltr .wrapper:has(> .portrait):nth-of-type(odd),
+  .rtl .wrapper:has(> .portrait):nth-of-type(even) {
+    justify-content: flex-end;
+    padding-left: 5px;
+  }
+  .ltr .wrapper:has(> .portrait):nth-of-type(even),
+  .rtl .wrapper:has(> .portrait):nth-of-type(odd) {
+    justify-content: flex-start;
+    padding-right: 5px;
+  }
+}
+@media (min-aspect-ratio: 9 / 3) {
+  :is(.ltr, .rtl) .wrapper:has(> .portrait) {
+    flex-basis: 25%;
+  }
+}
+/* #endregion 多行时 */
+

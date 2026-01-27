@@ -1,0 +1,4 @@
+:is(.ltr, .rtl) .comic-image {
+  height: var(--body-height);
+  width: auto;
+}
