@@ -1,7 +1,8 @@
 // ==UserScript==
 // @name Enhance the copy manga site
-// @version 33
+// @version 34
 // @author Arylo Yeung <arylo.open@gmail.com>
+// @connect unpkg.com
 // @license MIT
 // @match https://copymanga.com/comic/*/chapter/*
 // @match https://*.copymanga.com/comic/*/chapter/*
@@ -25,12 +26,13 @@
 // @match https://*.copy2000.site/comic/*/chapter/*
 // @match https://2025copy.com/comic/*/chapter/*
 // @match https://*.2025copy.com/comic/*/chapter/*
-// @require https://unpkg.com/vue@2.7.16/dist/vue.min.js
+// @require https://unpkg.com/vue@3/dist/vue.global.prod.js
 // @homepage https://github.com/Arylo/scripts#readme
 // @supportURL https://github.com/Arylo/scripts/issues
 // @downloadURL https://raw.githubusercontent.com/Arylo/scripts/monkey/copymanga-enhance.user.js
 // @updateURL https://raw.githubusercontent.com/Arylo/scripts/monkey/copymanga-enhance.meta.js
 // @run-at document-end
+// @grant GM_xmlhttpRequest
 // @grant GM_addStyle
 // @grant GM_setValue
 // @grant GM_getValue
@@ -38,12 +40,13 @@
 "use strict";
 (() => {
   // src/monkey/polyfill/GM.ts
-  var thisGlobal = window;
-  if (typeof thisGlobal.GM === "undefined") {
-    thisGlobal.GM = {};
+  if (typeof window.GM === "undefined") {
+    window.GM = {
+      addStyle: GM_addStyle
+    };
   }
   function getGMWindow() {
-    return thisGlobal;
+    return window;
   }
 
   // src/monkey/polyfill/GM_addStyle.ts
@@ -65,39 +68,27 @@
     w.GM.addStyle = GM_addStyle;
   }
 
-  // src/monkey/copymanga-enhance/style.css
-  var style_default = ":root{--header-label-color: rgba(255, 255, 255, .95);--header-height: 30px;--image-max-height: calc(100vh - var(--header-height));--action-btn-label-color: rgba(255, 255, 255, .95);--action-btn-bg-color: rgba(0, 0, 0, .2);--action-btn-height: 100px;--action-btn-width: 100px;--action-btn-border-radius: 100px;--action-btn-only-height: 30vh;--action-btn-only-width: 95px}#app{overflow:hidden;height:100vh}#app .header{height:var(--header-height);width:100vw;display:flex;justify-content:center;align-items:center}#app .header:hover~.hint{display:none}#app .header span{color:var(--header-label-color)}#app .header .btn{min-width:80px}#app .header .btn.no-action{visibility:hidden}#app .images,#app .images>div{display:flex;flex-wrap:wrap;justify-content:center;overflow:auto;height:var(--image-max-height)}#app .images{width:100vw;justify-content:space-evenly;column-gap:10px}#app .images>div{min-width:calc((100% - 10px)/4)}#app .images>div:has(.landscape),#app .images>div:has(.portrait+.portrait),#app .images>div:has(.white_page+.portrait){min-width:calc((100% - 10px)/2)}#app .images.rtl>div{flex-direction:row-reverse}#app .images.rtl img,#app .images.ltr img{height:100%}#app .images div>div{height:var(--image-max-height)}#app .images.ttb div>div{height:auto;width:90vw}#app .images .white_page{visibility:hidden}#app .hint-container{position:absolute;height:var(--hint-action-zone-height, var(--image-max-height));top:var(--hint-action-zone-top, var(--header-height));display:flex;width:30vw;align-items:center;cursor:pointer;overflow:hidden}#app .hint-container.left{left:0;justify-content:flex-start}#app .hint-container.right{right:0;justify-content:flex-end}#app .hint-container.windows.right{right:16px}#app .hint-container.top{--hint-action-zone-top: var(--header-height);--hint-action-zone-height: calc(var(--image-max-height) * .4);align-items:flex-start}#app .hint-container.bottom{--hint-action-zone-top: calc(var(--header-height) + var(--image-max-height) * .4);--hint-action-zone-height: calc(var(--image-max-height) * .6);align-items:flex-end}#app .hint-container>div{display:none;padding:20px;border-radius:var(--action-btn-border-radius);height:var(--action-btn-height);width:var(--action-btn-width);color:var(--action-btn-label-color);background-color:var(--action-btn-bg-color);box-shadow:var(--action-btn-shadow-x, 0) var(--action-btn-shadow-y, 0) 18px var(--action-btn-bg-color)}#app .hint-container:hover>div{display:flex}#app .hint-container.left>div{--action-btn-shadow-x: 10px;justify-content:flex-start;border-top-left-radius:0;border-bottom-left-radius:0}#app .hint-container.right>div{--action-btn-shadow-x: -10px;justify-content:flex-end;border-top-right-radius:0;border-bottom-right-radius:0}#app .hint-container.top>div{--action-btn-shadow-y: 10px;align-items:flex-start;border-top-left-radius:0;border-top-right-radius:0}#app .hint-container.bottom>div{--action-btn-shadow-y: -10px;align-items:flex-end;border-bottom-left-radius:0;border-bottom-right-radius:0}#app .hint-container:not(.top):not(.bottom)>div{align-items:center;height:var(--action-btn-only-height);width:var(--action-btn-only-width)}\n";
-
   // src/monkey/copymanga-enhance/template.html
-  var template_default = '<div id="app"> <div class="header"> <a :href="prevUrl" :class="{\'no-action\': !prevUrl}" class="btn"><span>\u4E0A\u4E00\u8BDD</span></a> <a :href="menuUrl" class="title"><span>{{ title }}</span></a> <a :href="nextUrl" :class="{\'no-action\': !nextUrl}" class="btn"><span>\u4E0B\u4E00\u8BDD</span></a> <select v-model="mode" @change="selectMode"> <option :value="ComicDirection.LTR">\u6B63\u5E38\u6A21\u5F0F</option> <option :value="ComicDirection.RTL">\u65E5\u6F2B\u6A21\u5F0F</option> <option :value="ComicDirection.TTB">\u6761\u6F2B\u6A21\u5F0F</option> </select> <template v-if="canWhitePage"> <a v-if="!hasWhitePage" class="btn" @click="() => toggleWhitePage()"><span>\u589E\u52A0\u7A7A\u767D\u9875</span></a> <a v-else class="btn" @click="() => toggleWhitePage()"><span>\u79FB\u9664\u7A7A\u767D\u9875</span></a> </template> <template v-else> <span style="margin-left: 15px;color: white;">{{currentImageCount}} / {{ totalImageCount }}</span> </template> </div> <div class="images" tabindex="0" :class="mode"> <div v-for="(group, index) of imageGroups" :key="`group-${index}`"> <div v-for="obj of group" :class="[obj.type]" :key="`image-${obj.index}`"> <img class="comic" :src="obj.url" @load="(e) => !imageInfos[obj.index] && imageLoaded(e, obj.index)"> </div> </div> </div> <div class="hint-container" :class="zone.names" v-for="zone of ActionZones" @click="() => onActionZoneClick(zone)" @wheel.stop="onActionZoneWheel"> <div v-if="zone.names.includes(ClickAction.PREV_PAGE)">\u4E0A\u4E00\u9875</div> <div v-if="zone.names.includes(ClickAction.NEXT_PAGE)">\u4E0B\u4E00\u9875</div> </div> </div>';
+  var template_default = '<div id="app"></div>';
 
-  // src/monkey/copymanga-enhance/scripts/utils/genScrollTo.ts
-  var genScrollTo = (el) => (top, isSmooth = false) => el.scrollTo({
-    top,
-    left: 0,
-    behavior: isSmooth ? "smooth" : "auto"
-  });
-  var genScrollTo_default = genScrollTo;
-
-  // src/monkey/copymanga-enhance/scripts/new-vue-mixin/constant.ts
-  var ComicDirection = /* @__PURE__ */ ((ComicDirection2) => {
-    ComicDirection2["LTR"] = "ltr";
-    ComicDirection2["RTL"] = "rtl";
-    ComicDirection2["TTB"] = "ttb";
-    return ComicDirection2;
-  })(ComicDirection || {});
-  var ClickAction = /* @__PURE__ */ ((ClickAction2) => {
-    ClickAction2["PREV_PAGE"] = "prev_page";
-    ClickAction2["NEXT_PAGE"] = "next_page";
-    return ClickAction2;
-  })(ClickAction || {});
-  var ActionZones = [{
-    names: ["left", "prev_page" /* PREV_PAGE */]
-  }, {
-    names: ["top", "right", "prev_page" /* PREV_PAGE */]
-  }, {
-    names: ["bottom", "right", "next_page" /* NEXT_PAGE */]
-  }];
+  // src/monkey/copymanga-enhance/scripts/newPage/vue.ts
+  var {
+    createApp,
+    defineComponent,
+    readonly,
+    ref,
+    reactive,
+    computed,
+    isRef,
+    unref,
+    onMounted,
+    watch,
+    watchEffect,
+    h,
+    compile,
+    Fragment
+  } = Vue;
+  var vue_default = Vue;
 
   // src/monkey/copymanga-enhance/scripts/utils/parseConstant.ts
   var parseConstant = (pathname) => {
@@ -115,6 +106,12 @@
   // src/monkey/copymanga-enhance/scripts/constant.ts
   var comic = parseConstant_default(globalThis.location?.pathname).comic;
   var chapter = parseConstant_default(globalThis.location?.pathname).chapter;
+
+  // src/monkey/copymanga-enhance/scripts/newPage/constant.ts
+  var ACTION_GRID_MAP = {
+    PREV: [1, 3, 4],
+    NEXT: [6]
+  };
 
   // src/monkey/copymanga-enhance/scripts/storage.ts
   var whitePageKey = Object.freeze([comic, chapter, "hasWhitePage"].join("."));
@@ -150,7 +147,7 @@
     set pageInfo(value) {
       const key = pageInfoKey;
       const result = JSON.stringify(value);
-      localStorage.setItem(key, result);
+      sessionStorage.setItem(key, result);
       cacheMap.set(key, value);
     },
     get directionMode() {
@@ -160,72 +157,82 @@
       return result;
     },
     set directionMode(value) {
-      const key = pageInfoKey;
+      const key = directionModeKey;
       GM_setValue(key, value);
       cacheMap.set(key, value);
     }
   };
 
-  // src/monkey/copymanga-enhance/scripts/new-vue-mixin/action.ts
-  var ActionMixin = () => ({
-    computed: {
-      ClickAction: () => ClickAction,
-      ActionZones: () => ActionZones.map(
-        (zone) => ({
-          names: zone.names.concat($.isWindow(window) ? ["windows"] : []).filter(Boolean)
-        })
-      )
-    },
-    methods: {
-      onJumpPage(nextAction) {
-        const that = this;
-        const element = document.body;
-        const containerElement = document.getElementsByClassName("images")[0];
-        const containerScrollTo = genScrollTo_default(containerElement);
-        const headerHeight = document.getElementsByClassName("header")[0].clientHeight;
-        if (["ltr" /* LTR */, "rtl" /* RTL */].includes(that.mode)) {
-          const offsetTops = [...document.getElementsByClassName("comic")].map((el) => el.offsetTop - headerHeight);
-          const currentTop = containerElement.scrollTop;
-          for (let i = 0; i < offsetTops.length - 1; i++) {
-            if (nextAction === "prev_page" /* PREV_PAGE */) {
-              if (offsetTops[i] < currentTop && offsetTops[i + 1] >= currentTop) {
-                containerScrollTo(offsetTops[i], true);
-                break;
-              }
-            }
-            if (nextAction === "next_page" /* NEXT_PAGE */) {
-              if (offsetTops[i] <= currentTop && offsetTops[i + 1] > currentTop) {
-                containerScrollTo(offsetTops[i + 1], true);
-                break;
-              }
-            }
-          }
-        } else if (that.mode === "ttb" /* TTB */) {
-          let nextTop = nextAction === "prev_page" /* PREV_PAGE */ ? containerElement.scrollTop - element.clientHeight : containerElement.scrollTop + element.clientHeight;
-          nextTop += headerHeight;
-          nextTop = Math.max(0, nextTop);
-          containerScrollTo(nextTop, true);
-        }
-      },
-      onActionZoneClick(zone) {
-        const that = this;
-        const { names } = zone;
-        const nextAction = [
-          names.includes("prev_page" /* PREV_PAGE */) ? "prev_page" /* PREV_PAGE */ : void 0,
-          names.includes("next_page" /* NEXT_PAGE */) ? "next_page" /* NEXT_PAGE */ : void 0
-        ].filter(Boolean)[0];
-        that.onJumpPage(nextAction);
-      },
-      onActionZoneWheel(event) {
-        const containerElement = document.getElementsByClassName("images")[0];
-        const containerScrollTo = genScrollTo_default(containerElement);
-        containerScrollTo(containerElement.scrollTop - event.wheelDeltaY * 2, true);
-      }
-    },
-    mounted() {
-      const that = this;
-      const { prevUrl, nextUrl } = storage_default.pageInfo ?? {};
-      window.addEventListener("keyup", ({ code }) => {
+  // src/monkey/copymanga-enhance/scripts/newPage/hooks/usePageInfo.ts
+  function usePageInfo() {
+    const rawData = ref(storage_default.pageInfo);
+    onMounted(() => {
+      rawData.value = storage_default.pageInfo;
+    });
+    return readonly(rawData);
+  }
+
+  // src/monkey/copymanga-enhance/scripts/newPage/hooks/useWhitePage.ts
+  var whitePageRef = ref(storage_default.whitePage);
+  function useWhitePage() {
+    const whitePage = readonly(whitePageRef);
+    function setter(value) {
+      whitePageRef.value = value;
+      storage_default.whitePage = value;
+    }
+    onMounted(() => {
+      setter(storage_default.whitePage);
+    });
+    return [whitePage, setter];
+  }
+
+  // src/monkey/copymanga-enhance/scripts/utils/genScrollTo.ts
+  var genScrollTo = (el) => (top, isSmooth = false) => el.scrollTo({
+    top,
+    left: 0,
+    behavior: isSmooth ? "smooth" : "auto"
+  });
+  var genScrollTo_default = genScrollTo;
+
+  // src/monkey/copymanga-enhance/scripts/newPage/hooks/useScrollBy.ts
+  function useScrollBy() {
+    let scrollTo = null;
+    const getScrollElement = () => {
+      const element = document.querySelector(".direction-wrapper");
+      return element;
+    };
+    const getScrollStep = () => {
+      const appBody = getScrollElement();
+      return appBody?.clientHeight ?? window.innerHeight;
+    };
+    const scrollBy = (delta) => {
+      if (!scrollTo) return;
+      scrollTo(getScrollElement()?.scrollTop + delta, true);
+    };
+    const scrollUp = () => {
+      scrollBy(-getScrollStep());
+    };
+    const scrollDown = () => {
+      scrollBy(getScrollStep());
+    };
+    onMounted(() => {
+      scrollTo = genScrollTo_default(getScrollElement());
+    });
+    return { scrollUp, scrollDown };
+  }
+
+  // src/monkey/copymanga-enhance/scripts/newPage/hooks/useKeyWatcher.ts
+  function useKeyWatcher() {
+    const pageInfoRef = usePageInfo();
+    const prevUrlRef = computed(() => unref(pageInfoRef).prevUrl);
+    const nextUrlRef = computed(() => unref(pageInfoRef).nextUrl);
+    const [_, setWhitePage] = useWhitePage();
+    const { scrollUp, scrollDown } = useScrollBy();
+    onMounted(() => {
+      const prevUrl = unref(prevUrlRef);
+      const nextUrl = unref(nextUrlRef);
+      window.addEventListener("keyup", (event) => {
+        const { code } = event;
         switch (code.toLowerCase()) {
           case "ArrowLeft".toLowerCase():
             prevUrl && (window.location.href = prevUrl);
@@ -234,196 +241,409 @@
             nextUrl && (window.location.href = nextUrl);
             break;
           case "ArrowUp".toLowerCase():
-            that.onJumpPage("prev_page" /* PREV_PAGE */);
+            event.preventDefault();
+            scrollUp();
             break;
           case "Space".toLowerCase():
           case "ArrowDown".toLowerCase():
-            that.onJumpPage("next_page" /* NEXT_PAGE */);
+            event.preventDefault();
+            scrollDown();
             break;
           case "MetaLeft".toLowerCase():
           case "ControlLeft".toLowerCase():
-            that.hasWhitePage = false;
+            setWhitePage(false);
             break;
           case "MetaRight".toLowerCase():
           case "ControlRight".toLowerCase():
-            that.hasWhitePage = true;
+            setWhitePage(true);
             break;
         }
       });
-    }
-  });
-  var action_default = ActionMixin;
-
-  // src/monkey/copymanga-enhance/scripts/new-vue-mixin/utils.ts
-  function imagesToImageGroups({
-    imageUrls = [],
-    imageInfos = [],
-    needWhitePage = false
-  }) {
-    const groupList = [];
-    let useWhitePage = !needWhitePage;
-    const currentImageList = imageUrls.map((imageUrl, index) => {
-      const currentImageInfo = imageInfos[index];
-      const currentImageObject = { index, url: imageUrl, type: currentImageInfo?.type ?? "loading" /* LOADING */ };
-      return currentImageObject;
     });
-    if (needWhitePage) {
-      currentImageList.forEach((imageObject, index) => {
-        if (useWhitePage) return;
-        if (imageObject.type !== "portrait" /* PORTRAIT */) return;
-        if (currentImageList[index + 1]?.type === "portrait" /* PORTRAIT */) {
-          currentImageList.splice(index, 0, {
-            ...imageObject,
-            index: index - 0.5,
-            type: "white_page" /* WHITE_PAGE */
-          });
-          useWhitePage = true;
-        }
-      });
-    }
-    currentImageList.forEach((imageObject) => {
-      const latestGroup = groupList[groupList.length - 1];
-      if (groupList.length === 0 || latestGroup.length === 2 || ["landscape" /* LANDSCAPE */, "loading" /* LOADING */].includes(latestGroup?.[0].type) || imageObject.type === "landscape" /* LANDSCAPE */) {
-        groupList.push([]);
-      }
-      groupList[groupList.length - 1].push(imageObject);
-    });
-    return groupList;
   }
 
-  // src/monkey/copymanga-enhance/scripts/new-vue-mixin/image.ts
-  var ImageMixin = () => ({
-    data: {
-      hasWhitePage: storage_default.whitePage
-    },
-    computed: {
-      currentImageCount() {
-        const that = this;
-        return that.imageInfos.filter(Boolean).length;
-      },
-      totalImageCount() {
-        const that = this;
-        return that.imageInfos.length;
-      },
-      isAllImagesLoaded() {
-        const that = this;
-        return that.currentImageCount === that.totalImageCount;
-      },
-      canWhitePage() {
-        const that = this;
-        if (!["ltr" /* LTR */, "rtl" /* RTL */].includes(that.mode)) {
-          return false;
+  // src/monkey/copymanga-enhance/scripts/newPage/hooks/useMouseGrid.ts
+  var mouseFocusRef = ref(-1);
+  function useMouseGrid() {
+    const mouseGrid = readonly(mouseFocusRef);
+    function setter(value) {
+      mouseFocusRef.value = value;
+    }
+    return [mouseGrid, setter];
+  }
+
+  // src/monkey/copymanga-enhance/scripts/newPage/hooks/useMouseWatcher.ts
+  function useMouseWatcher() {
+    const { scrollUp, scrollDown } = useScrollBy();
+    const [mouseGridRef, setMouseGrid] = useMouseGrid();
+    onMounted(() => {
+      const appBody = document.querySelector(".app-body");
+      if (!appBody) return;
+      const getGridIndex = (x, y) => {
+        const COUNT_COLUMN = 3;
+        const COUNT_ROW = 2;
+        const rect = appBody.getBoundingClientRect();
+        if (x < rect.left || x > rect.right || y < rect.top || y > rect.bottom) return -1;
+        const colWidth = rect.width / COUNT_COLUMN;
+        const rowHeight = rect.height / COUNT_ROW;
+        const col = Math.min(COUNT_COLUMN - 1, Math.max(0, Math.floor((x - rect.left) / colWidth)));
+        const row = Math.min(COUNT_ROW - 1, Math.max(0, Math.floor((y - rect.top) / rowHeight)));
+        return row * COUNT_COLUMN + col + 1;
+      };
+      const handleGridMove = (info) => {
+        const gridIndex = getGridIndex(info.x, info.y);
+        const currentGridIndex = unref(mouseGridRef);
+        if (gridIndex === currentGridIndex) return;
+        setMouseGrid(gridIndex);
+      };
+      const handleGridClick = (info) => {
+        const gridIndex = getGridIndex(info.x, info.y);
+        if (ACTION_GRID_MAP.PREV.includes(gridIndex)) {
+          return scrollUp();
         }
-        return that.isAllImagesLoaded;
-      },
-      imageGroups() {
-        const that = this;
-        return imagesToImageGroups({
-          imageUrls: that.images || [],
-          imageInfos: that.imageInfos || [],
-          needWhitePage: that.hasWhitePage
-        });
-      }
-    },
-    methods: {
-      imageLoaded(e, index) {
-        const that = this;
-        const el = e.target;
-        that.imageInfos.splice(index, 1, {
-          width: el.width,
-          height: el.height,
-          type: el.width > el.height ? "landscape" /* LANDSCAPE */ : "portrait" /* PORTRAIT */
-        });
-        if (that.mode === "ltr" /* LTR */) {
+        if (ACTION_GRID_MAP.NEXT.includes(gridIndex)) {
+          return scrollDown();
         }
-      },
-      toggleWhitePage() {
-        const that = this;
-        that.hasWhitePage = !that.hasWhitePage;
-      }
-    },
-    watch: {
-      hasWhitePage(val) {
-        storage_default.whitePage = val;
-      }
-    }
-  });
-  var image_default = ImageMixin;
-
-  // src/monkey/copymanga-enhance/scripts/new-vue-mixin/init.ts
-  var InitMixin = () => ({
-    data: {
-      imageInfos: []
-    },
-    computed: {
-      pageInfo() {
-        return storage_default.pageInfo ?? {};
-      },
-      images() {
-        const that = this;
-        return that.pageInfo?.images || [];
-      },
-      prevUrl() {
-        const that = this;
-        return that.pageInfo?.prevUrl;
-      },
-      menuUrl() {
-        const that = this;
-        return that.pageInfo?.menuUrl;
-      },
-      title() {
-        const that = this;
-        return that.pageInfo?.title;
-      },
-      nextUrl() {
-        const that = this;
-        return that.pageInfo?.nextUrl;
-      }
-    },
-    mounted() {
-      const that = this;
-      that.imageInfos = Array(that.pageInfo?.images.length).fill(void 0);
-    }
-  });
-  var init_default = InitMixin;
-
-  // src/monkey/copymanga-enhance/scripts/new-vue-mixin/mode.ts
-  var ModeMixin = () => ({
-    data: {
-      mode: "rtl" /* RTL */
-    },
-    computed: {
-      ComicDirection: () => ComicDirection
-    },
-    methods: {
-      selectMode(evt) {
-        const value = evt.target?.value;
-        this.switchMode(value);
-        storage_default.directionMode = value;
-      },
-      switchMode(mode) {
-        const that = this;
-        that.mode = mode;
-      }
-    },
-    mounted() {
-      const that = this;
-      that.mode = storage_default.directionMode;
-    }
-  });
-  var mode_default = ModeMixin;
-
-  // src/monkey/copymanga-enhance/scripts/new.ts
-  var render = () => {
-    new Vue({
-      el: "#app",
-      mixins: [
-        init_default(),
-        mode_default(),
-        action_default(),
-        image_default()
-      ]
+      };
+      appBody.addEventListener("mousemove", (event) => {
+        const info = {
+          x: event.clientX,
+          y: event.clientY
+        };
+        handleGridMove(info);
+      });
+      appBody.addEventListener("click", (event) => {
+        const info = {
+          x: event.clientX,
+          y: event.clientY
+        };
+        handleGridClick(info);
+      });
+      appBody.addEventListener("touchstart", (event) => {
+        const touch = event.touches[0];
+        if (!touch) return;
+        const info = {
+          x: touch.clientX,
+          y: touch.clientY
+        };
+        handleGridClick(info);
+      });
     });
+    return {};
+  }
+
+  // node_modules/classcat/index.js
+  function cc(names) {
+    if (typeof names === "string" || typeof names === "number") return "" + names;
+    let out = "";
+    if (Array.isArray(names)) {
+      for (let i = 0, tmp; i < names.length; i++) {
+        if ((tmp = cc(names[i])) !== "") {
+          out += (out && " ") + tmp;
+        }
+      }
+    } else {
+      for (let k in names) {
+        if (names[k]) out += (out && " ") + k;
+      }
+    }
+    return out;
+  }
+
+  // src/monkey/copymanga-enhance/scripts/newPage/hooks/useDirectionMode.ts
+  var directionModeRef = ref(storage_default.directionMode);
+  function useDirectionMode() {
+    const directionMode = readonly(directionModeRef);
+    function setter(mode) {
+      directionModeRef.value = mode;
+      storage_default.directionMode = mode;
+    }
+    onMounted(() => {
+      setter(storage_default.directionMode);
+    });
+    return [directionMode, setter];
+  }
+
+  // src/monkey/copymanga-enhance/scripts/newPage/hooks/useImageInfoMap.ts
+  var statusMap = ref([]);
+  function useImageInfoMap() {
+    return statusMap;
+  }
+
+  // src/monkey/copymanga-enhance/scripts/newPage/hooks/useImageList.ts
+  function useImageList() {
+    const pageInfoRef = usePageInfo();
+    const imagesRef = computed(() => unref(pageInfoRef).images ?? []);
+    return imagesRef;
+  }
+
+  // src/monkey/copymanga-enhance/scripts/newPage/component/Image/style.css
+  var style_default = ":is(.ltr,.rtl) .comic-image{height:var(--body-height);width:auto}\n";
+
+  // src/monkey/copymanga-enhance/scripts/newPage/component/Image/index.ts
+  var Image_default = defineComponent({
+    props: {
+      src: {
+        type: String,
+        required: true
+      }
+    },
+    setup(props, { emit }) {
+      onMounted(() => {
+        GM_addStyle(style_default);
+      });
+      const pageType = ref("portrait" /* PORTRAIT */);
+      const imageListRef = useImageList();
+      const imageInfoMapRef = useImageInfoMap();
+      const onLoad = (e) => {
+        const index = unref(imageListRef).indexOf(props.src);
+        const element = e.target;
+        const [width, height] = [element.naturalWidth, element.naturalHeight];
+        const type = width > height ? "landscape" /* LANDSCAPE */ : "portrait" /* PORTRAIT */;
+        imageInfoMapRef.value[index] = {
+          width,
+          height,
+          type
+        };
+        pageType.value = type;
+        emit("loaded");
+      };
+      return () => h("img", { class: `comic-image ${unref(pageType)}`, src: props.src, onLoad });
+    }
+  });
+
+  // src/monkey/copymanga-enhance/scripts/newPage/component/AppBody/style.css
+  var style_default2 = ".direction-wrapper{display:flex;flex-wrap:wrap;justify-content:center;width:100%;max-height:var(--body-height);overflow-y:scroll}.wrapper{display:flex;flex-basis:100%;justify-content:center;padding-top:1px;padding-bottom:1px;order:attr(data-index number)}:is(.ltr,.rtl).direction-wrapper{scroll-snap-type:y mandatory}:is(.ltr,.rtl) .wrapper{scroll-snap-align:center}@media (max-aspect-ratio: 5 / 3){.wrapper:has(>.white-page){display:none}}@media (min-aspect-ratio: 5 / 3){:is(.ltr,.rtl) .wrapper:has(>.portrait){flex-basis:50%}.ltr .wrapper:has(>.portrait):nth-of-type(odd),.rtl .wrapper:has(>.portrait):nth-of-type(2n){justify-content:flex-end;padding-left:5px}.ltr .wrapper:has(>.portrait):nth-of-type(2n),.rtl .wrapper:has(>.portrait):nth-of-type(odd){justify-content:flex-start;padding-right:5px}}@media (min-aspect-ratio: 9 / 3){:is(.ltr,.rtl) .wrapper:has(>.portrait){flex-basis:25%}}\n";
+
+  // src/monkey/copymanga-enhance/scripts/newPage/component/WhitePage/style.css
+  var style_default3 = ".white-page{height:1px;width:1px}\n";
+
+  // src/monkey/copymanga-enhance/scripts/newPage/component/WhitePage/index.ts
+  var WhitePage_default = defineComponent({
+    setup() {
+      onMounted(() => {
+        GM_addStyle(style_default3);
+      });
+      return {};
+    },
+    template: '<div class="white-page portrait"></div>'
+  });
+
+  // src/monkey/copymanga-enhance/scripts/newPage/component/AppBody/index.ts
+  var AppBody_default = defineComponent({
+    setup() {
+      const [whitePageRef2] = useWhitePage();
+      const [directionModeRef2] = useDirectionMode();
+      const imageListRef = useImageList();
+      const infoMapRef = useImageInfoMap();
+      onMounted(() => {
+        GM_addStyle(style_default2);
+        refresh();
+      });
+      watch(whitePageRef2, () => refresh());
+      watch(directionModeRef2, () => refresh());
+      watch(imageListRef, () => refresh());
+      watch(infoMapRef, () => refresh());
+      const onLoaded = () => {
+        refresh();
+      };
+      const parseImages = (urls = []) => {
+        const infoMap = unref(infoMapRef);
+        return urls.map((src, index) => {
+          const info = infoMap[index];
+          const pageType = info && info.type === "landscape" /* LANDSCAPE */ ? "landscape" /* LANDSCAPE */ : "portrait" /* PORTRAIT */;
+          return {
+            component: Image_default,
+            props: {
+              src,
+              onLoaded,
+              key: `image-${index}`,
+              pageType
+            }
+          };
+        });
+      };
+      const addFirstWhitePage = (list) => {
+        if (list.length === 0) return list;
+        if (!unref(whitePageRef2)) return list;
+        if (!["rtl" /* RTL */, "ltr" /* LTR */].includes(unref(directionModeRef2))) return list;
+        let anchorIndex = -1;
+        for (let index = 0; index < list.length; index++) {
+          const { props } = list[index];
+          if (props.pageType === "landscape" /* LANDSCAPE */) {
+            anchorIndex = -1;
+            continue;
+          }
+          if (anchorIndex === -1) {
+            anchorIndex = index;
+            continue;
+          }
+          if (index - anchorIndex > 2) {
+            list.splice(anchorIndex, 0, {
+              component: WhitePage_default,
+              props: { key: `white-page-${anchorIndex}`, class: "manual", pageType: "portrait" /* PORTRAIT */ }
+            });
+            break;
+          }
+        }
+        return list;
+      };
+      const injectWhitePages = (list) => {
+        if (list.length === 0) return list;
+        if (!["rtl" /* RTL */, "ltr" /* LTR */].includes(unref(directionModeRef2))) return list;
+        const tempList = [];
+        for (let index = 0; index < list.length; index++) {
+          const { props: { pageType } } = list[index];
+          let lastGroupPageType = tempList.length > 0 ? tempList[tempList.length - 1][0].props.pageType : null;
+          if (pageType !== lastGroupPageType) {
+            tempList.push([]);
+          }
+          tempList[tempList.length - 1].push(list[index]);
+        }
+        for (let groupIndex = 0; groupIndex < tempList.length; groupIndex++) {
+          const group = tempList[groupIndex];
+          if (group[0].props.pageType === "landscape" /* LANDSCAPE */) continue;
+          if (group.length % 2 === 0) continue;
+          group.push({
+            component: WhitePage_default,
+            props: { key: `white-page-group-${groupIndex}`, class: "auto", pageType: "portrait" /* PORTRAIT */ }
+          });
+        }
+        return tempList.flat();
+      };
+      const injectDataIndex = (list) => {
+        let portraitCount = 0;
+        return list.map((item, index) => {
+          let targetIndex = index + 1;
+          if ("rtl" /* RTL */ === unref(directionModeRef2)) {
+            if (item.props.pageType === "portrait" /* PORTRAIT */) {
+              portraitCount++;
+              if (portraitCount % 2 === 0) {
+                targetIndex -= 1;
+              } else {
+                targetIndex += 1;
+              }
+            }
+            if (item.props.pageType === "landscape" /* LANDSCAPE */) {
+              portraitCount = 0;
+            }
+          }
+          return {
+            ...item,
+            props: {
+              ...item.props,
+              "data-index": targetIndex
+            }
+          };
+        });
+      };
+      const refresh = () => {
+        let list = [];
+        list = parseImages(unref(imageListRef));
+        list = addFirstWhitePage(list);
+        list = injectWhitePages(list);
+        list = injectDataIndex(list);
+        imagesRef.value = list;
+      };
+      const imagesRef = ref([]);
+      return () => h(
+        "div",
+        { class: "app-body" },
+        [
+          h(
+            "div",
+            { class: cc(["direction-wrapper", unref(directionModeRef2)]) },
+            unref(imagesRef).map(({ component, props }) => h("div", { class: "wrapper", "data-index": props["data-index"] }, [h(component, { ...props })]))
+          )
+        ]
+      );
+    }
+  });
+
+  // src/monkey/copymanga-enhance/scripts/newPage/component/AppHeader/style.css
+  var style_default4 = ".app-header{display:grid;grid-template-columns:1fr 60px auto 60px 1fr;column-gap:5px;align-items:center}.app-header :is(.comic-title,.loading-hint,.white-page-toggle),.app-header :is(.prev-comic,.next-comic):not([disabled]){color:#fff!important;cursor:pointer}.app-header :is(.prev-comic,.next-comic)[disabled]{color:gray!important;cursor:default}.app-header :is(.prev-comic,.next-comic){text-decoration:none;text-align:center}.app-header :is(.left-space,.right-space){display:flex;flex-flow:column;justify-content:center;column-gap:5px}.app-header .left-space{align-items:flex-end}.app-header .right-space{align-items:flex-start}\n";
+
+  // src/monkey/copymanga-enhance/scripts/newPage/component/AppHeader/index.ts
+  var AppHeader_default = defineComponent({
+    setup() {
+      const pageInfoRef = usePageInfo();
+      const titleRef = computed(() => unref(pageInfoRef).title);
+      const titleUrlRef = computed(() => unref(pageInfoRef).menuUrl);
+      const prevUrlRef = computed(() => unref(pageInfoRef).prevUrl);
+      const nextUrlRef = computed(() => unref(pageInfoRef).nextUrl);
+      const imageListRef = useImageList();
+      const imageInfoMapRef = useImageInfoMap();
+      const loadingStatusRef = computed(() => {
+        const total = unref(imageListRef).length;
+        const loaded = unref(imageInfoMapRef).filter((info) => info).length;
+        return {
+          total,
+          loaded,
+          hint: loaded === total ? "" : `\u5DF2\u52A0\u8F7D (${loaded} / ${total})`
+        };
+      });
+      const [whitePageRef2, setWhitePage] = useWhitePage();
+      onMounted(() => {
+        GM_addStyle(style_default4);
+      });
+      const [directionModeRef2, setDirectionMode] = useDirectionMode();
+      return () => h("div", { class: "app-header" }, [
+        h(
+          "div",
+          { class: "left-space" },
+          [
+            unref(loadingStatusRef).hint ? h("div", { class: "loading-hint" }, unref(loadingStatusRef).hint) : h(Fragment),
+            h("div", { class: "white-page-toggle", onClick: () => setWhitePage(!unref(whitePageRef2)) }, unref(whitePageRef2) ? "\u5DF2\u6DFB\u52A0\u7A7A\u767D\u9875" : "\u672A\u6DFB\u52A0\u7A7A\u767D\u9875")
+          ]
+        ),
+        h(
+          "a",
+          { class: "prev-comic", disabled: unref(prevUrlRef) ? void 0 : "", href: unref(prevUrlRef) },
+          "\u4E0A\u4E00\u9875"
+        ),
+        h("a", { class: "comic-title", href: unref(titleUrlRef) }, unref(titleRef)),
+        h(
+          "a",
+          { class: "next-comic", disabled: unref(nextUrlRef) ? void 0 : "", href: unref(nextUrlRef) },
+          "\u4E0B\u4E00\u9875"
+        ),
+        h("div", { class: "right-space" }, [
+          h("select", { onChange: (event) => setDirectionMode(event.target.value) }, [
+            h("option", { value: "rtl" /* RTL */, selected: unref(directionModeRef2) === "rtl" /* RTL */ }, "\u65E5\u6F2B\u6A21\u5F0F"),
+            h("option", { value: "ltr" /* LTR */, selected: unref(directionModeRef2) === "ltr" /* LTR */ }, "\u666E\u901A\u6A21\u5F0F"),
+            h("option", { value: "ttb" /* TTB */, selected: unref(directionModeRef2) === "ttb" /* TTB */ }, "\u56FD\u6F2B\u6A21\u5F0F")
+          ])
+        ])
+      ]);
+    }
+  });
+
+  // src/monkey/copymanga-enhance/scripts/newPage/component/App/style.css
+  var style_default5 = ":root{--header-height: 30px;--body-height: calc(100dvh - var(--header-height))}*:has(>:is(.app-header,.app-body)){width:100dvw;height:100dvh;max-width:100dvw;max-height:100dvh;min-width:100dvw;min-height:100dvh;overflow:hidden;display:grid;grid-template-rows:var(--header-height) auto}:is(.app-header,.app-body){width:100%}\n";
+
+  // src/monkey/copymanga-enhance/scripts/newPage/component/App/index.ts
+  var App_default = defineComponent({
+    setup() {
+      useKeyWatcher();
+      useMouseWatcher();
+      onMounted(() => {
+        GM_addStyle(style_default5);
+      });
+      return () => h(Fragment, [
+        h(AppHeader_default, { class: "app-header" }),
+        h(AppBody_default, { class: "app-body" }, "Comic Content")
+      ]);
+    }
+  });
+
+  // src/monkey/copymanga-enhance/scripts/newPage/index.ts
+  var render = () => {
+    const app = createApp({
+      setup() {
+        return () => h(App_default);
+      }
+    });
+    app.mount("#app");
   };
 
   // src/monkey/copymanga-enhance/scripts/old.ts
@@ -468,8 +688,18 @@
     console.log("PageInfo:", storage_default.pageInfo);
     windowScrollTo(0);
     document.body.innerHTML = template_default;
-    GM_addStyle(style_default);
-    render();
+    GM_xmlhttpRequest({
+      method: "GET",
+      url: "https://unpkg.com/vue@3/dist/vue.global.prod.js",
+      onload: (res) => {
+        const script = document.createElement("script");
+        script.textContent = res.responseText;
+        document.head.appendChild(script);
+        setTimeout(() => {
+          render();
+        }, 50);
+      }
+    });
   };
   setTimeout(() => {
     let cacheContent = storage_default.pageInfo;

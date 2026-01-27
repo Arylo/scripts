@@ -3,7 +3,7 @@
 // @name:zh-CN 将Fira Code 作为开发用网站的代码字体
 // @description Unified use of `Fira Code` as the code font to enhance developers' awareness of the code on the page
 // @description:zh-CN 统一将`Fira Code`作为代码字体, 提高开发者对页面中的代码的感知度
-// @version 9
+// @version 10
 // @author Arylo Yeung <arylo.open@gmail.com>
 // @include https://webpack.js.org/*
 // @include https://rollupjs.org/*
@@ -53,12 +53,13 @@
 "use strict";
 (() => {
   // src/monkey/polyfill/GM.ts
-  var thisGlobal = window;
-  if (typeof thisGlobal.GM === "undefined") {
-    thisGlobal.GM = {};
+  if (typeof window.GM === "undefined") {
+    window.GM = {
+      addStyle: GM_addStyle
+    };
   }
   function getGMWindow() {
-    return thisGlobal;
+    return window;
   }
 
   // src/monkey/polyfill/GM_addStyle.ts
