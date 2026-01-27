@@ -1,10 +1,9 @@
-/// <reference path="../../../types/monkey.d.ts" />
+import '../../../types/monkey.d.ts'
 
-const thisGlobal = window
-
-if (typeof thisGlobal.GM === 'undefined') {
-  thisGlobal.GM = {} as any
+if (typeof window.GM === 'undefined') {
+  window.GM = {
+    addStyle: GM_addStyle,
+  }
 }
 
-export function getGMWindow () { return thisGlobal }
-
+export function getGMWindow () { return window }

@@ -35,7 +35,8 @@ export default defineComponent({
       const infoMap = unref(infoMapRef)
       return urls
         .map((src, index) => {
-          const pageType = infoMap[index] && infoMap[index].type === PageType.LANDSCAPE ? PageType.LANDSCAPE : PageType.PORTRAIT
+          const info = infoMap[index]
+          const pageType: PageType = info && info.type === PageType.LANDSCAPE ? PageType.LANDSCAPE : PageType.PORTRAIT
           return {
             component: Image,
             props: {
