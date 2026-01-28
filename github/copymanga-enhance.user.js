@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name Enhance the copy manga site
-// @version 34
+// @version 35
 // @author Arylo Yeung <arylo.open@gmail.com>
 // @connect unpkg.com
 // @license MIT
@@ -39,35 +39,6 @@
 // ==/UserScript==
 "use strict";
 (() => {
-  // src/monkey/polyfill/GM.ts
-  if (typeof window.GM === "undefined") {
-    window.GM = {
-      addStyle: GM_addStyle
-    };
-  }
-  function getGMWindow() {
-    return window;
-  }
-
-  // src/monkey/polyfill/GM_addStyle.ts
-  var w = getGMWindow();
-  if (typeof w.GM_addStyle === "undefined") {
-    w.GM_addStyle = function GM_addStyle2(cssContent) {
-      const head = document.getElementsByTagName("head")[0];
-      if (head) {
-        const styleElement = document.createElement("style");
-        styleElement.setAttribute("type", "text/css");
-        styleElement.textContent = cssContent;
-        head.appendChild(styleElement);
-        return styleElement;
-      }
-      return null;
-    };
-  }
-  if (typeof w.GM.addStyle === "undefined") {
-    w.GM.addStyle = GM_addStyle;
-  }
-
   // src/monkey/copymanga-enhance/template.html
   var template_default = '<div id="app"></div>';
 
@@ -89,6 +60,22 @@
     Fragment
   } = Vue;
   var vue_default = Vue;
+
+  // src/monkey/polyfill/GM_addStyle.ts
+  if (typeof window.GM_addStyle === "undefined") {
+    window.GM_addStyle = function GM_addStyle(cssContent) {
+      const head = document.getElementsByTagName("head")[0];
+      if (head) {
+        const styleElement = document.createElement("style");
+        styleElement.setAttribute("type", "text/css");
+        styleElement.textContent = cssContent;
+        head.appendChild(styleElement);
+        return styleElement;
+      }
+      return null;
+    };
+  }
+  var GM_addStyle_default = window.GM_addStyle;
 
   // src/monkey/copymanga-enhance/scripts/utils/parseConstant.ts
   var parseConstant = (pathname) => {
@@ -390,7 +377,7 @@
     },
     setup(props, { emit }) {
       onMounted(() => {
-        GM_addStyle(style_default);
+        GM_addStyle_default(style_default);
       });
       const pageType = ref("portrait" /* PORTRAIT */);
       const imageListRef = useImageList();
@@ -422,7 +409,7 @@
   var WhitePage_default = defineComponent({
     setup() {
       onMounted(() => {
-        GM_addStyle(style_default3);
+        GM_addStyle_default(style_default3);
       });
       return {};
     },
@@ -437,7 +424,7 @@
       const imageListRef = useImageList();
       const infoMapRef = useImageInfoMap();
       onMounted(() => {
-        GM_addStyle(style_default2);
+        GM_addStyle_default(style_default2);
         refresh();
       });
       watch(whitePageRef2, () => refresh());
@@ -584,7 +571,7 @@
       });
       const [whitePageRef2, setWhitePage] = useWhitePage();
       onMounted(() => {
-        GM_addStyle(style_default4);
+        GM_addStyle_default(style_default4);
       });
       const [directionModeRef2, setDirectionMode] = useDirectionMode();
       return () => h("div", { class: "app-header" }, [
@@ -627,7 +614,7 @@
       useKeyWatcher();
       useMouseWatcher();
       onMounted(() => {
-        GM_addStyle(style_default5);
+        GM_addStyle_default(style_default5);
       });
       return () => h(Fragment, [
         h(AppHeader_default, { class: "app-header" }),
