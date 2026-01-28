@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name Enhance the copy manga site
-// @version 35
+// @version 36
 // @author Arylo Yeung <arylo.open@gmail.com>
 // @connect unpkg.com
 // @license MIT
