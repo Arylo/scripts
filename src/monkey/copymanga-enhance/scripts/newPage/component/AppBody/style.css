@@ -11,8 +11,6 @@
   display: flex;
   flex-basis: 100%;
   justify-content: center;
-  padding-top: 1px;
-  padding-bottom: 1px;
   order: attr(data-index number)
 }
 
@@ -20,18 +18,23 @@
   scroll-snap-type: y mandatory;
 }
 :is(.ltr, .rtl) .wrapper {
+  height: var(--body-height);
   scroll-snap-align: center;
 }
 
-/* #region 单行时 */
+*:not(:is(.ltr, .rtl)) > .wrapper:has(> .white-page) {
+  display: none;
+}
+
+/* #region 单列时 */
 @media (max-aspect-ratio: 5 / 3) {
   .wrapper:has(> .white-page) {
     display: none;
   }
 }
-/* #endregion 单行时 */
+/* #endregion 单列时 */
 
-/* #region 多行时 */
+/* #region 多列时 */
 @media (min-aspect-ratio: 5 / 3) {
   :is(.ltr, .rtl) .wrapper:has(> .portrait) {
     flex-basis: 50%;
@@ -47,10 +50,22 @@
     padding-right: 5px;
   }
 }
+/* #endregion 多列时 */
+
+/* #region 两列时 */
+@media (min-aspect-ratio: 5 / 3) and (max-aspect-ratio: 9 / 3) {
+  :is(.ltr, .rtl) .wrapper:has(> .white-page):nth-last-child(2),
+  :is(.ltr, .rtl) .wrapper:has(> .white-page):nth-last-child(2) + .wrapper:has(> .white-page) {
+    display: none;
+  }
+}
+/* #endregion 两列时 */
+
+/* #region 四列时 */
 @media (min-aspect-ratio: 9 / 3) {
   :is(.ltr, .rtl) .wrapper:has(> .portrait) {
     flex-basis: 25%;
   }
 }
-/* #endregion 多行时 */
+/* #endregion 四列时 */
 

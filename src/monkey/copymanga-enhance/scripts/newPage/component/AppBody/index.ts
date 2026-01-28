@@ -97,6 +97,19 @@ export default defineComponent({
           props: { key: `white-page-group-${groupIndex}`, class: 'auto', pageType: PageType.PORTRAIT },
         })
       }
+      if (
+        tempList[tempList.length - 1][0].props.pageType === PageType.PORTRAIT &&
+        tempList[tempList.length - 1].length % 4 !== 0
+      ) {
+        const groupIndex = tempList.length - 1
+        const group = tempList[groupIndex]
+        Array.from({ length: 4 - (group.length % 4) }).forEach((_, index) => {
+          group.push({
+            component: WhitePage,
+            props: { key: `white-page-group-${groupIndex + index}-end`, class: 'auto end', pageType: PageType.PORTRAIT },
+          })
+        })
+      }
       return tempList.flat();
     }
     const injectDataIndex = (list: ImageItem[]): ImageItem[] => {
