@@ -1,4 +1,5 @@
 import '../../../types/monkey.d.ts'
+import GM_addStyle from './GM_addStyle'
 
 if (typeof window.GM === 'undefined') {
   window.GM = {
@@ -6,4 +7,4 @@ if (typeof window.GM === 'undefined') {
   }
 }
 
-export function getGMWindow () { return window }
+export default window.GM

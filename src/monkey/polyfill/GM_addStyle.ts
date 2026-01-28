@@ -1,9 +1,7 @@
-import { getGMWindow } from "./GM"
+import '../../../types/monkey.d.ts'
 
-const w = getGMWindow()
-
-if (typeof w.GM_addStyle === 'undefined') {
-  w.GM_addStyle = function GM_addStyle(cssContent: string) {
+if (typeof window.GM_addStyle === 'undefined') {
+  window.GM_addStyle = function GM_addStyle(cssContent: string) {
     const head = document.getElementsByTagName('head')[0]
     if (head) {
       const styleElement = document.createElement('style')
@@ -16,6 +14,4 @@ if (typeof w.GM_addStyle === 'undefined') {
   }
 }
 
-if (typeof w.GM.addStyle === 'undefined') {
-  w.GM.addStyle = GM_addStyle
-}
+export default window.GM_addStyle

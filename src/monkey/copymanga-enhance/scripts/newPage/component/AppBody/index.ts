@@ -1,3 +1,4 @@
+import GM_addStyle from "../../../../../polyfill/GM_addStyle";
 import cc from 'classcat'
 import { DirectionMode, PageType } from "../../constant";
 import useDirectionMode from "../../hooks/useDirectionMode";

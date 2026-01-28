@@ -1,7 +1,7 @@
 import path from 'path'
 import lodash from 'lodash'
 import { ROOT_PATH } from '../consts'
-import { buildScript, exportLatestDeployInfo, stringifyBanner, exportInjectFiles } from './monkey.utils'
+import { buildScript, exportLatestDeployInfo, stringifyBanner } from './monkey.utils'
 import hasBannerFile from './utils/hasBannerFile'
 import parseScriptInfo, { ScriptInfo } from './utils/parseScriptInfo'
 import buildFS, { LS_TYPE } from '../../packages/buildFS'
@@ -41,7 +41,6 @@ if (matchValueIndex > 0) {
       await buildScript(scriptInfo.entryFilePath, {
         banner: { js: banner },
         outfile: path.resolve(scriptInfo.outPath, scriptInfo.output.user),
-        inject: exportInjectFiles(scriptInfo.bannerFilePath),
       })
       buildFS.writeFileSync(path.resolve(scriptInfo.outPath, scriptInfo.output.meta), banner)
       buildFS.writeJSONFileSync(path.resolve(scriptInfo.outPath, scriptInfo.output.deployJson), scriptInfo.deployInfo)

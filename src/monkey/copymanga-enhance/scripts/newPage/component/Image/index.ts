@@ -1,3 +1,4 @@
+import GM_addStyle from "../../../../../polyfill/GM_addStyle";
 import { PageType } from "../../constant";
 import useImageInfoMap from "../../hooks/useImageInfoMap";
 import useImageList from "../../hooks/useImageList";

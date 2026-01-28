@@ -1,3 +1,4 @@
+import GM_addStyle from '../../polyfill/GM_addStyle'
 import * as templateUtils from '../../../../packages/MdGenerator/index'
 import templateCss from './template.css'
 import { getButtonElement } from '../utils'

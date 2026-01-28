@@ -1,3 +1,4 @@
+import GM_addStyle from "../../../../../polyfill/GM_addStyle";
 import { DirectionMode } from "../../constant";
 import useDirectionMode from "../../hooks/useDirectionMode";
 import useImageInfoMap from "../../hooks/useImageInfoMap";

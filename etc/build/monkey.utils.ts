@@ -30,13 +30,6 @@ const findIndex = (val: string, rules: Array<string|RegExp> = []) => {
   })
 }
 
-export const exportInjectFiles = (bannerFilePath: string) => {
-  const { grant = [] } = parseBanner(bannerFilePath)
-  return (Array.isArray(grant) ? grant : [grant])
-    .map((name) => path.resolve(POLYFILL_PATH, `${name}.ts`))
-    .filter((filepath) => buildFS.isFile(filepath))
-}
-
 export const parseBanner = (bannerFilePath: string) =>{
   const jsonContent = buildFS.readJSONFileSync(bannerFilePath)
   return jsonContent
@@ -105,7 +98,6 @@ export const exportLatestDeployInfo = (() => {
       await buildScript(scriptInfo.entryFilePath, {
         minify: true,
         outfile: tmpScriptPath,
-        inject: exportInjectFiles(scriptInfo.bannerFilePath),
       })
       contentHash = md5file.sync(tmpScriptPath)
       // #endregion content hash

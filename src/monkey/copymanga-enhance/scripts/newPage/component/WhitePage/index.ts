@@ -1,3 +1,4 @@
+import GM_addStyle from "../../../../../polyfill/GM_addStyle";
 import { defineComponent, onMounted } from "../../vue";
 import css from './style.css'
 

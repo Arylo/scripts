@@ -1,3 +1,4 @@
+import GM_addStyle from "../../../../../polyfill/GM_addStyle";
 import useKeyWatcher from "../../hooks/useKeyWatcher";
 import useMouseWatcher from "../../hooks/useMouseWatcher";
 import { defineComponent, Fragment, h, onMounted } from "../../vue";
