@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name Enhance the copy manga site
-// @version 36
+// @version 37
 // @author Arylo Yeung <arylo.open@gmail.com>
 // @connect unpkg.com
 // @license MIT
@@ -400,7 +400,7 @@
   });
 
   // src/monkey/copymanga-enhance/scripts/newPage/component/AppBody/style.css
-  var style_default2 = ".direction-wrapper{display:flex;flex-wrap:wrap;justify-content:center;width:100%;max-height:var(--body-height);overflow-y:scroll}.wrapper{display:flex;flex-basis:100%;justify-content:center;order:attr(data-index number)}:is(.ltr,.rtl).direction-wrapper{scroll-snap-type:y mandatory}:is(.ltr,.rtl) .wrapper{height:var(--body-height);scroll-snap-align:center}*:not(:is(.ltr,.rtl))>.wrapper:has(>.white-page){display:none}@media (max-aspect-ratio: 5 / 3){.wrapper:has(>.white-page){display:none}}@media (min-aspect-ratio: 5 / 3){:is(.ltr,.rtl) .wrapper:has(>.portrait){flex-basis:50%}.ltr .wrapper:has(>.portrait):nth-of-type(odd),.rtl .wrapper:has(>.portrait):nth-of-type(2n){justify-content:flex-end;padding-left:5px}.ltr .wrapper:has(>.portrait):nth-of-type(2n),.rtl .wrapper:has(>.portrait):nth-of-type(odd){justify-content:flex-start;padding-right:5px}}@media (min-aspect-ratio: 5 / 3) and (max-aspect-ratio: 9 / 3){:is(.ltr,.rtl) .wrapper:has(>.white-page):nth-last-child(2),:is(.ltr,.rtl) .wrapper:has(>.white-page):nth-last-child(2)+.wrapper:has(>.white-page){display:none}}@media (min-aspect-ratio: 9 / 3){:is(.ltr,.rtl) .wrapper:has(>.portrait){flex-basis:25%}}\n";
+  var style_default2 = ".direction-wrapper{display:flex;flex-wrap:wrap;justify-content:center;width:100%;max-height:var(--body-height);overflow-y:scroll}.wrapper{display:flex;flex-basis:100%;justify-content:center;order:attr(data-index number)}:is(.ltr,.rtl).direction-wrapper{scroll-snap-type:y mandatory}:is(.ltr,.rtl) .wrapper{height:var(--body-height);scroll-snap-align:center}*:not(:is(.ltr,.rtl))>.wrapper:has(>.white-page){display:none}@media (max-aspect-ratio: 5 / 3){.wrapper:has(>.white-page){display:none}}@media (min-aspect-ratio: 5 / 3){:is(.ltr,.rtl) .wrapper:has(>.portrait){flex-basis:50%}.wrapper:has(>[data-side=L]){justify-content:flex-end;padding-left:5px}.wrapper:has(>[data-side=R]){justify-content:flex-start;padding-right:5px}}@media (min-aspect-ratio: 5 / 3) and (max-aspect-ratio: 9 / 3){:is(.ltr,.rtl) .wrapper:has(>.white-page):nth-last-child(2),:is(.ltr,.rtl) .wrapper:has(>.white-page):nth-last-child(2)+.wrapper:has(>.white-page){display:none}}@media (min-aspect-ratio: 9 / 3){:is(.ltr,.rtl) .wrapper:has(>.portrait){flex-basis:25%}}\n";
 
   // src/monkey/copymanga-enhance/scripts/newPage/component/WhitePage/style.css
   var style_default3 = ".white-page{height:1px;width:1px}\n";
@@ -512,24 +512,30 @@
         let portraitCount = 0;
         return list.map((item, index) => {
           let targetIndex = index + 1;
-          if ("rtl" /* RTL */ === unref(directionModeRef2)) {
-            if (item.props.pageType === "portrait" /* PORTRAIT */) {
-              portraitCount++;
+          let side = "A";
+          if (item.props.pageType === "landscape" /* LANDSCAPE */) {
+            portraitCount = 0;
+            side = "A";
+          } else {
+            portraitCount++;
+            if ("rtl" /* RTL */ === unref(directionModeRef2)) {
               if (portraitCount % 2 === 0) {
                 targetIndex -= 1;
               } else {
                 targetIndex += 1;
               }
+              side = portraitCount % 2 === 1 ? "R" : "L";
             }
-            if (item.props.pageType === "landscape" /* LANDSCAPE */) {
-              portraitCount = 0;
+            if ("ltr" /* LTR */ === unref(directionModeRef2)) {
+              side = portraitCount % 2 === 1 ? "L" : "R";
             }
           }
           return {
             ...item,
             props: {
               ...item.props,
-              "data-index": targetIndex
+              "data-index": targetIndex,
+              "data-side": side
             }
           };
         });
