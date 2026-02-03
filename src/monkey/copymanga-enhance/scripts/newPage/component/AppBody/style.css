@@ -39,13 +39,11 @@
   :is(.ltr, .rtl) .wrapper:has(> .portrait) {
     flex-basis: 50%;
   }
-  .ltr .wrapper:has(> .portrait):nth-of-type(odd),
-  .rtl .wrapper:has(> .portrait):nth-of-type(even) {
+  .wrapper:has(> [data-side="L"]) {
     justify-content: flex-end;
     padding-left: 5px;
   }
-  .ltr .wrapper:has(> .portrait):nth-of-type(even),
-  .rtl .wrapper:has(> .portrait):nth-of-type(odd) {
+  .wrapper:has(> [data-side="R"]) {
     justify-content: flex-start;
     padding-right: 5px;
   }

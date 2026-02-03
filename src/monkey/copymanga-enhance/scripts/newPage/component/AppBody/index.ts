@@ -5,7 +5,7 @@ import useDirectionMode from "../../hooks/useDirectionMode";
 import useImageInfoMap from "../../hooks/useImageInfoMap";
 import useImageList from "../../hooks/useImageList";
 import useWhitePage from "../../hooks/useWhitePage";
-import { defineComponent, onMounted, unref, h, watch, computed, ref } from "../../vue";
+import { defineComponent, onMounted, unref, h, watch, ref } from "../../vue";
 import Image from "../Image";
 import css from './style.css'
 import WhitePage from '../WhitePage';
@@ -116,17 +116,22 @@ export default defineComponent({
       let portraitCount = 0
       return list.map((item, index) => {
         let targetIndex = index + 1
-        if (DirectionMode.RTL === unref(directionModeRef)) {
-          if (item.props.pageType === PageType.PORTRAIT) {
-            portraitCount++
+        let side = 'A'
+        if (item.props.pageType === PageType.LANDSCAPE) {
+          portraitCount = 0
+          side = 'A'
+        } else {
+          portraitCount++
+          if (DirectionMode.RTL === unref(directionModeRef)) {
             if (portraitCount % 2 === 0) {
               targetIndex -= 1
             } else {
               targetIndex += 1
             }
+            side = portraitCount % 2 === 1 ? 'R' : 'L'
           }
-          if (item.props.pageType === PageType.LANDSCAPE) {
-            portraitCount = 0
+          if (DirectionMode.LTR === unref(directionModeRef)) {
+            side = portraitCount % 2 === 1 ? 'L' : 'R'
           }
         }
         return ({
@@ -134,6 +139,7 @@ export default defineComponent({
           props: {
             ...item.props,
             'data-index': targetIndex,
+            'data-side': side,
           },
         })
       })
