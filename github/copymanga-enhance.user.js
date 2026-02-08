@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name Enhance the copy manga site
-// @version 37
+// @version 38
 // @author Arylo Yeung <arylo.open@gmail.com>
 // @connect unpkg.com
 // @license MIT
@@ -95,9 +95,45 @@
   var chapter = parseConstant_default(globalThis.location?.pathname).chapter;
 
   // src/monkey/copymanga-enhance/scripts/newPage/constant.ts
+  var GRID_COLUMN = 7;
+  var GRID_ROW = 5;
   var ACTION_GRID_MAP = {
-    PREV: [1, 3, 4],
-    NEXT: [6]
+    PREV: [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      22,
+      23,
+      24,
+      29,
+      30,
+      31
+    ],
+    NEXT: [
+      19,
+      20,
+      21,
+      26,
+      27,
+      28,
+      33,
+      34,
+      35
+    ]
   };
 
   // src/monkey/copymanga-enhance/scripts/storage.ts
@@ -267,8 +303,8 @@
       const appBody = document.querySelector(".app-body");
       if (!appBody) return;
       const getGridIndex = (x, y) => {
-        const COUNT_COLUMN = 3;
-        const COUNT_ROW = 2;
+        const COUNT_COLUMN = GRID_COLUMN;
+        const COUNT_ROW = GRID_ROW;
         const rect = appBody.getBoundingClientRect();
         if (x < rect.left || x > rect.right || y < rect.top || y > rect.bottom) return -1;
         const colWidth = rect.width / COUNT_COLUMN;
@@ -400,7 +436,7 @@
   });
 
   // src/monkey/copymanga-enhance/scripts/newPage/component/AppBody/style.css
-  var style_default2 = ".direction-wrapper{display:flex;flex-wrap:wrap;justify-content:center;width:100%;max-height:var(--body-height);overflow-y:scroll}.wrapper{display:flex;flex-basis:100%;justify-content:center;order:attr(data-index number)}:is(.ltr,.rtl).direction-wrapper{scroll-snap-type:y mandatory}:is(.ltr,.rtl) .wrapper{height:var(--body-height);scroll-snap-align:center}*:not(:is(.ltr,.rtl))>.wrapper:has(>.white-page){display:none}@media (max-aspect-ratio: 5 / 3){.wrapper:has(>.white-page){display:none}}@media (min-aspect-ratio: 5 / 3){:is(.ltr,.rtl) .wrapper:has(>.portrait){flex-basis:50%}.wrapper:has(>[data-side=L]){justify-content:flex-end;padding-left:5px}.wrapper:has(>[data-side=R]){justify-content:flex-start;padding-right:5px}}@media (min-aspect-ratio: 5 / 3) and (max-aspect-ratio: 9 / 3){:is(.ltr,.rtl) .wrapper:has(>.white-page):nth-last-child(2),:is(.ltr,.rtl) .wrapper:has(>.white-page):nth-last-child(2)+.wrapper:has(>.white-page){display:none}}@media (min-aspect-ratio: 9 / 3){:is(.ltr,.rtl) .wrapper:has(>.portrait){flex-basis:25%}}\n";
+  var style_default2 = ".direction-wrapper{display:flex;flex-wrap:wrap;justify-content:center;width:100%;max-height:var(--body-height);overflow-y:scroll}.wrapper{display:flex;flex-basis:100%;justify-content:center;order:attr(data-index number)}:is(.ltr,.rtl).direction-wrapper{scroll-snap-type:y mandatory}:is(.ltr,.rtl) .wrapper{height:var(--body-height);scroll-snap-align:center}*:not(:is(.ltr,.rtl))>.wrapper:has(>.white-page){display:none}@media (max-aspect-ratio: 5 / 3){.wrapper:has(>.white-page){display:none}}@media (min-aspect-ratio: 5 / 3){:is(.ltr,.rtl) .wrapper:has(>.portrait){flex-basis:50%}.wrapper[data-side=L]{justify-content:flex-end;padding-left:5px}.wrapper[data-side=R]{justify-content:flex-start;padding-right:5px}}@media (min-aspect-ratio: 5 / 3) and (max-aspect-ratio: 9 / 3){:is(.ltr,.rtl) .wrapper:has(>.white-page):nth-last-child(2),:is(.ltr,.rtl) .wrapper:has(>.white-page):nth-last-child(2)+.wrapper:has(>.white-page){display:none}}@media (min-aspect-ratio: 9 / 3){:is(.ltr,.rtl) .wrapper:has(>.portrait){flex-basis:25%}}\n";
 
   // src/monkey/copymanga-enhance/scripts/newPage/component/WhitePage/style.css
   var style_default3 = ".white-page{height:1px;width:1px}\n";
@@ -415,6 +451,11 @@
     },
     template: '<div class="white-page portrait"></div>'
   });
+
+  // src/monkey/utils/flow.ts
+  function flow(source, ...fns) {
+    return fns.reduce((prev, fn) => fn(prev), source);
+  }
 
   // src/monkey/copymanga-enhance/scripts/newPage/component/AppBody/index.ts
   var AppBody_default = defineComponent({
@@ -541,11 +582,13 @@
         });
       };
       const refresh = () => {
-        let list = [];
-        list = parseImages(unref(imageListRef));
-        list = addFirstWhitePage(list);
-        list = injectWhitePages(list);
-        list = injectDataIndex(list);
+        const list = flow(
+          unref(imageListRef),
+          parseImages,
+          addFirstWhitePage,
+          injectWhitePages,
+          injectDataIndex
+        );
         imagesRef.value = list;
       };
       const imagesRef = ref([]);
@@ -556,7 +599,14 @@
           h(
             "div",
             { class: cc(["direction-wrapper", unref(directionModeRef2)]) },
-            unref(imagesRef).map(({ component, props }) => h("div", { class: "wrapper", "data-index": props["data-index"] }, [h(component, { ...props })]))
+            unref(imagesRef).map(({ component, props }) => h(
+              "div",
+              {
+                class: "wrapper",
+                ...Object.fromEntries(Object.entries(props).filter(([k]) => k.startsWith("data-")))
+              },
+              [h(component, { ...props })]
+            ))
           )
         ]
       );
@@ -564,7 +614,7 @@
   });
 
   // src/monkey/copymanga-enhance/scripts/newPage/component/AppHeader/style.css
-  var style_default4 = ".app-header{display:grid;grid-template-columns:1fr 60px auto 60px 1fr;column-gap:5px;align-items:center}.app-header :is(.comic-title,.loading-hint,.white-page-toggle),.app-header :is(.prev-comic,.next-comic):not([disabled]){color:#fff!important;cursor:pointer}.app-header :is(.prev-comic,.next-comic)[disabled]{color:gray!important;cursor:default}.app-header :is(.prev-comic,.next-comic){text-decoration:none;text-align:center}.app-header :is(.left-space,.right-space){display:flex;flex-flow:column;justify-content:center;column-gap:5px}.app-header .left-space{align-items:flex-end}.app-header .right-space{align-items:flex-start}\n";
+  var style_default4 = ".app-header{display:grid;grid-template-columns:1fr 60px auto 60px 1fr;column-gap:5px;align-items:center}.app-header :is(.comic-title,.loading-hint,.white-page-toggle),.app-header :is(.prev-comic,.next-comic):not([disabled]){color:#fff!important;cursor:pointer}.app-header :is(.prev-comic,.next-comic)[disabled]{color:gray!important;cursor:default}.app-header :is(.prev-comic,.next-comic){text-decoration:none;text-align:center}.app-header :is(.left-space,.right-space){display:flex;flex-flow:row;align-items:center;gap:5px}.app-header .left-space{justify-content:flex-end}.app-header .right-space{justify-content:flex-start}\n";
 
   // src/monkey/copymanga-enhance/scripts/newPage/component/AppHeader/index.ts
   var AppHeader_default = defineComponent({
