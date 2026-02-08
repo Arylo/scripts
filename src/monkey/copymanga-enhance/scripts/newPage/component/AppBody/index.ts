@@ -9,6 +9,7 @@ import { defineComponent, onMounted, unref, h, watch, ref } from "../../vue";
 import Image from "../Image";
 import css from './style.css'
 import WhitePage from '../WhitePage';
+import flow from "../../../../../utils/flow";
 
 type ImageItem = {
   component: ReturnType<typeof defineComponent> | string;
@@ -145,11 +146,13 @@ export default defineComponent({
       })
     }
     const refresh = () => {
-      let list: ImageItem[] = []
-      list = parseImages(unref(imageListRef))
-      list = addFirstWhitePage(list)
-      list = injectWhitePages(list)
-      list = injectDataIndex(list)
+      const list = flow(
+        unref(imageListRef),
+        parseImages,
+        addFirstWhitePage,
+        injectWhitePages,
+        injectDataIndex
+      )
       imagesRef.value = list
     }
     const imagesRef = ref<ImageItem[]>([])
@@ -160,7 +163,15 @@ export default defineComponent({
         h(
           'div',
           { class: cc(['direction-wrapper', unref(directionModeRef)]) },
-          unref(imagesRef).map(({ component, props }) => h('div', { class: 'wrapper', 'data-index': props['data-index'] }, [h(component, { ...props })]))),
+          unref(imagesRef)
+            .map(({ component, props }) => h(
+              'div',
+              {
+                class: 'wrapper',
+                ...Object.fromEntries(Object.entries(props).filter(([k]) => k.startsWith('data-')))
+              },
+              [h(component, { ...props })],
+            ))),
       ],
     )
   },

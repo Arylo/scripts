@@ -11,7 +11,7 @@
   display: flex;
   flex-basis: 100%;
   justify-content: center;
-  order: attr(data-index number)
+  order: attr(data-index number);
 }
 
 :is(.ltr, .rtl).direction-wrapper {
@@ -39,11 +39,11 @@
   :is(.ltr, .rtl) .wrapper:has(> .portrait) {
     flex-basis: 50%;
   }
-  .wrapper:has(> [data-side="L"]) {
+  .wrapper[data-side="L"] {
     justify-content: flex-end;
     padding-left: 5px;
   }
-  .wrapper:has(> [data-side="R"]) {
+  .wrapper[data-side="R"] {
     justify-content: flex-start;
     padding-right: 5px;
   }
