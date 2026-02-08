@@ -1,4 +1,4 @@
-import { ACTION_GRID_MAP } from "../constant";
+import { ACTION_GRID_MAP, GRID_COLUMN, GRID_ROW } from "../constant";
 import { onMounted, readonly, ref, unref } from "../vue";
 import useMouseGrid from "./useMouseGrid";
 import useScrollBy from "./useScrollBy";
@@ -10,15 +10,9 @@ export default function useMouseWatcher () {
     const appBody = document.querySelector('.app-body') as HTMLElement | null
     if (!appBody) return
 
-    /**
-     * ```markdown
-     * |1|2|3|
-     * |4|5|6|
-     * ```
-     */
     const getGridIndex = (x: number, y: number) => {
-      const COUNT_COLUMN = 3
-      const COUNT_ROW = 2
+      const COUNT_COLUMN = GRID_COLUMN
+      const COUNT_ROW = GRID_ROW
       const rect = appBody.getBoundingClientRect()
       if (x < rect.left || x > rect.right || y < rect.top || y > rect.bottom) return -1
       const colWidth = rect.width / COUNT_COLUMN
