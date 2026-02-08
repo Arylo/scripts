@@ -23,15 +23,15 @@
 
 .app-header :is(.left-space, .right-space) {
   display: flex;
-  flex-flow: column;
-  justify-content: center;
-  column-gap: 5px;
+  flex-flow: row;
+  align-items: center;
+  gap: 5px;
 }
 
 .app-header .left-space {
-  align-items: flex-end;
+  justify-content: flex-end;
 }
 
 .app-header .right-space {
-  align-items: flex-start;
+  justify-content: flex-start;
 }
