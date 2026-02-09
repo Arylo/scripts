@@ -11,7 +11,6 @@
   display: flex;
   flex-basis: 100%;
   justify-content: center;
-  order: attr(data-index number);
 }
 
 :is(.ltr, .rtl).direction-wrapper {
@@ -38,6 +37,9 @@
 @media (min-aspect-ratio: 5 / 3) {
   :is(.ltr, .rtl) .wrapper:has(> .portrait) {
     flex-basis: 50%;
+  }
+  .wrapper {
+    order: attr(data-index number);
   }
   .wrapper[data-side="L"] {
     justify-content: flex-end;
