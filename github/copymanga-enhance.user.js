@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name Enhance the copy manga site
-// @version 38
+// @version 39
 // @author Arylo Yeung <arylo.open@gmail.com>
 // @connect unpkg.com
 // @license MIT
@@ -63,7 +63,7 @@
 
   // src/monkey/polyfill/GM_addStyle.ts
   if (typeof window.GM_addStyle === "undefined") {
-    window.GM_addStyle = function GM_addStyle(cssContent) {
+    window.GM_addStyle = function GM_addStyle2(cssContent) {
       const head = document.getElementsByTagName("head")[0];
       if (head) {
         const styleElement = document.createElement("style");
@@ -95,46 +95,32 @@
   var chapter = parseConstant_default(globalThis.location?.pathname).chapter;
 
   // src/monkey/copymanga-enhance/scripts/newPage/constant.ts
-  var GRID_COLUMN = 7;
-  var GRID_ROW = 5;
-  var ACTION_GRID_MAP = {
-    PREV: [
-      1,
-      2,
-      3,
-      4,
-      5,
-      6,
-      7,
-      8,
-      9,
-      10,
-      11,
-      12,
-      13,
-      14,
-      15,
-      16,
-      17,
-      22,
-      23,
-      24,
-      29,
-      30,
-      31
-    ],
-    NEXT: [
-      19,
-      20,
-      21,
-      26,
-      27,
-      28,
-      33,
-      34,
-      35
-    ]
+  var GRID_CELL_TYPE = {
+    PREV: "PREV",
+    NEXT: "NEXT",
+    SPACE: "SPACE"
   };
+  var GRID_MAP = (() => {
+    const P = GRID_CELL_TYPE.PREV;
+    const N = GRID_CELL_TYPE.NEXT;
+    const S = GRID_CELL_TYPE.SPACE;
+    return [
+      [P, P, P, P, P, P, P],
+      [P, P, P, P, P, P, P],
+      [P, P, S, S, N, N, N],
+      [P, P, S, S, N, N, N],
+      [P, P, S, S, N, N, N]
+    ];
+  })();
+  var GRID_COLUMN = Math.max(...GRID_MAP.map((row) => row.length));
+  var GRID_ROW = GRID_MAP.length;
+  var ACTION_GRID_MAP = GRID_MAP.reduce((acc, row, rowIndex) => {
+    row.forEach((cell, cellIndex) => {
+      acc[cell] = acc[cell] || [];
+      acc[cell].push(rowIndex * GRID_COLUMN + cellIndex + 1);
+    });
+    return acc;
+  }, {});
 
   // src/monkey/copymanga-enhance/scripts/storage.ts
   var whitePageKey = Object.freeze([comic, chapter, "hasWhitePage"].join("."));
@@ -438,18 +424,12 @@
   // src/monkey/copymanga-enhance/scripts/newPage/component/AppBody/style.css
   var style_default2 = ".direction-wrapper{display:flex;flex-wrap:wrap;justify-content:center;width:100%;max-height:var(--body-height);overflow-y:scroll}.wrapper{display:flex;flex-basis:100%;justify-content:center;order:attr(data-index number)}:is(.ltr,.rtl).direction-wrapper{scroll-snap-type:y mandatory}:is(.ltr,.rtl) .wrapper{height:var(--body-height);scroll-snap-align:center}*:not(:is(.ltr,.rtl))>.wrapper:has(>.white-page){display:none}@media (max-aspect-ratio: 5 / 3){.wrapper:has(>.white-page){display:none}}@media (min-aspect-ratio: 5 / 3){:is(.ltr,.rtl) .wrapper:has(>.portrait){flex-basis:50%}.wrapper[data-side=L]{justify-content:flex-end;padding-left:5px}.wrapper[data-side=R]{justify-content:flex-start;padding-right:5px}}@media (min-aspect-ratio: 5 / 3) and (max-aspect-ratio: 9 / 3){:is(.ltr,.rtl) .wrapper:has(>.white-page):nth-last-child(2),:is(.ltr,.rtl) .wrapper:has(>.white-page):nth-last-child(2)+.wrapper:has(>.white-page){display:none}}@media (min-aspect-ratio: 9 / 3){:is(.ltr,.rtl) .wrapper:has(>.portrait){flex-basis:25%}}\n";
 
-  // src/monkey/copymanga-enhance/scripts/newPage/component/WhitePage/style.css
-  var style_default3 = ".white-page{height:1px;width:1px}\n";
-
   // src/monkey/copymanga-enhance/scripts/newPage/component/WhitePage/index.ts
   var WhitePage_default = defineComponent({
     setup() {
-      onMounted(() => {
-        GM_addStyle_default(style_default3);
-      });
       return {};
     },
-    template: '<div class="white-page portrait"></div>'
+    template: '<div class="white-page portrait size-[1px]"></div>'
   });
 
   // src/monkey/utils/flow.ts
@@ -592,9 +572,15 @@
         imagesRef.value = list;
       };
       const imagesRef = ref([]);
+      const [mouseGridRef] = useMouseGrid();
       return () => h(
         "div",
-        { class: "app-body" },
+        {
+          class: cc([
+            "app-body",
+            { "cursor-pointer": ["ltr" /* LTR */, "rtl" /* RTL */].includes(unref(directionModeRef2)) && [...ACTION_GRID_MAP.PREV, ...ACTION_GRID_MAP.NEXT].includes(unref(mouseGridRef)) }
+          ])
+        },
         [
           h(
             "div",
@@ -614,7 +600,7 @@
   });
 
   // src/monkey/copymanga-enhance/scripts/newPage/component/AppHeader/style.css
-  var style_default4 = ".app-header{display:grid;grid-template-columns:1fr 60px auto 60px 1fr;column-gap:5px;align-items:center}.app-header :is(.comic-title,.loading-hint,.white-page-toggle),.app-header :is(.prev-comic,.next-comic):not([disabled]){color:#fff!important;cursor:pointer}.app-header :is(.prev-comic,.next-comic)[disabled]{color:gray!important;cursor:default}.app-header :is(.prev-comic,.next-comic){text-decoration:none;text-align:center}.app-header :is(.left-space,.right-space){display:flex;flex-flow:row;align-items:center;gap:5px}.app-header .left-space{justify-content:flex-end}.app-header .right-space{justify-content:flex-start}\n";
+  var style_default3 = ".app-header{display:grid;grid-template-columns:1fr 60px auto 60px 1fr;column-gap:5px;align-items:center}.app-header :is(.comic-title,.loading-hint,.white-page-toggle),.app-header :is(.prev-comic,.next-comic):not([disabled]){color:#fff!important;cursor:pointer}.app-header :is(.prev-comic,.next-comic)[disabled]{color:gray!important;cursor:default}.app-header :is(.prev-comic,.next-comic){text-decoration:none;text-align:center}.app-header :is(.left-space,.right-space){display:flex;flex-flow:row;align-items:center;gap:5px}.app-header .left-space{justify-content:flex-end}.app-header .right-space{justify-content:flex-start}\n";
 
   // src/monkey/copymanga-enhance/scripts/newPage/component/AppHeader/index.ts
   var AppHeader_default = defineComponent({
@@ -637,7 +623,7 @@
       });
       const [whitePageRef2, setWhitePage] = useWhitePage();
       onMounted(() => {
-        GM_addStyle_default(style_default4);
+        GM_addStyle_default(style_default3);
       });
       const [directionModeRef2, setDirectionMode] = useDirectionMode();
       return () => h("div", { class: "app-header" }, [
@@ -672,7 +658,7 @@
   });
 
   // src/monkey/copymanga-enhance/scripts/newPage/component/App/style.css
-  var style_default5 = ":root{--header-height: 30px;--body-height: calc(100dvh - var(--header-height))}*:has(>:is(.app-header,.app-body)){width:100dvw;height:100dvh;max-width:100dvw;max-height:100dvh;min-width:100dvw;min-height:100dvh;overflow:hidden;display:grid;grid-template-rows:var(--header-height) auto}:is(.app-header,.app-body){width:100%}\n";
+  var style_default4 = ":root{--header-height: 30px;--body-height: calc(100dvh - var(--header-height))}*:has(>:is(.app-header,.app-body)){width:100dvw;height:100dvh;max-width:100dvw;max-height:100dvh;min-width:100dvw;min-height:100dvh;overflow:hidden;display:grid;grid-template-rows:var(--header-height) auto}:is(.app-header,.app-body){width:100%}\n";
 
   // src/monkey/copymanga-enhance/scripts/newPage/component/App/index.ts
   var App_default = defineComponent({
@@ -680,7 +666,7 @@
       useKeyWatcher();
       useMouseWatcher();
       onMounted(() => {
-        GM_addStyle_default(style_default5);
+        GM_addStyle_default(style_default4);
       });
       return () => h(Fragment, [
         h(AppHeader_default, { class: "app-header" }),
@@ -689,10 +675,14 @@
     }
   });
 
+  // src/monkey/copymanga-enhance/scripts/newPage/tailwind.css
+  var tailwind_default = ".cursor-pointer{cursor:pointer}.size-\\[1px\\]{width:1px;height:1px}\n";
+
   // src/monkey/copymanga-enhance/scripts/newPage/index.ts
   var render = () => {
     const app = createApp({
       setup() {
+        GM_addStyle(tailwind_default);
         return () => h(App_default);
       }
     });
