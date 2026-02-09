@@ -1,13 +1,8 @@
-import GM_addStyle from "../../../../../polyfill/GM_addStyle";
-import { defineComponent, onMounted } from "../../vue";
-import css from './style.css'
+import { defineComponent } from "../../vue";
 
 export default defineComponent({
   setup () {
-    onMounted(() => {
-      GM_addStyle(css)
-    })
     return {}
   },
-  template: '<div class="white-page portrait"></div>',
+  template: '<div class="white-page portrait size-[1px]"></div>',
 })

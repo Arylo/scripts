@@ -1,6 +1,6 @@
 import GM_addStyle from "../../../../../polyfill/GM_addStyle";
 import cc from 'classcat'
-import { DirectionMode, PageType } from "../../constant";
+import { ACTION_GRID_MAP, DirectionMode, PageType } from "../../constant";
 import useDirectionMode from "../../hooks/useDirectionMode";
 import useImageInfoMap from "../../hooks/useImageInfoMap";
 import useImageList from "../../hooks/useImageList";
@@ -10,6 +10,7 @@ import Image from "../Image";
 import css from './style.css'
 import WhitePage from '../WhitePage';
 import flow from "../../../../../utils/flow";
+import useMouseGrid from "../../hooks/useMouseGrid";
 
 type ImageItem = {
   component: ReturnType<typeof defineComponent> | string;
@@ -156,9 +157,16 @@ export default defineComponent({
       imagesRef.value = list
     }
     const imagesRef = ref<ImageItem[]>([])
+
+    const [mouseGridRef] = useMouseGrid()
     return () => h(
       'div',
-      { class: 'app-body' },
+      {
+        class: cc([
+          'app-body',
+          { 'cursor-pointer': [DirectionMode.LTR, DirectionMode.RTL].includes(unref(directionModeRef)) && [...ACTION_GRID_MAP.PREV, ...ACTION_GRID_MAP.NEXT].includes(unref(mouseGridRef)) },
+        ])
+      },
       [
         h(
           'div',
