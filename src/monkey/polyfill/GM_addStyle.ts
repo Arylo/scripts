@@ -1,7 +1,12 @@
-import '../../../types/monkey.d.ts'
+declare global {
+  interface Window {
+    GM_addStyle(cssContent: string): any;
+  }
+}
+
 
 if (typeof window.GM_addStyle === 'undefined') {
-  window.GM_addStyle = function GM_addStyle(cssContent: string) {
+  window.GM_addStyle = function GM_addStyle(cssContent) {
     const head = document.getElementsByTagName('head')[0]
     if (head) {
       const styleElement = document.createElement('style')

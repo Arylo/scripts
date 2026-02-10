@@ -1,3 +1,5 @@
+import GM_getValue from "../../polyfill/GM_getValue"
+import GM_setValue from "../../polyfill/GM_setValue"
 import { chapter, comic } from "./constant"
 import { DirectionMode } from "./newPage/constant"
 import { PageInfo } from "./types"

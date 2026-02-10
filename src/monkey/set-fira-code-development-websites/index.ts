@@ -1,4 +1,5 @@
 import GM_addStyle from '../polyfill/GM_addStyle'
+import GM_getResourceText from '../polyfill/GM_getResourceText'
 import templateCss from './styles/template.css'
 
 const DEFAULT_PARENT_SELECTORS = [
