@@ -4,7 +4,7 @@
 // @namespace https://greasyfork.org/users/1133279
 // @description Unified use of `Fira Code` as the code font to enhance developers' awareness of the code on the page
 // @description:zh-CN 统一将`Fira Code`作为代码字体, 提高开发者对页面中的代码的感知度
-// @version 11
+// @version 12
 // @author Arylo
 // @include https://webpack.js.org/*
 // @include https://rollupjs.org/*

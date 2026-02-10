@@ -1,6 +1,9 @@
 // ==UserScript==
-// @name Enhance the copy manga site
-// @version 40
+// @name 快乐看拷贝
+// @name:en Enhance the copy manga site
+// @description 对开布局、支持带鱼屏、自适应图片高度、快捷翻页、支持键盘操作
+// @description:en support ultra-wide screen, adaptive image height, quick page turning, keyboard operation
+// @version 41
 // @author Arylo Yeung <arylo.open@gmail.com>
 // @connect unpkg.com
 // @license MIT
@@ -27,12 +30,13 @@
 // @match https://2025copy.com/comic/*/chapter/*
 // @match https://*.2025copy.com/comic/*/chapter/*
 // @require https://unpkg.com/vue@3/dist/vue.global.prod.js
+// @resource vue https://unpkg.com/vue@3/dist/vue.global.prod.js
 // @homepage https://github.com/Arylo/scripts#readme
 // @supportURL https://github.com/Arylo/scripts/issues
 // @downloadURL https://raw.githubusercontent.com/Arylo/scripts/monkey/copymanga-enhance.user.js
 // @updateURL https://raw.githubusercontent.com/Arylo/scripts/monkey/copymanga-enhance.meta.js
 // @run-at document-end
-// @grant GM_xmlhttpRequest
+// @grant GM_getResourceText
 // @grant GM_addStyle
 // @grant GM_setValue
 // @grant GM_getValue
@@ -63,7 +67,7 @@
 
   // src/monkey/polyfill/GM_addStyle.ts
   if (typeof window.GM_addStyle === "undefined") {
-    window.GM_addStyle = function GM_addStyle2(cssContent) {
+    window.GM_addStyle = function GM_addStyle(cssContent) {
       const head = document.getElementsByTagName("head")[0];
       if (head) {
         const styleElement = document.createElement("style");
@@ -76,6 +80,12 @@
     };
   }
   var GM_addStyle_default = window.GM_addStyle;
+
+  // src/monkey/polyfill/GM_getValue.ts
+  var GM_getValue_default = window.GM_getValue;
+
+  // src/monkey/polyfill/GM_setValue.ts
+  var GM_setValue_default = window.GM_setValue;
 
   // src/monkey/copymanga-enhance/scripts/utils/parseConstant.ts
   var parseConstant = (pathname) => {
@@ -161,13 +171,13 @@
     },
     get directionMode() {
       const key = directionModeKey;
-      const result = cacheMap.get(key) ?? GM_getValue(key, "rtl" /* RTL */);
+      const result = cacheMap.get(key) ?? GM_getValue_default(key, "rtl" /* RTL */);
       !cacheMap.has(key) && cacheMap.set(key, result);
       return result;
     },
     set directionMode(value) {
       const key = directionModeKey;
-      GM_setValue(key, value);
+      GM_setValue_default(key, value);
       cacheMap.set(key, value);
     }
   };
@@ -682,7 +692,7 @@
   var render = () => {
     const app = createApp({
       setup() {
-        GM_addStyle(tailwind_default);
+        GM_addStyle_default(tailwind_default);
         return () => h(App_default);
       }
     });
@@ -726,23 +736,21 @@
     return info;
   };
 
+  // src/monkey/polyfill/GM_getResourceText.ts
+  var GM_getResourceText_default = window.GM_getResourceText;
+
   // src/monkey/copymanga-enhance/index.ts
-  var renderNewPage = () => {
+  var renderNewPage = async () => {
     console.log("PageInfo:", storage_default.pageInfo);
     windowScrollTo(0);
     document.body.innerHTML = template_default;
-    GM_xmlhttpRequest({
-      method: "GET",
-      url: "https://unpkg.com/vue@3/dist/vue.global.prod.js",
-      onload: (res) => {
-        const script = document.createElement("script");
-        script.textContent = res.responseText;
-        document.head.appendChild(script);
-        setTimeout(() => {
-          render();
-        }, 50);
-      }
-    });
+    const textContent = await GM_getResourceText_default("vue");
+    const script = document.createElement("script");
+    script.textContent = textContent;
+    document.head.appendChild(script);
+    setTimeout(() => {
+      render();
+    }, 50);
   };
   setTimeout(() => {
     let cacheContent = storage_default.pageInfo;

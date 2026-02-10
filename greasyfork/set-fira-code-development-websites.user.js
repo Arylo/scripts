@@ -4,7 +4,7 @@
 // @namespace https://greasyfork.org/users/1133279
 // @description Unified use of `Fira Code` as the code font to enhance developers' awareness of the code on the page
 // @description:zh-CN 统一将`Fira Code`作为代码字体, 提高开发者对页面中的代码的感知度
-// @version 11
+// @version 12
 // @author Arylo
 // @include https://webpack.js.org/*
 // @include https://rollupjs.org/*
@@ -69,6 +69,9 @@
   }
   var GM_addStyle_default = window.GM_addStyle;
 
+  // src/monkey/polyfill/GM_getResourceText.ts
+  var GM_getResourceText_default = window.GM_getResourceText;
+
   // src/monkey/set-fira-code-development-websites/styles/template.css
   var template_default = '*{font-family:Fira Code,monospace!important;font-variant-ligatures:contextual;font-feature-settings:"calt"}\n';
 
@@ -94,8 +97,8 @@
   function parseFontString(selectors) {
     return template_default.replace(/\*/g, selectors.join(", "));
   }
-  setTimeout(() => {
-    const fontCssContent = GM_getResourceText("font_css").replace(/(\burl\(["'])/g, "$1https://cdn.jsdelivr.net/npm/firacode@6.2.0/distr/");
+  setTimeout(async () => {
+    const fontCssContent = (await GM_getResourceText_default("font_css")).replace(/(\burl\(["'])/g, "$1https://cdn.jsdelivr.net/npm/firacode@6.2.0/distr/");
     GM_addStyle_default(fontCssContent);
     const codeSelectors = DEFAULT_CODE_SELECTORS;
     const parentSelectors = DEFAULT_PARENT_SELECTORS;
