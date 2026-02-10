@@ -27,8 +27,8 @@ function parseFontString(selectors: string[]) {
   return templateCss.replace(/\*/g, selectors.join(', '))
 }
 
-setTimeout(() => {
-  const fontCssContent = GM_getResourceText('font_css')
+setTimeout(async () => {
+  const fontCssContent = (await GM_getResourceText('font_css'))
     .replace(/(\burl\(["'])/g, '$1https://cdn.jsdelivr.net/npm/firacode@6.2.0/distr/')
   GM_addStyle(fontCssContent)
 
