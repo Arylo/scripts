@@ -1,5 +1,5 @@
 import { ACTION_GRID_MAP, GRID_COLUMN, GRID_ROW } from "../constant";
-import { onMounted, readonly, ref, unref } from "../vue";
+import { onMounted, unref } from "../vue";
 import useMouseGrid from "./useMouseGrid";
 import useScrollBy from "./useScrollBy";
 
@@ -45,6 +45,10 @@ export default function useMouseWatcher () {
         y: event.clientY,
       }
       handleGridMove(info)
+    })
+
+    appBody.addEventListener('mouseleave', () => {
+      setMouseGrid(-1)
     })
 
     appBody.addEventListener('click', (event) => {

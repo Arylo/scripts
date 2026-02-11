@@ -165,7 +165,7 @@ export default defineComponent({
         class: cc([
           'app-body max-w-dvw',
           unref(directionModeRef),
-          { 'cursor-pointer': [DirectionMode.LTR, DirectionMode.RTL].includes(unref(directionModeRef)) && [...ACTION_GRID_MAP.PREV, ...ACTION_GRID_MAP.NEXT].includes(unref(mouseGridRef)) },
+          { 'cursor-pointer': [...ACTION_GRID_MAP.PREV, ...ACTION_GRID_MAP.NEXT].includes(unref(mouseGridRef)) },
         ])
       },
       [
