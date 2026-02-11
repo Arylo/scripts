@@ -21,34 +21,34 @@
 // @description:zh-TW 對開佈局、支持帶魚屏、自適應圖片高度、快捷翻頁、支持鍵盤操作
 // @description:zh-SG 对开布局、支持带鱼屏、自适应图片高度、快捷翻页、支持键盘操作
 // @description:zh-MY 对开布局、支持带鱼屏、自适应图片高度、快捷翻页、支持键盘操作
-// @version 42
+// @version 43
 // @author Arylo Yeung <arylo.open@gmail.com>
 // @connect unpkg.com
 // @license MIT
-// @match https://copymanga.com/comic/*/chapter/*
-// @match https://*.copymanga.com/comic/*/chapter/*
-// @match https://copymanga.org/comic/*/chapter/*
-// @match https://*.copymanga.org/comic/*/chapter/*
-// @match https://copymanga.net/comic/*/chapter/*
-// @match https://*.copymanga.net/comic/*/chapter/*
-// @match https://copymanga.info/comic/*/chapter/*
-// @match https://*.copymanga.info/comic/*/chapter/*
-// @match https://copymanga.site/comic/*/chapter/*
-// @match https://*.copymanga.site/comic/*/chapter/*
-// @match https://copymanga.tv/comic/*/chapter/*
-// @match https://*.copymanga.tv/comic/*/chapter/*
-// @match https://mangacopy.com/comic/*/chapter/*
-// @match https://*.mangacopy.com/comic/*/chapter/*
-// @match https://copy-manga.com/comic/*/chapter/*
-// @match https://*.copy-manga.com/comic/*/chapter/*
-// @match https://copy20.com/comic/*/chapter/*
-// @match https://*.copy20.com/comic/*/chapter/*
-// @match https://copy2000.site/comic/*/chapter/*
-// @match https://*.copy2000.site/comic/*/chapter/*
-// @match https://2025copy.com/comic/*/chapter/*
-// @match https://*.2025copy.com/comic/*/chapter/*
-// @match https://2026copy.com/comic/*/chapter/*
-// @match https://*.2026copy.com/comic/*/chapter/*
+// @match https://copymanga.com/comic/*
+// @match https://*.copymanga.com/comic/*
+// @match https://copymanga.org/comic/*
+// @match https://*.copymanga.org/comic/*
+// @match https://copymanga.net/comic/*
+// @match https://*.copymanga.net/comic/*
+// @match https://copymanga.info/comic/*
+// @match https://*.copymanga.info/comic/*
+// @match https://copymanga.site/comic/*
+// @match https://*.copymanga.site/comic/*
+// @match https://copymanga.tv/comic/*
+// @match https://*.copymanga.tv/comic/*
+// @match https://mangacopy.com/comic/*
+// @match https://*.mangacopy.com/comic/*
+// @match https://copy-manga.com/comic/*
+// @match https://*.copy-manga.com/comic/*
+// @match https://copy20.com/comic/*
+// @match https://*.copy20.com/comic/*
+// @match https://copy2000.site/comic/*
+// @match https://*.copy2000.site/comic/*
+// @match https://2025copy.com/comic/*
+// @match https://*.2025copy.com/comic/*
+// @match https://2026copy.com/comic/*
+// @match https://*.2026copy.com/comic/*
 // @require https://unpkg.com/vue@3/dist/vue.global.prod.js
 // @resource vue https://unpkg.com/vue@3/dist/vue.global.prod.js
 // @homepage https://github.com/Arylo/scripts#readme
@@ -63,8 +63,107 @@
 // ==/UserScript==
 "use strict";
 (() => {
-  // src/monkey/copymanga-enhance/template.html
-  var template_default = '<div id="app"></div>';
+  // src/monkey/copymanga-enhance/scripts/utils/parseConstant.ts
+  var parseConstant = (pathname) => {
+    const match = pathname.match(/\/comic\/(\w+)(?:\/chapter\/(\w+))?/);
+    if (!match) {
+      return {};
+    }
+    return {
+      comic: match[1],
+      chapter: match[2]
+    };
+  };
+  var parseConstant_default = parseConstant;
+
+  // src/monkey/polyfill/GM_getValue.ts
+  var GM_getValue_default = window.GM_getValue;
+
+  // src/monkey/polyfill/GM_setValue.ts
+  var GM_setValue_default = window.GM_setValue;
+
+  // src/monkey/copymanga-enhance/scripts/detail/newPage/constant.ts
+  var GRID_CELL_TYPE = {
+    PREV: "PREV",
+    NEXT: "NEXT",
+    SPACE: "SPACE"
+  };
+  var GRID_MAP = (() => {
+    const P = GRID_CELL_TYPE.PREV;
+    const N = GRID_CELL_TYPE.NEXT;
+    const S = GRID_CELL_TYPE.SPACE;
+    return [
+      [P, P, P, P, P, P, P],
+      [P, P, P, P, P, P, P],
+      [P, P, S, S, N, N, N],
+      [P, P, S, S, N, N, N],
+      [P, P, S, S, N, N, N]
+    ];
+  })();
+  var GRID_COLUMN = Math.max(...GRID_MAP.map((row) => row.length));
+  var GRID_ROW = GRID_MAP.length;
+  var ACTION_GRID_MAP = GRID_MAP.reduce((acc, row, rowIndex) => {
+    row.forEach((cell, cellIndex) => {
+      acc[cell] = acc[cell] || [];
+      acc[cell].push(rowIndex * GRID_COLUMN + cellIndex + 1);
+    });
+    return acc;
+  }, {});
+
+  // src/monkey/copymanga-enhance/scripts/utils/genStorage.ts
+  function serializer(value) {
+    return JSON.stringify(value);
+  }
+  function deserializer(value) {
+    return JSON.parse(value);
+  }
+  function genStorage(options) {
+    const cacheMap = /* @__PURE__ */ new Map();
+    function getter(key, defaultValue) {
+      const result = cacheMap.get(key) ?? options?.load(key);
+      if (typeof result !== "undefined" && result !== null) {
+        return deserializer(result);
+      }
+      return defaultValue;
+    }
+    return {
+      get: getter,
+      set(key, value) {
+        const result = serializer(value);
+        options?.save(key, result);
+        cacheMap.set(key, result);
+      }
+    };
+  }
+
+  // src/monkey/copymanga-enhance/scripts/table/index.ts
+  var directionModeStorage = genStorage({
+    save: (key, value) => GM_setValue_default(key, value),
+    load: (key) => GM_getValue_default(key, null)
+  });
+  var getDirectionModeKey = () => {
+    const comic2 = parseConstant_default(location?.pathname).comic;
+    return Object.freeze([comic2, "direction", "mode"].join("."));
+  };
+  var table_default = () => {
+    const directionModeKey = getDirectionModeKey();
+    const directionMode = directionModeStorage.get(directionModeKey);
+    if (directionMode) return;
+    const changeTiaoTag = $('a[href^="/comics?theme=changtiao"]');
+    if (changeTiaoTag.length) {
+      directionModeStorage.set(directionModeKey, "ttb" /* TTB */);
+      return;
+    }
+    const authors = $('a[href^="/author"]').text();
+    if (/[\u0800-\u4e00]/.test(authors)) {
+      console.log("Found Japanese author");
+      directionModeStorage.set(directionModeKey, "rtl" /* RTL */);
+      return;
+    }
+  };
+
+  // src/monkey/copymanga-enhance/scripts/detail/template.html
+  var template_default = '<div id="app" class="grid h-dvh max-h-dvh max-w-dvw min-h-dvh min-w-dvw overflow-hidden w-dvw"></div>';
 
   // src/monkey/copymanga-enhance/scripts/detail/newPage/vue.ts
   var {
@@ -101,87 +200,29 @@
   }
   var GM_addStyle_default = window.GM_addStyle;
 
-  // src/monkey/polyfill/GM_getValue.ts
-  var GM_getValue_default = window.GM_getValue;
-
-  // src/monkey/polyfill/GM_setValue.ts
-  var GM_setValue_default = window.GM_setValue;
-
-  // src/monkey/copymanga-enhance/scripts/utils/parseConstant.ts
-  var parseConstant = (pathname) => {
-    const match = pathname.match(/\/comic\/(\w+)(?:\/chapter\/(\w+))?/);
-    if (!match) {
-      return {};
-    }
-    return {
-      comic: match[1],
-      chapter: match[2]
-    };
-  };
-  var parseConstant_default = parseConstant;
-
-  // src/monkey/copymanga-enhance/scripts/constant.ts
-  var comic = parseConstant_default(globalThis.location?.pathname).comic;
-  var chapter = parseConstant_default(globalThis.location?.pathname).chapter;
-
-  // src/monkey/copymanga-enhance/scripts/utils/genStorage.ts
-  function serializer(value) {
-    return JSON.stringify(value);
-  }
-  function deserializer(value) {
-    return JSON.parse(value);
-  }
-  function genStorage(options) {
-    const cacheMap = /* @__PURE__ */ new Map();
-    function getter(key, defaultValue) {
-      const result = cacheMap.get(key) ?? options?.load(key);
-      if (typeof result !== "undefined" && result !== null) {
-        return deserializer(result);
-      }
-      return defaultValue;
-    }
-    return {
-      get: getter,
-      set(key, value) {
-        const result = serializer(value);
-        options?.save(key, result);
-        cacheMap.set(key, result);
-      }
-    };
-  }
-
-  // src/monkey/copymanga-enhance/scripts/detail/newPage/constant.ts
-  var GRID_CELL_TYPE = {
-    PREV: "PREV",
-    NEXT: "NEXT",
-    SPACE: "SPACE"
-  };
-  var GRID_MAP = (() => {
-    const P = GRID_CELL_TYPE.PREV;
-    const N = GRID_CELL_TYPE.NEXT;
-    const S = GRID_CELL_TYPE.SPACE;
-    return [
-      [P, P, P, P, P, P, P],
-      [P, P, P, P, P, P, P],
-      [P, P, S, S, N, N, N],
-      [P, P, S, S, N, N, N],
-      [P, P, S, S, N, N, N]
-    ];
-  })();
-  var GRID_COLUMN = Math.max(...GRID_MAP.map((row) => row.length));
-  var GRID_ROW = GRID_MAP.length;
-  var ACTION_GRID_MAP = GRID_MAP.reduce((acc, row, rowIndex) => {
-    row.forEach((cell, cellIndex) => {
-      acc[cell] = acc[cell] || [];
-      acc[cell].push(rowIndex * GRID_COLUMN + cellIndex + 1);
-    });
-    return acc;
-  }, {});
-
   // src/monkey/copymanga-enhance/scripts/detail/storage.ts
-  var whitePageKey = Object.freeze([comic, chapter, "hasWhitePage"].join("."));
-  var pageInfoKey = Object.freeze([comic, chapter, "info"].join("."));
-  var directionModeKey = Object.freeze([comic, "direction", "mode"].join("."));
+  var getImageWidthKey = () => {
+    const comic2 = parseConstant_default(location?.pathname).comic;
+    return Object.freeze([comic2, "image", "width"].join("."));
+  };
+  var getWhitePageKey = () => {
+    const comic2 = parseConstant_default(location?.pathname).comic;
+    const chapter2 = parseConstant_default(location?.pathname).chapter;
+    return Object.freeze([comic2, chapter2, "hasWhitePage"].join("."));
+  };
+  var getPageInfoKey = () => {
+    const comic2 = parseConstant_default(location?.pathname).comic;
+    const chapter2 = parseConstant_default(location?.pathname).chapter;
+    return Object.freeze([comic2, chapter2, "info"].join("."));
+  };
+  var getDirectionModeKey2 = () => {
+    const comic2 = parseConstant_default(location?.pathname).comic;
+    return Object.freeze([comic2, "direction", "mode"].join("."));
+  };
+  var imageWidthStorage = genStorage({
+    save: (key, value) => GM_setValue_default(key, value),
+    load: (key) => GM_getValue_default(key, null)
+  });
   var whitePageStorage = genStorage({
     save: (key, value) => localStorage.setItem(key, value),
     load: (key) => localStorage.getItem(key)
@@ -190,18 +231,29 @@
     save: (key, value) => sessionStorage.setItem(key, value),
     load: (key) => sessionStorage.getItem(key)
   });
-  var directionModeStorage = genStorage({
+  var directionModeStorage2 = genStorage({
     save: (key, value) => GM_setValue_default(key, value),
     load: (key) => GM_getValue_default(key, null)
   });
   var storage_default = {
+    get imageWidth() {
+      const imageWidthKey = getImageWidthKey();
+      return imageWidthStorage.get(imageWidthKey, 70);
+    },
+    set imageWidth(value) {
+      const imageWidthKey = getImageWidthKey();
+      imageWidthStorage.set(imageWidthKey, value);
+    },
     get whitePage() {
+      const whitePageKey = getWhitePageKey();
       return whitePageStorage.get(whitePageKey, false);
     },
     set whitePage(value) {
+      const whitePageKey = getWhitePageKey();
       whitePageStorage.set(whitePageKey, value);
     },
     get pageInfo() {
+      const pageInfoKey = getPageInfoKey();
       const defaultValue = {
         images: [],
         title: void 0,
@@ -212,13 +264,16 @@
       return pageInfoStorage.get(pageInfoKey, defaultValue);
     },
     set pageInfo(value) {
+      const pageInfoKey = getPageInfoKey();
       pageInfoStorage.set(pageInfoKey, value);
     },
     get directionMode() {
-      return directionModeStorage.get(directionModeKey, "rtl" /* RTL */);
+      const directionModeKey = getDirectionModeKey2();
+      return directionModeStorage2.get(directionModeKey, "rtl" /* RTL */);
     },
     set directionMode(value) {
-      directionModeStorage.set(directionModeKey, value);
+      const directionModeKey = getDirectionModeKey2();
+      directionModeStorage2.set(directionModeKey, value);
     }
   };
 
@@ -436,8 +491,19 @@
     return imagesRef;
   }
 
-  // src/monkey/copymanga-enhance/scripts/detail/newPage/component/Image/style.css
-  var style_default = ":is(.ltr,.rtl) .comic-image{height:var(--body-height);width:auto}\n";
+  // src/monkey/copymanga-enhance/scripts/detail/newPage/hooks/useImageWidth.ts
+  var imageWidthRef = ref(100);
+  function useImageWidth() {
+    const imageWidth = readonly(imageWidthRef);
+    function setter(value) {
+      imageWidthRef.value = value;
+      storage_default.imageWidth = value;
+    }
+    onMounted(() => {
+      setter(storage_default.imageWidth);
+    });
+    return [imageWidth, setter];
+  }
 
   // src/monkey/copymanga-enhance/scripts/detail/newPage/component/Image/index.ts
   var Image_default = defineComponent({
@@ -448,12 +514,11 @@
       }
     },
     setup(props, { emit }) {
-      onMounted(() => {
-        GM_addStyle_default(style_default);
-      });
       const pageType = ref("portrait" /* PORTRAIT */);
       const imageListRef = useImageList();
       const imageInfoMapRef = useImageInfoMap();
+      const [directionModeRef2] = useDirectionMode();
+      const [imageWidthRef2] = useImageWidth();
       const onLoad = (e) => {
         const index = unref(imageListRef).indexOf(props.src);
         const element = e.target;
@@ -467,19 +532,27 @@
         pageType.value = type;
         emit("loaded");
       };
-      return () => h("img", { class: `comic-image ${unref(pageType)}`, src: props.src, onLoad });
+      return () => h(
+        "img",
+        {
+          class: `comic-image ${unref(pageType)} ltr:w-auto ltr:h-(--body-height) rtl:w-auto rtl:h-(--body-height)`,
+          style: unref(directionModeRef2) === "ttb" /* TTB */ ? { "max-width": `${unref(imageWidthRef2)}%` } : {},
+          src: props.src,
+          onLoad
+        }
+      );
     }
   });
 
   // src/monkey/copymanga-enhance/scripts/detail/newPage/component/AppBody/style.css
-  var style_default2 = ".direction-wrapper{display:flex;flex-wrap:wrap;justify-content:center;width:100%;max-height:var(--body-height);overflow-y:scroll}.wrapper{display:flex;flex-basis:100%;justify-content:center}:is(.ltr,.rtl).direction-wrapper{scroll-snap-type:y mandatory}:is(.ltr,.rtl) .wrapper{height:var(--body-height);scroll-snap-align:center}*:not(:is(.ltr,.rtl))>.wrapper:has(>.white-page){display:none}@media (max-aspect-ratio: 5 / 3){.wrapper:has(>.white-page){display:none}}@media (min-aspect-ratio: 5 / 3){:is(.ltr,.rtl) .wrapper:has(>.portrait){flex-basis:50%}.wrapper{order:attr(data-index number)}.wrapper[data-side=L]{justify-content:flex-end;padding-left:5px}.wrapper[data-side=R]{justify-content:flex-start;padding-right:5px}}@media (min-aspect-ratio: 5 / 3) and (max-aspect-ratio: 9 / 3){:is(.ltr,.rtl) .wrapper:has(>.white-page):nth-last-child(2),:is(.ltr,.rtl) .wrapper:has(>.white-page):nth-last-child(2)+.wrapper:has(>.white-page){display:none}}@media (min-aspect-ratio: 9 / 3){:is(.ltr,.rtl) .wrapper:has(>.portrait){flex-basis:25%}}\n";
+  var style_default = ".direction-wrapper{max-height:var(--body-height);overflow-y:scroll}.wrapper{flex-basis:100%;justify-content:center}@media (max-aspect-ratio: 5 / 3){.wrapper:has(>.white-page){display:none}}@media (min-aspect-ratio: 5 / 3){:is(.ltr,.rtl) .wrapper:has(>.portrait){flex-basis:50%}.wrapper{order:attr(data-index number)}.wrapper[data-side=L]{justify-content:flex-end;padding-left:5px}.wrapper[data-side=R]{justify-content:flex-start;padding-right:5px}}@media (min-aspect-ratio: 5 / 3) and (max-aspect-ratio: 9 / 3){:is(.ltr,.rtl) .wrapper:has(>.white-page):nth-last-child(2),:is(.ltr,.rtl) .wrapper:has(>.white-page):nth-last-child(2)+.wrapper:has(>.white-page){display:none}}@media (min-aspect-ratio: 9 / 3){:is(.ltr,.rtl) .wrapper:has(>.portrait){flex-basis:25%}}\n";
 
   // src/monkey/copymanga-enhance/scripts/detail/newPage/component/WhitePage/index.ts
   var WhitePage_default = defineComponent({
     setup() {
       return {};
     },
-    template: '<div class="white-page portrait size-[1px]"></div>'
+    template: '<div class="white-page portrait size-px"></div>'
   });
 
   // src/monkey/utils/flow.ts
@@ -495,7 +568,7 @@
       const imageListRef = useImageList();
       const infoMapRef = useImageInfoMap();
       onMounted(() => {
-        GM_addStyle_default(style_default2);
+        GM_addStyle_default(style_default);
         refresh();
       });
       watch(whitePageRef2, () => refresh());
@@ -627,18 +700,30 @@
         "div",
         {
           class: cc([
-            "app-body",
+            "app-body max-w-dvw",
+            unref(directionModeRef2),
             { "cursor-pointer": ["ltr" /* LTR */, "rtl" /* RTL */].includes(unref(directionModeRef2)) && [...ACTION_GRID_MAP.PREV, ...ACTION_GRID_MAP.NEXT].includes(unref(mouseGridRef)) }
           ])
         },
         [
           h(
             "div",
-            { class: cc(["direction-wrapper", unref(directionModeRef2)]) },
+            { class: cc([
+              "direction-wrapper",
+              "w-dvw",
+              "flex flex-wrap justify-center",
+              "snap-mandatory ltr:snap-y rtl:snap-y"
+            ]) },
             unref(imagesRef).map(({ component, props }) => h(
               "div",
               {
-                class: "wrapper",
+                class: cc([
+                  "wrapper",
+                  "ltr:h-(--body-height) rtl:h-(--body-height)",
+                  "ltr:snap-center rtl:snap-center",
+                  "flex",
+                  { "hidden": unref(directionModeRef2) === "ttb" /* TTB */ && component === WhitePage_default }
+                ]),
                 ...Object.fromEntries(Object.entries(props).filter(([k]) => k.startsWith("data-")))
               },
               [h(component, { ...props })]
@@ -650,7 +735,7 @@
   });
 
   // src/monkey/copymanga-enhance/scripts/detail/newPage/component/AppHeader/style.css
-  var style_default3 = ".app-header{display:grid;grid-template-columns:1fr 60px auto 60px 1fr;column-gap:5px;align-items:center}.app-header :is(.comic-title,.loading-hint,.white-page-toggle),.app-header :is(.prev-comic,.next-comic):not([disabled]){color:#fff!important;cursor:pointer}.app-header :is(.prev-comic,.next-comic)[disabled]{color:gray!important;cursor:default}.app-header :is(.prev-comic,.next-comic){text-decoration:none;text-align:center}.app-header :is(.left-space,.right-space){display:flex;flex-flow:row;align-items:center;gap:5px}.app-header .left-space{justify-content:flex-end}.app-header .right-space{justify-content:flex-start}\n";
+  var style_default2 = ".app-header{grid-template-columns:1fr 60px auto 60px 1fr}\n";
 
   // src/monkey/copymanga-enhance/scripts/detail/newPage/component/AppHeader/index.ts
   var AppHeader_default = defineComponent({
@@ -673,42 +758,90 @@
       });
       const [whitePageRef2, setWhitePage] = useWhitePage();
       onMounted(() => {
-        GM_addStyle_default(style_default3);
+        GM_addStyle_default(style_default2);
       });
       const [directionModeRef2, setDirectionMode] = useDirectionMode();
-      return () => h("div", { class: "app-header" }, [
-        h(
-          "div",
-          { class: "left-space" },
-          [
-            unref(loadingStatusRef).hint ? h("div", { class: "loading-hint" }, unref(loadingStatusRef).hint) : h(Fragment),
-            h("div", { class: "white-page-toggle", onClick: () => setWhitePage(!unref(whitePageRef2)) }, unref(whitePageRef2) ? "\u5DF2\u6DFB\u52A0\u7A7A\u767D\u9875" : "\u672A\u6DFB\u52A0\u7A7A\u767D\u9875")
-          ]
-        ),
-        h(
-          "a",
-          { class: "prev-comic", disabled: unref(prevUrlRef) ? void 0 : "", href: unref(prevUrlRef) },
-          "\u4E0A\u4E00\u9875"
-        ),
-        h("a", { class: "comic-title", href: unref(titleUrlRef) }, unref(titleRef)),
-        h(
-          "a",
-          { class: "next-comic", disabled: unref(nextUrlRef) ? void 0 : "", href: unref(nextUrlRef) },
-          "\u4E0B\u4E00\u9875"
-        ),
-        h("div", { class: "right-space" }, [
-          h("select", { onChange: (event) => setDirectionMode(event.target.value) }, [
-            h("option", { value: "rtl" /* RTL */, selected: unref(directionModeRef2) === "rtl" /* RTL */ }, "\u65E5\u6F2B\u6A21\u5F0F"),
-            h("option", { value: "ltr" /* LTR */, selected: unref(directionModeRef2) === "ltr" /* LTR */ }, "\u666E\u901A\u6A21\u5F0F"),
-            h("option", { value: "ttb" /* TTB */, selected: unref(directionModeRef2) === "ttb" /* TTB */ }, "\u56FD\u6F2B\u6A21\u5F0F")
+      const [imageWidthRef2, setImageWidth] = useImageWidth();
+      return () => h(
+        "div",
+        {
+          class: cc([
+            "app-header",
+            "max-w-dvw",
+            "grid items-center gap-x-[5px]"
           ])
-        ])
-      ]);
+        },
+        [
+          h(
+            "div",
+            {
+              class: cc([
+                "left-space",
+                "flex flex-row justify-end items-center gap-x-[5px]"
+              ])
+            },
+            [
+              unref(loadingStatusRef).hint ? h("div", { class: "loading-hint text-white" }, unref(loadingStatusRef).hint) : h(Fragment),
+              h("select", { onChange: (event) => setDirectionMode(event.target.value) }, [
+                h("option", { value: "rtl" /* RTL */, selected: unref(directionModeRef2) === "rtl" /* RTL */ }, "\u65E5\u6F2B\u6A21\u5F0F"),
+                h("option", { value: "ltr" /* LTR */, selected: unref(directionModeRef2) === "ltr" /* LTR */ }, "\u666E\u901A\u6A21\u5F0F"),
+                h("option", { value: "ttb" /* TTB */, selected: unref(directionModeRef2) === "ttb" /* TTB */ }, "\u56FD\u6F2B\u6A21\u5F0F")
+              ])
+            ]
+          ),
+          h(
+            "a",
+            {
+              class: cc([
+                "prev-comic",
+                "text-gray text-center",
+                { "text-white cursor-pointer": unref(prevUrlRef) }
+              ]),
+              href: unref(prevUrlRef)
+            },
+            "\u4E0A\u4E00\u9875"
+          ),
+          h("a", { class: "comic-title text-white cursor-pointer", href: unref(titleUrlRef) }, unref(titleRef)),
+          h(
+            "a",
+            {
+              class: cc([
+                "next-comic",
+                "text-gray text-center",
+                { "text-white cursor-pointer": unref(nextUrlRef) }
+              ]),
+              href: unref(nextUrlRef)
+            },
+            "\u4E0B\u4E00\u9875"
+          ),
+          h(
+            "div",
+            {
+              class: cc([
+                "right-space",
+                "flex flex-row justify-start items-center gap-x-[5px]"
+              ])
+            },
+            [
+              ["rtl" /* RTL */, "ltr" /* LTR */].includes(unref(directionModeRef2)) ? h("div", { class: "white-page-toggle text-white cursor-pointer", onClick: () => setWhitePage(!unref(whitePageRef2)) }, unref(whitePageRef2) ? "\u5DF2\u52A0\u7A7A\u767D\u9875" : "\u672A\u52A0\u7A7A\u767D\u9875") : h(Fragment),
+              ["ttb" /* TTB */].includes(unref(directionModeRef2)) ? h("select", { onChange: (event) => setImageWidth(Number(event.target.value)) }, [
+                h("option", { value: "100", selected: unref(imageWidthRef2) === 100 }, "100%"),
+                h("option", { value: "90", selected: unref(imageWidthRef2) === 90 }, "90%"),
+                h("option", { value: "80", selected: unref(imageWidthRef2) === 80 }, "80%"),
+                h("option", { value: "70", selected: unref(imageWidthRef2) === 70 }, "70%"),
+                h("option", { value: "60", selected: unref(imageWidthRef2) === 60 }, "60%"),
+                h("option", { value: "50", selected: unref(imageWidthRef2) === 50 }, "50%"),
+                h("option", { value: "40", selected: unref(imageWidthRef2) === 40 }, "40%")
+              ]) : h(Fragment)
+            ]
+          )
+        ]
+      );
     }
   });
 
   // src/monkey/copymanga-enhance/scripts/detail/newPage/component/App/style.css
-  var style_default4 = ":root{--header-height: 30px;--body-height: calc(100dvh - var(--header-height))}*:has(>:is(.app-header,.app-body)){width:100dvw;height:100dvh;max-width:100dvw;max-height:100dvh;min-width:100dvw;min-height:100dvh;overflow:hidden;display:grid;grid-template-rows:var(--header-height) auto}:is(.app-header,.app-body){width:100%}\n";
+  var style_default3 = ":root{--header-height: 30px;--body-height: calc(100dvh - var(--header-height))}#app{grid-template-rows:var(--header-height) auto}\n";
 
   // src/monkey/copymanga-enhance/scripts/detail/newPage/component/App/index.ts
   var App_default = defineComponent({
@@ -716,7 +849,7 @@
       useKeyWatcher();
       useMouseWatcher();
       onMounted(() => {
-        GM_addStyle_default(style_default4);
+        GM_addStyle_default(style_default3);
       });
       return () => h(Fragment, [
         h(AppHeader_default, { class: "app-header" }),
@@ -726,7 +859,7 @@
   });
 
   // src/monkey/copymanga-enhance/scripts/detail/newPage/tailwind.css
-  var tailwind_default = ".cursor-pointer{cursor:pointer}.size-\\[1px\\]{width:1px;height:1px}\n";
+  var tailwind_default = ".cursor-pointer{cursor:pointer}.size-px{width:1px;height:1px}.w-dvw{width:100dvw}.min-w-dvw{min-width:100dvw}.max-w-dvw{max-width:100dvw}.h-dvh{height:100dvh}.min-w-dvw{min-height:100dvh}.max-h-dvh{max-height:100dvh}.grid{display:grid}.flex{display:flex}.flex-row{flex-direction:row}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.justify-start{justify-content:flex-start}.justify-end{justify-content:flex-end}.justify-center{justify-content:center}.items-center{align-items:center}.gap-x-\\[5px\\]{column-gap:5px}.hidden{display:none}.overflow-hidden{overflow:hidden}.overflow-auto{overflow:auto}.text-white{color:#fff}.text-gray{color:gray}.text-center{text-align:center}.snap-mandatory{--scroll-snap-strictness: mandatory}.ttb .ttb\\:hidden{display:none}.ltr .ltr\\:snap-y,.rtl .rtl\\:snap-y{scroll-snap-type:y var(--scroll-snap-strictness)}.ltr .ltr\\:snap-center,.rtl .rtl\\:snap-center{scroll-snap-align:center}.ltr .ltr\\:w-auto,.rtl .rtl\\:w-auto{width:auto}.ltr .ltr\\:h-\\(--body-height\\),.rtl .rtl\\:h-\\(--body-height\\){height:var(--body-height)}\n";
 
   // src/monkey/copymanga-enhance/scripts/detail/newPage/index.ts
   var render = () => {
@@ -779,34 +912,48 @@
   // src/monkey/polyfill/GM_getResourceText.ts
   var GM_getResourceText_default = window.GM_getResourceText;
 
-  // src/monkey/copymanga-enhance/index.ts
+  // src/monkey/copymanga-enhance/scripts/detail/index.ts
   var renderNewPage = async () => {
-    console.log("PageInfo:", storage_default.pageInfo);
+    console.info("PageInfo:", storage_default.pageInfo);
     windowScrollTo(0);
     document.body.innerHTML = template_default;
+    console.info("Start request vue library");
     const textContent = await GM_getResourceText_default("vue");
     const script = document.createElement("script");
     script.textContent = textContent;
     document.head.appendChild(script);
     setTimeout(() => {
+      console.info("Start render new page");
       render();
     }, 50);
   };
-  setTimeout(() => {
-    let cacheContent = storage_default.pageInfo;
-    if (cacheContent?.images.length) {
-      console.info("Found cache");
-      return renderNewPage();
-    }
-    console.info("Non found cache");
-    refreshImage(() => {
-      const info = getPageInfo();
-      storage_default.pageInfo = Object.assign({
-        prevUrl: void 0,
-        nextUrl: void 0,
-        menuUrl: void 0
-      }, info);
-      renderNewPage();
-    });
-  }, 25);
+  var detail_default = () => {
+    setTimeout(() => {
+      let cacheContent = storage_default.pageInfo;
+      if (cacheContent?.images.length) {
+        console.info("Found cache");
+        return renderNewPage();
+      }
+      console.info("Non found cache");
+      refreshImage(() => {
+        const info = getPageInfo();
+        storage_default.pageInfo = Object.assign({
+          prevUrl: void 0,
+          nextUrl: void 0,
+          menuUrl: void 0
+        }, info);
+        renderNewPage();
+      });
+    }, 25);
+  };
+
+  // src/monkey/copymanga-enhance/index.ts
+  var { comic, chapter } = parseConstant_default(location?.pathname);
+  if (comic && chapter) {
+    console.log("start detail mode");
+    detail_default();
+  } else if (comic) {
+    console.log("start table mode");
+    table_default();
+  }
 })();
