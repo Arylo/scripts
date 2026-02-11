@@ -1,9 +1,27 @@
 // ==UserScript==
-// @name 快乐看拷贝
+// @name Enhance the copy manga site
 // @name:en Enhance the copy manga site
-// @description 对开布局、支持带鱼屏、自适应图片高度、快捷翻页、支持键盘操作
+// @name:zh 快乐看拷贝
+// @name:zh-Hans 快乐看拷贝
+// @name:zh-Hant 快樂看拷貝
+// @name:zh-CN 快乐看拷贝
+// @name:zh-HK 快樂看拷貝
+// @name:zh-MO 快樂看拷貝
+// @name:zh-TW 快樂看拷貝
+// @name:zh-SG 快乐看拷贝
+// @name:zh-MY 快乐看拷贝
+// @description support ultra-wide screen, adaptive image height, quick page turning, keyboard operation
 // @description:en support ultra-wide screen, adaptive image height, quick page turning, keyboard operation
-// @version 41
+// @description:zh 对开布局、支持带鱼屏、自适应图片高度、快捷翻页、支持键盘操作
+// @description:zh-Hans 对开布局、支持带鱼屏、自适应图片高度、快捷翻页、支持键盘操作
+// @description:zh-Hant 對開佈局、支持帶魚屏、自適應圖片高度、快捷翻頁、支持鍵盤操作
+// @description:zh-CN 对开布局、支持带鱼屏、自适应图片高度、快捷翻页、支持键盘操作
+// @description:zh-HK 對開佈局、支持帶魚屏、自適應圖片高度、快捷翻頁、支持鍵盤操作
+// @description:zh-MO 對開佈局、支持帶魚屏、自適應圖片高度、快捷翻頁、支持鍵盤操作
+// @description:zh-TW 對開佈局、支持帶魚屏、自適應圖片高度、快捷翻頁、支持鍵盤操作
+// @description:zh-SG 对开布局、支持带鱼屏、自适应图片高度、快捷翻页、支持键盘操作
+// @description:zh-MY 对开布局、支持带鱼屏、自适应图片高度、快捷翻页、支持键盘操作
+// @version 42
 // @author Arylo Yeung <arylo.open@gmail.com>
 // @connect unpkg.com
 // @license MIT
@@ -29,6 +47,8 @@
 // @match https://*.copy2000.site/comic/*/chapter/*
 // @match https://2025copy.com/comic/*/chapter/*
 // @match https://*.2025copy.com/comic/*/chapter/*
+// @match https://2026copy.com/comic/*/chapter/*
+// @match https://*.2026copy.com/comic/*/chapter/*
 // @require https://unpkg.com/vue@3/dist/vue.global.prod.js
 // @resource vue https://unpkg.com/vue@3/dist/vue.global.prod.js
 // @homepage https://github.com/Arylo/scripts#readme
@@ -46,7 +66,7 @@
   // src/monkey/copymanga-enhance/template.html
   var template_default = '<div id="app"></div>';
 
-  // src/monkey/copymanga-enhance/scripts/newPage/vue.ts
+  // src/monkey/copymanga-enhance/scripts/detail/newPage/vue.ts
   var {
     createApp,
     defineComponent,
@@ -104,7 +124,33 @@
   var comic = parseConstant_default(globalThis.location?.pathname).comic;
   var chapter = parseConstant_default(globalThis.location?.pathname).chapter;
 
-  // src/monkey/copymanga-enhance/scripts/newPage/constant.ts
+  // src/monkey/copymanga-enhance/scripts/utils/genStorage.ts
+  function serializer(value) {
+    return JSON.stringify(value);
+  }
+  function deserializer(value) {
+    return JSON.parse(value);
+  }
+  function genStorage(options) {
+    const cacheMap = /* @__PURE__ */ new Map();
+    function getter(key, defaultValue) {
+      const result = cacheMap.get(key) ?? options?.load(key);
+      if (typeof result !== "undefined" && result !== null) {
+        return deserializer(result);
+      }
+      return defaultValue;
+    }
+    return {
+      get: getter,
+      set(key, value) {
+        const result = serializer(value);
+        options?.save(key, result);
+        cacheMap.set(key, result);
+      }
+    };
+  }
+
+  // src/monkey/copymanga-enhance/scripts/detail/newPage/constant.ts
   var GRID_CELL_TYPE = {
     PREV: "PREV",
     NEXT: "NEXT",
@@ -132,23 +178,28 @@
     return acc;
   }, {});
 
-  // src/monkey/copymanga-enhance/scripts/storage.ts
+  // src/monkey/copymanga-enhance/scripts/detail/storage.ts
   var whitePageKey = Object.freeze([comic, chapter, "hasWhitePage"].join("."));
   var pageInfoKey = Object.freeze([comic, chapter, "info"].join("."));
   var directionModeKey = Object.freeze([comic, "direction", "mode"].join("."));
-  var cacheMap = /* @__PURE__ */ new Map();
+  var whitePageStorage = genStorage({
+    save: (key, value) => localStorage.setItem(key, value),
+    load: (key) => localStorage.getItem(key)
+  });
+  var pageInfoStorage = genStorage({
+    save: (key, value) => sessionStorage.setItem(key, value),
+    load: (key) => sessionStorage.getItem(key)
+  });
+  var directionModeStorage = genStorage({
+    save: (key, value) => GM_setValue_default(key, value),
+    load: (key) => GM_getValue_default(key, null)
+  });
   var storage_default = {
     get whitePage() {
-      const key = whitePageKey;
-      const result = cacheMap.get(key) ?? JSON.parse(localStorage.getItem(key) || "false");
-      !cacheMap.has(key) && cacheMap.set(key, result);
-      return result;
+      return whitePageStorage.get(whitePageKey, false);
     },
     set whitePage(value) {
-      const key = whitePageKey;
-      const result = JSON.stringify(value);
-      localStorage.setItem(key, result);
-      cacheMap.set(key, value);
+      whitePageStorage.set(whitePageKey, value);
     },
     get pageInfo() {
       const defaultValue = {
@@ -158,31 +209,20 @@
         nextUrl: void 0,
         menuUrl: void 0
       };
-      const key = pageInfoKey;
-      const result = cacheMap.get(key) ?? JSON.parse(sessionStorage.getItem(key) ?? JSON.stringify(defaultValue));
-      !cacheMap.has(key) && cacheMap.set(key, result);
-      return result;
+      return pageInfoStorage.get(pageInfoKey, defaultValue);
     },
     set pageInfo(value) {
-      const key = pageInfoKey;
-      const result = JSON.stringify(value);
-      sessionStorage.setItem(key, result);
-      cacheMap.set(key, value);
+      pageInfoStorage.set(pageInfoKey, value);
     },
     get directionMode() {
-      const key = directionModeKey;
-      const result = cacheMap.get(key) ?? GM_getValue_default(key, "rtl" /* RTL */);
-      !cacheMap.has(key) && cacheMap.set(key, result);
-      return result;
+      return directionModeStorage.get(directionModeKey, "rtl" /* RTL */);
     },
     set directionMode(value) {
-      const key = directionModeKey;
-      GM_setValue_default(key, value);
-      cacheMap.set(key, value);
+      directionModeStorage.set(directionModeKey, value);
     }
   };
 
-  // src/monkey/copymanga-enhance/scripts/newPage/hooks/usePageInfo.ts
+  // src/monkey/copymanga-enhance/scripts/detail/newPage/hooks/usePageInfo.ts
   function usePageInfo() {
     const rawData = ref(storage_default.pageInfo);
     onMounted(() => {
@@ -191,7 +231,7 @@
     return readonly(rawData);
   }
 
-  // src/monkey/copymanga-enhance/scripts/newPage/hooks/useWhitePage.ts
+  // src/monkey/copymanga-enhance/scripts/detail/newPage/hooks/useWhitePage.ts
   var whitePageRef = ref(storage_default.whitePage);
   function useWhitePage() {
     const whitePage = readonly(whitePageRef);
@@ -205,7 +245,7 @@
     return [whitePage, setter];
   }
 
-  // src/monkey/copymanga-enhance/scripts/utils/genScrollTo.ts
+  // src/monkey/copymanga-enhance/scripts/detail/utils/genScrollTo.ts
   var genScrollTo = (el) => (top, isSmooth = false) => el.scrollTo({
     top,
     left: 0,
@@ -213,7 +253,7 @@
   });
   var genScrollTo_default = genScrollTo;
 
-  // src/monkey/copymanga-enhance/scripts/newPage/hooks/useScrollBy.ts
+  // src/monkey/copymanga-enhance/scripts/detail/newPage/hooks/useScrollBy.ts
   function useScrollBy() {
     let scrollTo = null;
     const getScrollElement = () => {
@@ -240,7 +280,7 @@
     return { scrollUp, scrollDown };
   }
 
-  // src/monkey/copymanga-enhance/scripts/newPage/hooks/useKeyWatcher.ts
+  // src/monkey/copymanga-enhance/scripts/detail/newPage/hooks/useKeyWatcher.ts
   function useKeyWatcher() {
     const pageInfoRef = usePageInfo();
     const prevUrlRef = computed(() => unref(pageInfoRef).prevUrl);
@@ -281,7 +321,7 @@
     });
   }
 
-  // src/monkey/copymanga-enhance/scripts/newPage/hooks/useMouseGrid.ts
+  // src/monkey/copymanga-enhance/scripts/detail/newPage/hooks/useMouseGrid.ts
   var mouseFocusRef = ref(-1);
   function useMouseGrid() {
     const mouseGrid = readonly(mouseFocusRef);
@@ -291,7 +331,7 @@
     return [mouseGrid, setter];
   }
 
-  // src/monkey/copymanga-enhance/scripts/newPage/hooks/useMouseWatcher.ts
+  // src/monkey/copymanga-enhance/scripts/detail/newPage/hooks/useMouseWatcher.ts
   function useMouseWatcher() {
     const { scrollUp, scrollDown } = useScrollBy();
     const [mouseGridRef, setMouseGrid] = useMouseGrid();
@@ -369,7 +409,7 @@
     return out;
   }
 
-  // src/monkey/copymanga-enhance/scripts/newPage/hooks/useDirectionMode.ts
+  // src/monkey/copymanga-enhance/scripts/detail/newPage/hooks/useDirectionMode.ts
   var directionModeRef = ref(storage_default.directionMode);
   function useDirectionMode() {
     const directionMode = readonly(directionModeRef);
@@ -383,23 +423,23 @@
     return [directionMode, setter];
   }
 
-  // src/monkey/copymanga-enhance/scripts/newPage/hooks/useImageInfoMap.ts
+  // src/monkey/copymanga-enhance/scripts/detail/newPage/hooks/useImageInfoMap.ts
   var statusMap = ref([]);
   function useImageInfoMap() {
     return statusMap;
   }
 
-  // src/monkey/copymanga-enhance/scripts/newPage/hooks/useImageList.ts
+  // src/monkey/copymanga-enhance/scripts/detail/newPage/hooks/useImageList.ts
   function useImageList() {
     const pageInfoRef = usePageInfo();
     const imagesRef = computed(() => unref(pageInfoRef).images ?? []);
     return imagesRef;
   }
 
-  // src/monkey/copymanga-enhance/scripts/newPage/component/Image/style.css
+  // src/monkey/copymanga-enhance/scripts/detail/newPage/component/Image/style.css
   var style_default = ":is(.ltr,.rtl) .comic-image{height:var(--body-height);width:auto}\n";
 
-  // src/monkey/copymanga-enhance/scripts/newPage/component/Image/index.ts
+  // src/monkey/copymanga-enhance/scripts/detail/newPage/component/Image/index.ts
   var Image_default = defineComponent({
     props: {
       src: {
@@ -431,10 +471,10 @@
     }
   });
 
-  // src/monkey/copymanga-enhance/scripts/newPage/component/AppBody/style.css
+  // src/monkey/copymanga-enhance/scripts/detail/newPage/component/AppBody/style.css
   var style_default2 = ".direction-wrapper{display:flex;flex-wrap:wrap;justify-content:center;width:100%;max-height:var(--body-height);overflow-y:scroll}.wrapper{display:flex;flex-basis:100%;justify-content:center}:is(.ltr,.rtl).direction-wrapper{scroll-snap-type:y mandatory}:is(.ltr,.rtl) .wrapper{height:var(--body-height);scroll-snap-align:center}*:not(:is(.ltr,.rtl))>.wrapper:has(>.white-page){display:none}@media (max-aspect-ratio: 5 / 3){.wrapper:has(>.white-page){display:none}}@media (min-aspect-ratio: 5 / 3){:is(.ltr,.rtl) .wrapper:has(>.portrait){flex-basis:50%}.wrapper{order:attr(data-index number)}.wrapper[data-side=L]{justify-content:flex-end;padding-left:5px}.wrapper[data-side=R]{justify-content:flex-start;padding-right:5px}}@media (min-aspect-ratio: 5 / 3) and (max-aspect-ratio: 9 / 3){:is(.ltr,.rtl) .wrapper:has(>.white-page):nth-last-child(2),:is(.ltr,.rtl) .wrapper:has(>.white-page):nth-last-child(2)+.wrapper:has(>.white-page){display:none}}@media (min-aspect-ratio: 9 / 3){:is(.ltr,.rtl) .wrapper:has(>.portrait){flex-basis:25%}}\n";
 
-  // src/monkey/copymanga-enhance/scripts/newPage/component/WhitePage/index.ts
+  // src/monkey/copymanga-enhance/scripts/detail/newPage/component/WhitePage/index.ts
   var WhitePage_default = defineComponent({
     setup() {
       return {};
@@ -447,7 +487,7 @@
     return fns.reduce((prev, fn) => fn(prev), source);
   }
 
-  // src/monkey/copymanga-enhance/scripts/newPage/component/AppBody/index.ts
+  // src/monkey/copymanga-enhance/scripts/detail/newPage/component/AppBody/index.ts
   var AppBody_default = defineComponent({
     setup() {
       const [whitePageRef2] = useWhitePage();
@@ -609,10 +649,10 @@
     }
   });
 
-  // src/monkey/copymanga-enhance/scripts/newPage/component/AppHeader/style.css
+  // src/monkey/copymanga-enhance/scripts/detail/newPage/component/AppHeader/style.css
   var style_default3 = ".app-header{display:grid;grid-template-columns:1fr 60px auto 60px 1fr;column-gap:5px;align-items:center}.app-header :is(.comic-title,.loading-hint,.white-page-toggle),.app-header :is(.prev-comic,.next-comic):not([disabled]){color:#fff!important;cursor:pointer}.app-header :is(.prev-comic,.next-comic)[disabled]{color:gray!important;cursor:default}.app-header :is(.prev-comic,.next-comic){text-decoration:none;text-align:center}.app-header :is(.left-space,.right-space){display:flex;flex-flow:row;align-items:center;gap:5px}.app-header .left-space{justify-content:flex-end}.app-header .right-space{justify-content:flex-start}\n";
 
-  // src/monkey/copymanga-enhance/scripts/newPage/component/AppHeader/index.ts
+  // src/monkey/copymanga-enhance/scripts/detail/newPage/component/AppHeader/index.ts
   var AppHeader_default = defineComponent({
     setup() {
       const pageInfoRef = usePageInfo();
@@ -667,10 +707,10 @@
     }
   });
 
-  // src/monkey/copymanga-enhance/scripts/newPage/component/App/style.css
+  // src/monkey/copymanga-enhance/scripts/detail/newPage/component/App/style.css
   var style_default4 = ":root{--header-height: 30px;--body-height: calc(100dvh - var(--header-height))}*:has(>:is(.app-header,.app-body)){width:100dvw;height:100dvh;max-width:100dvw;max-height:100dvh;min-width:100dvw;min-height:100dvh;overflow:hidden;display:grid;grid-template-rows:var(--header-height) auto}:is(.app-header,.app-body){width:100%}\n";
 
-  // src/monkey/copymanga-enhance/scripts/newPage/component/App/index.ts
+  // src/monkey/copymanga-enhance/scripts/detail/newPage/component/App/index.ts
   var App_default = defineComponent({
     setup() {
       useKeyWatcher();
@@ -685,10 +725,10 @@
     }
   });
 
-  // src/monkey/copymanga-enhance/scripts/newPage/tailwind.css
+  // src/monkey/copymanga-enhance/scripts/detail/newPage/tailwind.css
   var tailwind_default = ".cursor-pointer{cursor:pointer}.size-\\[1px\\]{width:1px;height:1px}\n";
 
-  // src/monkey/copymanga-enhance/scripts/newPage/index.ts
+  // src/monkey/copymanga-enhance/scripts/detail/newPage/index.ts
   var render = () => {
     const app = createApp({
       setup() {
@@ -699,7 +739,7 @@
     app.mount("#app");
   };
 
-  // src/monkey/copymanga-enhance/scripts/old.ts
+  // src/monkey/copymanga-enhance/scripts/detail/old.ts
   var getCurrentCount = () => $(".comicContent-list > li > img").length;
   var getTotalCount = () => Number(document.getElementsByClassName("comicCount")[0].innerText);
   var windowScrollTo = genScrollTo_default(window);
