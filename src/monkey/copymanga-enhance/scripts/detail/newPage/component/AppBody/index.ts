@@ -163,19 +163,31 @@ export default defineComponent({
       'div',
       {
         class: cc([
-          'app-body',
+          'app-body max-w-dvw',
+          unref(directionModeRef),
           { 'cursor-pointer': [DirectionMode.LTR, DirectionMode.RTL].includes(unref(directionModeRef)) && [...ACTION_GRID_MAP.PREV, ...ACTION_GRID_MAP.NEXT].includes(unref(mouseGridRef)) },
         ])
       },
       [
         h(
           'div',
-          { class: cc(['direction-wrapper', unref(directionModeRef)]) },
+          { class: cc([
+            'direction-wrapper',
+            'w-dvw',
+            'flex flex-wrap justify-center',
+            'snap-mandatory ltr:snap-y rtl:snap-y',
+          ]) },
           unref(imagesRef)
             .map(({ component, props }) => h(
               'div',
               {
-                class: 'wrapper',
+                class: cc([
+                  'wrapper',
+                  'ltr:h-(--body-height) rtl:h-(--body-height)',
+                  'ltr:snap-center rtl:snap-center',
+                  'flex',
+                  { 'hidden': unref(directionModeRef) === DirectionMode.TTB && component === WhitePage },
+                ]),
                 ...Object.fromEntries(Object.entries(props).filter(([k]) => k.startsWith('data-')))
               },
               [h(component, { ...props })],

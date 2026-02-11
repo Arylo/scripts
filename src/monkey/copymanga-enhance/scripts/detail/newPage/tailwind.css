@@ -2,7 +2,123 @@
   cursor: pointer;
 }
 
-.size-\[1px\] {
+.size-px {
   width: 1px;
   height: 1px;
 }
+
+.w-dvw {
+  width: 100dvw;
+}
+
+.min-w-dvw {
+  min-width: 100dvw;
+}
+
+.max-w-dvw {
+  max-width: 100dvw;
+}
+
+.h-dvh {
+  height: 100dvh;
+}
+
+.min-w-dvw {
+  min-height: 100dvh;
+}
+
+.max-h-dvh {
+  max-height: 100dvh;
+}
+
+.grid {
+  display: grid;
+}
+
+.flex {
+  display: flex;
+}
+
+.flex-row {
+  flex-direction: row;
+}
+
+.flex-col {
+  flex-direction: column;
+}
+
+.flex-wrap {
+  flex-wrap: wrap;
+}
+
+.justify-start {
+  justify-content: flex-start;
+}
+
+.justify-end {
+  justify-content: flex-end;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.gap-x-\[5px\] {
+  column-gap: 5px;
+}
+
+.hidden {
+  display: none;
+}
+
+.overflow-hidden {
+  overflow: hidden;
+}
+
+.overflow-auto {
+  overflow: auto;
+}
+
+.text-white {
+  color: white;
+}
+
+.text-gray {
+  color: gray;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.snap-mandatory {
+  --scroll-snap-strictness: mandatory;
+}
+
+/* #region Direction */
+
+.ttb .ttb\:hidden {
+  display: none;
+}
+
+.ltr .ltr\:snap-y, .rtl .rtl\:snap-y {
+  scroll-snap-type: y var(--scroll-snap-strictness);
+}
+
+.ltr .ltr\:snap-center, .rtl .rtl\:snap-center {
+  scroll-snap-align: center;
+}
+
+.ltr .ltr\:w-auto, .rtl .rtl\:w-auto {
+  width: auto;
+}
+
+.ltr .ltr\:h-\(--body-height\), .rtl .rtl\:h-\(--body-height\) {
+  height: var(--body-height);
+}
+
+/* #endregion Direction */

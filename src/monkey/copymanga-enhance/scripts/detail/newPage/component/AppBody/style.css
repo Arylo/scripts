@@ -1,28 +1,11 @@
 .direction-wrapper {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  width: 100%;
   max-height: var(--body-height);
   overflow-y: scroll;
 }
 
 .wrapper {
-  display: flex;
   flex-basis: 100%;
   justify-content: center;
-}
-
-:is(.ltr, .rtl).direction-wrapper {
-  scroll-snap-type: y mandatory;
-}
-:is(.ltr, .rtl) .wrapper {
-  height: var(--body-height);
-  scroll-snap-align: center;
-}
-
-*:not(:is(.ltr, .rtl)) > .wrapper:has(> .white-page) {
-  display: none;
 }
 
 /* #region 单列时 */

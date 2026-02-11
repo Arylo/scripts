@@ -1,37 +1,3 @@
 .app-header {
-  display: grid;
   grid-template-columns: 1fr 60px auto 60px 1fr;
-  column-gap: 5px;
-  align-items: center;
-}
-
-.app-header :is(.comic-title, .loading-hint, .white-page-toggle),
-.app-header :is(.prev-comic, .next-comic):not([disabled]) {
-  color: white !important;
-  cursor: pointer;
-}
-
-.app-header :is(.prev-comic, .next-comic)[disabled] {
-  color: gray !important;
-  cursor: default;
-}
-
-.app-header :is(.prev-comic, .next-comic) {
-  text-decoration: none;
-  text-align: center;
-}
-
-.app-header :is(.left-space, .right-space) {
-  display: flex;
-  flex-flow: row;
-  align-items: center;
-  gap: 5px;
-}
-
-.app-header .left-space {
-  justify-content: flex-end;
-}
-
-.app-header .right-space {
-  justify-content: flex-start;
 }

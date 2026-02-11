@@ -3,19 +3,6 @@
   --body-height: calc(100dvh - var(--header-height));
 }
 
-*:has(> :is(.app-header, .app-body)) {
-  width: 100dvw;
-  height: 100dvh;
-  max-width: 100dvw;
-  max-height: 100dvh;
-  min-width: 100dvw;
-  min-height: 100dvh;
-  overflow: hidden;
-
-  display: grid;
+#app {
   grid-template-rows: var(--header-height) auto;
-}
-
-:is(.app-header, .app-body) {
-  width: 100%;
 }

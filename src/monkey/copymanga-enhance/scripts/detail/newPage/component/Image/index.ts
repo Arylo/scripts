@@ -1,9 +1,9 @@
-import GM_addStyle from "../../../../../../polyfill/GM_addStyle";
-import { PageType } from "../../constant";
+import { DirectionMode, PageType } from "../../constant";
+import useDirectionMode from "../../hooks/useDirectionMode";
 import useImageInfoMap from "../../hooks/useImageInfoMap";
 import useImageList from "../../hooks/useImageList";
-import { defineComponent, h, onMounted, ref, unref } from "../../vue";
-import css from './style.css'
+import useImageWidth from "../../hooks/useImageWidth";
+import { defineComponent, h, ref, unref } from "../../vue";
 
 export default defineComponent({
   props: {
@@ -13,12 +13,11 @@ export default defineComponent({
     },
   },
   setup (props, { emit }) {
-    onMounted(() => {
-      GM_addStyle(css)
-    })
     const pageType = ref(PageType.PORTRAIT)
     const imageListRef = useImageList()
     const imageInfoMapRef = useImageInfoMap()
+    const [directionModeRef] = useDirectionMode()
+    const [imageWidthRef] = useImageWidth()
     const onLoad = (e: Event) => {
       const index = unref(imageListRef).indexOf(props.src)
       const element = e.target as HTMLImageElement
@@ -32,6 +31,14 @@ export default defineComponent({
       pageType.value = type
       emit('loaded')
     }
-    return () => h('img', { class: `comic-image ${unref(pageType)}`, src: props.src, onLoad })
+    return () => h(
+      'img',
+      {
+        class: `comic-image ${unref(pageType)} ltr:w-auto ltr:h-(--body-height) rtl:w-auto rtl:h-(--body-height)`,
+        style: unref(directionModeRef) === DirectionMode.TTB ? { 'max-width': `${unref(imageWidthRef)}%` } : {},
+        src: props.src,
+        onLoad,
+      },
+    )
   },
 })
