@@ -48,7 +48,7 @@ const directionModeStorage = genStorage<DirectionMode>({
 export default {
   get imageWidth (): number {
     const imageWidthKey = getImageWidthKey()
-    return imageWidthStorage.get(imageWidthKey, 100)
+    return imageWidthStorage.get(imageWidthKey, 70)
   },
   set imageWidth (value: number) {
     const imageWidthKey = getImageWidthKey()
