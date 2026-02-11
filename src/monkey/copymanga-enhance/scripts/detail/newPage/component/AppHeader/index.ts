@@ -1,4 +1,4 @@
-import GM_addStyle from "../../../../../polyfill/GM_addStyle";
+import GM_addStyle from "../../../../../../polyfill/GM_addStyle";
 import { DirectionMode } from "../../constant";
 import useDirectionMode from "../../hooks/useDirectionMode";
 import useImageInfoMap from "../../hooks/useImageInfoMap";
@@ -58,7 +58,7 @@ export default defineComponent({
           h('option', { value: DirectionMode.RTL, selected: unref(directionModeRef) === DirectionMode.RTL }, '日漫模式'),
           h('option', { value: DirectionMode.LTR, selected: unref(directionModeRef) === DirectionMode.LTR }, '普通模式'),
           h('option', { value: DirectionMode.TTB, selected: unref(directionModeRef) === DirectionMode.TTB }, '国漫模式'),
-        ])
+        ]),
       ]),
     ])
   },

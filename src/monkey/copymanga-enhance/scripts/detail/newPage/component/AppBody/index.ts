@@ -1,4 +1,4 @@
-import GM_addStyle from "../../../../../polyfill/GM_addStyle";
+import GM_addStyle from "../../../../../../polyfill/GM_addStyle";
 import cc from 'classcat'
 import { ACTION_GRID_MAP, DirectionMode, PageType } from "../../constant";
 import useDirectionMode from "../../hooks/useDirectionMode";
@@ -9,7 +9,7 @@ import { defineComponent, onMounted, unref, h, watch, ref } from "../../vue";
 import Image from "../Image";
 import css from './style.css'
 import WhitePage from '../WhitePage';
-import flow from "../../../../../utils/flow";
+import flow from "../../../../../../utils/flow";
 import useMouseGrid from "../../hooks/useMouseGrid";
 
 type ImageItem = {

@@ -1,7 +1,7 @@
 import html from './template.html'
-import { render } from './scripts/newPage'
-import { getPageInfo, refreshImage, windowScrollTo } from './scripts/old'
-import storage from './scripts/storage'
+import { render } from './scripts/detail/newPage'
+import { getPageInfo, refreshImage, windowScrollTo } from './scripts/detail/old'
+import storage from './scripts/detail/storage'
 import GM_getResourceText from '../polyfill/GM_getResourceText'
 
 const renderNewPage = async () => {

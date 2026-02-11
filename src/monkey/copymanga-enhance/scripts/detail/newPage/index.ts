@@ -1,7 +1,7 @@
 import { createApp, h } from './vue'
 import App from './component/App'
 import tailwindCss from './tailwind.css'
-import GM_addStyle from '../../../polyfill/GM_addStyle'
+import GM_addStyle from '../../../../polyfill/GM_addStyle'
 
 export const render = () => {
   const app = createApp({
