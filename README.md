@@ -13,7 +13,7 @@ This project contains scripts that are useful for Arylo's daily tasks.
 |~~gitlab-settings-max-size~~|~~(Deprecated)(Please use the gitlab-enhance script) Maximize the size of the CI/CD setting~~||
 |gitlab-font-family||[Jump](#change-gitlab-font)|
 |gitlab-enhance|Enhance some features of the Self-managed Gitlab, such as the CI/CD settings page, the merge request create/edit page etc.|[Jump](#enhance-ux-for-the-self-managed-gitlab)|
-|copymanga-enhance||[Jump](#enhance-ux-for-copy-manga-comic-sites)|
+|copymanga-enhance|support ultra-wide screen, adaptive image height, quick page turning, keyboard operation|[Jump](#enhance-ux-for-copy-manga-comic-sites)|
 
 ### Set Fira Code as font in development websites
 
