@@ -21,7 +21,7 @@
 // @description:zh-TW 對開佈局、支持帶魚屏、自適應圖片高度、快捷翻頁、支持鍵盤操作
 // @description:zh-SG 对开布局、支持带鱼屏、自适应图片高度、快捷翻页、支持键盘操作
 // @description:zh-MY 对开布局、支持带鱼屏、自适应图片高度、快捷翻页、支持键盘操作
-// @version 45
+// @version 46
 // @author Arylo Yeung <arylo.open@gmail.com>
 // @connect unpkg.com
 // @license MIT
@@ -175,6 +175,8 @@
     computed,
     isRef,
     unref,
+    toRef,
+    toRefs,
     onMounted,
     watch,
     watchEffect,
@@ -219,6 +221,10 @@
     const comic2 = parseConstant_default(location?.pathname).comic;
     return Object.freeze([comic2, "direction", "mode"].join("."));
   };
+  var getTtbColumnKey = () => {
+    const comic2 = parseConstant_default(location?.pathname).comic;
+    return Object.freeze([comic2, "ttb", "column"].join("."));
+  };
   var imageWidthStorage = genStorage({
     save: (key, value) => GM_setValue_default(key, value),
     load: (key) => GM_getValue_default(key, null)
@@ -232,6 +238,10 @@
     load: (key) => sessionStorage.getItem(key)
   });
   var directionModeStorage2 = genStorage({
+    save: (key, value) => GM_setValue_default(key, value),
+    load: (key) => GM_getValue_default(key, null)
+  });
+  var ttbColumnStorage = genStorage({
     save: (key, value) => GM_setValue_default(key, value),
     load: (key) => GM_getValue_default(key, null)
   });
@@ -274,6 +284,15 @@
     set directionMode(value) {
       const directionModeKey = getDirectionModeKey2();
       directionModeStorage2.set(directionModeKey, value);
+    },
+    get ttbColumn() {
+      const ttbColumnKey = getTtbColumnKey();
+      const value = ttbColumnStorage.get(ttbColumnKey, 1);
+      return [1, 2, 3].includes(value) ? value : 1;
+    },
+    set ttbColumn(value) {
+      const ttbColumnKey = getTtbColumnKey();
+      ttbColumnStorage.set(ttbColumnKey, value);
     }
   };
 
@@ -563,6 +582,71 @@
     return fns.reduce((prev, fn) => fn(prev), source);
   }
 
+  // src/monkey/copymanga-enhance/scripts/detail/newPage/component/ImageGroup/index.ts
+  var ImageGroup_default = defineComponent({
+    props: {
+      images: {
+        type: Array,
+        required: true
+      },
+      class: {
+        type: String,
+        default: () => void 0
+      },
+      style: {
+        type: String,
+        default: () => void 0
+      }
+    },
+    setup(props) {
+      const [directionModeRef2] = useDirectionMode();
+      const {
+        images: imagesRef,
+        class: classRef,
+        style: styleRef
+      } = toRefs(props);
+      return () => h(
+        "div",
+        {
+          class: cc([
+            "flex flex-wrap justify-center",
+            "snap-mandatory ltr:snap-y rtl:snap-y",
+            unref(classRef)
+          ]),
+          style: unref(styleRef)
+        },
+        unref(imagesRef).map(({ component, props: componentProps = {} }) => h(
+          "div",
+          {
+            class: cc([
+              "wrapper",
+              "ltr:h-(--body-height) rtl:h-(--body-height)",
+              "ltr:snap-center rtl:snap-center",
+              "flex",
+              { "hidden": unref(directionModeRef2) === "ttb" /* TTB */ && component === WhitePage_default }
+            ]),
+            ...Object.fromEntries(Object.entries(componentProps).filter(([k]) => k.startsWith("data-")))
+          },
+          [h(component, { ...componentProps })]
+        ))
+      );
+    }
+  });
+
+  // src/monkey/copymanga-enhance/scripts/detail/newPage/hooks/useTtbColumn.ts
+  var ttbColumnRef = ref(storage_default.ttbColumn);
+  function useTtbColumn() {
+    const ttbColumn = readonly(ttbColumnRef);
+    function setter(value) {
+      ttbColumnRef.value = value;
+      storage_default.ttbColumn = value;
+    }
+    onMounted(() => {
+      setter(storage_default.ttbColumn);
+    });
+    return [ttbColumn, setter];
+  }
+
   // src/monkey/copymanga-enhance/scripts/detail/newPage/component/AppBody/index.ts
   var AppBody_default = defineComponent({
     setup() {
@@ -699,6 +783,12 @@
         imagesRef.value = list;
       };
       const [mouseGridRef] = useMouseGrid();
+      const [ttbColumnRef2] = useTtbColumn();
+      const avgImageHalfHeightRef = computed(() => {
+        const totalHeight = infoMapRef.value.map((info) => info ? info.height : 0).reduce((a, b) => a + b, 0);
+        const total = unref(imageListRef).length;
+        return Math.ceil((total > 0 ? totalHeight / total : 0) / 2);
+      });
       return () => h(
         "div",
         {
@@ -711,26 +801,56 @@
         [
           h(
             "div",
-            { class: cc([
-              "direction-wrapper",
-              "w-dvw",
-              "flex flex-wrap justify-center",
-              "snap-mandatory ltr:snap-y rtl:snap-y"
-            ]) },
-            unref(imagesRef).map(({ component, props }) => h(
-              "div",
-              {
-                class: cc([
-                  "wrapper",
-                  "ltr:h-(--body-height) rtl:h-(--body-height)",
-                  "ltr:snap-center rtl:snap-center",
-                  "flex",
-                  { "hidden": unref(directionModeRef2) === "ttb" /* TTB */ && component === WhitePage_default }
-                ]),
-                ...Object.fromEntries(Object.entries(props).filter(([k]) => k.startsWith("data-")))
-              },
-              [h(component, { ...props })]
-            ))
+            {
+              class: cc([
+                "direction-wrapper",
+                "flex flex-row flex-wrap"
+              ])
+            },
+            [
+              h(
+                ImageGroup_default,
+                {
+                  class: cc([
+                    {
+                      "w-dvw": "ttb" /* TTB */ !== unref(directionModeRef2),
+                      "basic-[50%]": "ttb" /* TTB */ === unref(directionModeRef2) && unref(ttbColumnRef2) === 2,
+                      "basic-[33%]": "ttb" /* TTB */ === unref(directionModeRef2) && unref(ttbColumnRef2) === 3
+                    }
+                  ]),
+                  images: unref(imagesRef)
+                }
+              ),
+              h(
+                ImageGroup_default,
+                {
+                  class: cc([
+                    "ltr:hidden rtl:hidden",
+                    {
+                      "hidden": unref(ttbColumnRef2) === 1,
+                      "basic-[50%]": unref(ttbColumnRef2) === 2,
+                      "basic-[33%]": unref(ttbColumnRef2) === 3
+                    }
+                  ]),
+                  style: `margin-top: -${avgImageHalfHeightRef.value}px;`,
+                  images: unref(imagesRef)
+                }
+              ),
+              h(
+                ImageGroup_default,
+                {
+                  class: cc([
+                    "ltr:hidden rtl:hidden",
+                    {
+                      "hidden": unref(ttbColumnRef2) === 1 || unref(ttbColumnRef2) === 2,
+                      "basic-[33%]": unref(ttbColumnRef2) === 3
+                    }
+                  ]),
+                  style: `margin-top: -${avgImageHalfHeightRef.value * 2}px;`,
+                  images: unref(imagesRef)
+                }
+              )
+            ]
           )
         ]
       );
@@ -741,6 +861,17 @@
   var style_default2 = ".app-header{grid-template-columns:1fr 60px auto 60px 1fr}\n";
 
   // src/monkey/copymanga-enhance/scripts/detail/newPage/component/AppHeader/index.ts
+  var ImageWidths = [
+    100,
+    90,
+    80,
+    70,
+    60,
+    50,
+    40,
+    30,
+    20
+  ].sort((a, b) => b - a);
   var AppHeader_default = defineComponent({
     setup() {
       const pageInfoRef = usePageInfo();
@@ -765,6 +896,27 @@
       });
       const [directionModeRef2, setDirectionMode] = useDirectionMode();
       const [imageWidthRef2, setImageWidth] = useImageWidth();
+      const [ttbColumnRef2, setTtbColumn] = useTtbColumn();
+      const toggleTtbColumn = () => {
+        const imageWidth = unref(imageWidthRef2);
+        const ttbColumn = unref(ttbColumnRef2);
+        if (ttbColumn === 1) {
+          setTtbColumn(2);
+          if (ImageWidths.indexOf(imageWidth) !== ImageWidths.length - 1) {
+            setImageWidth(ImageWidths[ImageWidths.indexOf(imageWidth) + 1]);
+          }
+        } else if (ttbColumn === 2) {
+          setTtbColumn(3);
+          if (ImageWidths.indexOf(imageWidth) !== ImageWidths.length - 1) {
+            setImageWidth(ImageWidths[ImageWidths.indexOf(imageWidth) + 1]);
+          }
+        } else {
+          setTtbColumn(1);
+          if (ImageWidths.indexOf(imageWidth) - 2 >= 0) {
+            setImageWidth(ImageWidths[ImageWidths.indexOf(imageWidth) - 2]);
+          }
+        }
+      };
       return () => h(
         "div",
         {
@@ -833,17 +985,10 @@
             },
             [
               ["rtl" /* RTL */, "ltr" /* LTR */].includes(unref(directionModeRef2)) ? h("div", { class: "white-page-toggle text-white cursor-pointer", onClick: () => setWhitePage(!unref(whitePageRef2)) }, unref(whitePageRef2) ? "\u5DF2\u52A0\u7A7A\u767D\u9875" : "\u672A\u52A0\u7A7A\u767D\u9875") : h(Fragment),
-              ["ttb" /* TTB */].includes(unref(directionModeRef2)) ? h("select", { onChange: (event) => setImageWidth(Number(event.target.value)) }, [
-                h("option", { value: "100", selected: unref(imageWidthRef2) === 100 }, "100%"),
-                h("option", { value: "90", selected: unref(imageWidthRef2) === 90 }, "90%"),
-                h("option", { value: "80", selected: unref(imageWidthRef2) === 80 }, "80%"),
-                h("option", { value: "70", selected: unref(imageWidthRef2) === 70 }, "70%"),
-                h("option", { value: "60", selected: unref(imageWidthRef2) === 60 }, "60%"),
-                h("option", { value: "50", selected: unref(imageWidthRef2) === 50 }, "50%"),
-                h("option", { value: "40", selected: unref(imageWidthRef2) === 40 }, "40%"),
-                h("option", { value: "30", selected: unref(imageWidthRef2) === 30 }, "30%"),
-                h("option", { value: "20", selected: unref(imageWidthRef2) === 20 }, "20%")
-              ]) : h(Fragment)
+              ["ttb" /* TTB */].includes(unref(directionModeRef2)) ? h("select", { onChange: (event) => setImageWidth(Number(event.target.value)) }, ImageWidths.map((v) => {
+                return h("option", { value: v, selected: unref(imageWidthRef2) === v }, `${v}%`);
+              })) : h(Fragment),
+              ["ttb" /* TTB */].includes(unref(directionModeRef2)) ? h("div", { class: "text-white cursor-pointer", onClick: () => toggleTtbColumn() }, unref(ttbColumnRef2) === 1 ? "\u9ED8\u8BA4\u6A21\u5F0F" : unref(ttbColumnRef2) === 2 ? "\u63D0\u524D\u9884\u89C8" : "\u8D85\u524D\u9884\u89C8") : h(Fragment)
             ]
           )
         ]
@@ -870,7 +1015,7 @@
   });
 
   // src/monkey/copymanga-enhance/scripts/detail/newPage/tailwind.css
-  var tailwind_default = ".cursor-pointer{cursor:pointer}.size-px{width:1px;height:1px}.w-dvw{width:100dvw}.min-w-dvw{min-width:100dvw}.max-w-dvw{max-width:100dvw}.h-dvh{height:100dvh}.min-w-dvw{min-height:100dvh}.max-h-dvh{max-height:100dvh}.grid{display:grid}.flex{display:flex}.flex-row{flex-direction:row}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.justify-start{justify-content:flex-start}.justify-end{justify-content:flex-end}.justify-center{justify-content:center}.items-center{align-items:center}.gap-x-\\[5px\\]{column-gap:5px}.hidden{display:none}.overflow-hidden{overflow:hidden}.overflow-auto{overflow:auto}.text-white{color:#fff}.text-gray{color:gray}.text-gray\\!{color:gray!important}.text-center{text-align:center}.snap-mandatory{--scroll-snap-strictness: mandatory}.ttb .ttb\\:hidden{display:none}.ltr .ltr\\:snap-y,.rtl .rtl\\:snap-y{scroll-snap-type:y var(--scroll-snap-strictness)}.ltr .ltr\\:snap-center,.rtl .rtl\\:snap-center{scroll-snap-align:center}.ltr .ltr\\:w-auto,.rtl .rtl\\:w-auto{width:auto}.ltr .ltr\\:h-\\(--body-height\\),.rtl .rtl\\:h-\\(--body-height\\){height:var(--body-height)}\n";
+  var tailwind_default = ".cursor-pointer{cursor:pointer}.size-px{width:1px;height:1px}.w-dvw{width:100dvw}.min-w-dvw{min-width:100dvw}.max-w-dvw{max-width:100dvw}.h-dvh{height:100dvh}.min-w-dvw{min-height:100dvh}.max-h-dvh{max-height:100dvh}.grid{display:grid}.flex{display:flex}.flex-row{flex-direction:row}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.justify-start{justify-content:flex-start}.justify-end{justify-content:flex-end}.justify-center{justify-content:center}.items-center{align-items:center}.basic-\\[33\\%\\]{flex-basis:33%}.basic-\\[50\\%\\]{flex-basis:50%}.gap-x-\\[5px\\]{column-gap:5px}.hidden{display:none}.overflow-hidden{overflow:hidden}.overflow-auto{overflow:auto}.text-white{color:#fff}.text-gray{color:gray}.text-gray\\!{color:gray!important}.text-center{text-align:center}.snap-mandatory{--scroll-snap-strictness: mandatory}.ttb .ttb\\:hidden,.ltr .ltr\\:hidden,.rtl .rtl\\:hidden{display:none}.ltr .ltr\\:snap-y,.rtl .rtl\\:snap-y{scroll-snap-type:y var(--scroll-snap-strictness)}.ltr .ltr\\:snap-center,.rtl .rtl\\:snap-center{scroll-snap-align:center}.ltr .ltr\\:w-auto,.rtl .rtl\\:w-auto{width:auto}.ltr .ltr\\:h-\\(--body-height\\),.rtl .rtl\\:h-\\(--body-height\\){height:var(--body-height)}\n";
 
   // src/monkey/copymanga-enhance/scripts/detail/newPage/index.ts
   var render = () => {
