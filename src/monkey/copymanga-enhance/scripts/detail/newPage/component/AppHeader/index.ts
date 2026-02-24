@@ -67,8 +67,11 @@ export default defineComponent({
           {
             class: cc([
               'prev-comic',
-              'text-gray text-center',
-              { 'text-white cursor-pointer': unref(prevUrlRef) },
+              'text-center',
+              {
+                'text-white cursor-pointer': unref(prevUrlRef),
+                'text-gray!': !unref(prevUrlRef),
+              },
             ]),
             href: unref(prevUrlRef),
           },
@@ -80,8 +83,11 @@ export default defineComponent({
           {
             class: cc([
               'next-comic',
-              'text-gray text-center',
-              { 'text-white cursor-pointer': unref(nextUrlRef) },
+              'text-center',
+              {
+                'text-white cursor-pointer': unref(nextUrlRef),
+                'text-gray!': !unref(nextUrlRef),
+              },
             ]),
             href: unref(nextUrlRef),
           },
@@ -107,6 +113,8 @@ export default defineComponent({
                 h('option', { value: '60', selected: unref(imageWidthRef) === 60 }, '60%'),
                 h('option', { value: '50', selected: unref(imageWidthRef) === 50 }, '50%'),
                 h('option', { value: '40', selected: unref(imageWidthRef) === 40 }, '40%'),
+                h('option', { value: '30', selected: unref(imageWidthRef) === 30 }, '30%'),
+                h('option', { value: '20', selected: unref(imageWidthRef) === 20 }, '20%'),
               ]) :
               h(Fragment),
           ],

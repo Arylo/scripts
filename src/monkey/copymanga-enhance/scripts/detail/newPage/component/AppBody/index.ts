@@ -146,6 +146,7 @@ export default defineComponent({
         })
       })
     }
+    const imagesRef = ref<ImageItem[]>([])
     const refresh = () => {
       const list = flow(
         unref(imageListRef),
@@ -156,7 +157,6 @@ export default defineComponent({
       )
       imagesRef.value = list
     }
-    const imagesRef = ref<ImageItem[]>([])
 
     const [mouseGridRef] = useMouseGrid()
     return () => h(

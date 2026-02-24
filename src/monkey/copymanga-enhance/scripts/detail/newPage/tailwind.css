@@ -91,6 +91,10 @@
   color: gray;
 }
 
+.text-gray\! {
+  color: gray !important;
+}
+
 .text-center {
   text-align: center;
 }
