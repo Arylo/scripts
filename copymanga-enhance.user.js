@@ -21,7 +21,7 @@
 // @description:zh-TW 對開佈局、支持帶魚屏、自適應圖片高度、快捷翻頁、支持鍵盤操作
 // @description:zh-SG 对开布局、支持带鱼屏、自适应图片高度、快捷翻页、支持键盘操作
 // @description:zh-MY 对开布局、支持带鱼屏、自适应图片高度、快捷翻页、支持键盘操作
-// @version 44
+// @version 45
 // @author Arylo Yeung <arylo.open@gmail.com>
 // @connect unpkg.com
 // @license MIT
@@ -687,6 +687,7 @@
           };
         });
       };
+      const imagesRef = ref([]);
       const refresh = () => {
         const list = flow(
           unref(imageListRef),
@@ -697,7 +698,6 @@
         );
         imagesRef.value = list;
       };
-      const imagesRef = ref([]);
       const [mouseGridRef] = useMouseGrid();
       return () => h(
         "div",
@@ -797,8 +797,11 @@
             {
               class: cc([
                 "prev-comic",
-                "text-gray text-center",
-                { "text-white cursor-pointer": unref(prevUrlRef) }
+                "text-center",
+                {
+                  "text-white cursor-pointer": unref(prevUrlRef),
+                  "text-gray!": !unref(prevUrlRef)
+                }
               ]),
               href: unref(prevUrlRef)
             },
@@ -810,8 +813,11 @@
             {
               class: cc([
                 "next-comic",
-                "text-gray text-center",
-                { "text-white cursor-pointer": unref(nextUrlRef) }
+                "text-center",
+                {
+                  "text-white cursor-pointer": unref(nextUrlRef),
+                  "text-gray!": !unref(nextUrlRef)
+                }
               ]),
               href: unref(nextUrlRef)
             },
@@ -834,7 +840,9 @@
                 h("option", { value: "70", selected: unref(imageWidthRef2) === 70 }, "70%"),
                 h("option", { value: "60", selected: unref(imageWidthRef2) === 60 }, "60%"),
                 h("option", { value: "50", selected: unref(imageWidthRef2) === 50 }, "50%"),
-                h("option", { value: "40", selected: unref(imageWidthRef2) === 40 }, "40%")
+                h("option", { value: "40", selected: unref(imageWidthRef2) === 40 }, "40%"),
+                h("option", { value: "30", selected: unref(imageWidthRef2) === 30 }, "30%"),
+                h("option", { value: "20", selected: unref(imageWidthRef2) === 20 }, "20%")
               ]) : h(Fragment)
             ]
           )
@@ -862,7 +870,7 @@
   });
 
   // src/monkey/copymanga-enhance/scripts/detail/newPage/tailwind.css
-  var tailwind_default = ".cursor-pointer{cursor:pointer}.size-px{width:1px;height:1px}.w-dvw{width:100dvw}.min-w-dvw{min-width:100dvw}.max-w-dvw{max-width:100dvw}.h-dvh{height:100dvh}.min-w-dvw{min-height:100dvh}.max-h-dvh{max-height:100dvh}.grid{display:grid}.flex{display:flex}.flex-row{flex-direction:row}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.justify-start{justify-content:flex-start}.justify-end{justify-content:flex-end}.justify-center{justify-content:center}.items-center{align-items:center}.gap-x-\\[5px\\]{column-gap:5px}.hidden{display:none}.overflow-hidden{overflow:hidden}.overflow-auto{overflow:auto}.text-white{color:#fff}.text-gray{color:gray}.text-center{text-align:center}.snap-mandatory{--scroll-snap-strictness: mandatory}.ttb .ttb\\:hidden{display:none}.ltr .ltr\\:snap-y,.rtl .rtl\\:snap-y{scroll-snap-type:y var(--scroll-snap-strictness)}.ltr .ltr\\:snap-center,.rtl .rtl\\:snap-center{scroll-snap-align:center}.ltr .ltr\\:w-auto,.rtl .rtl\\:w-auto{width:auto}.ltr .ltr\\:h-\\(--body-height\\),.rtl .rtl\\:h-\\(--body-height\\){height:var(--body-height)}\n";
+  var tailwind_default = ".cursor-pointer{cursor:pointer}.size-px{width:1px;height:1px}.w-dvw{width:100dvw}.min-w-dvw{min-width:100dvw}.max-w-dvw{max-width:100dvw}.h-dvh{height:100dvh}.min-w-dvw{min-height:100dvh}.max-h-dvh{max-height:100dvh}.grid{display:grid}.flex{display:flex}.flex-row{flex-direction:row}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.justify-start{justify-content:flex-start}.justify-end{justify-content:flex-end}.justify-center{justify-content:center}.items-center{align-items:center}.gap-x-\\[5px\\]{column-gap:5px}.hidden{display:none}.overflow-hidden{overflow:hidden}.overflow-auto{overflow:auto}.text-white{color:#fff}.text-gray{color:gray}.text-gray\\!{color:gray!important}.text-center{text-align:center}.snap-mandatory{--scroll-snap-strictness: mandatory}.ttb .ttb\\:hidden{display:none}.ltr .ltr\\:snap-y,.rtl .rtl\\:snap-y{scroll-snap-type:y var(--scroll-snap-strictness)}.ltr .ltr\\:snap-center,.rtl .rtl\\:snap-center{scroll-snap-align:center}.ltr .ltr\\:w-auto,.rtl .rtl\\:w-auto{width:auto}.ltr .ltr\\:h-\\(--body-height\\),.rtl .rtl\\:h-\\(--body-height\\){height:var(--body-height)}\n";
 
   // src/monkey/copymanga-enhance/scripts/detail/newPage/index.ts
   var render = () => {
