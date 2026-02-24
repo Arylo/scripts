@@ -24,6 +24,10 @@ const getDirectionModeKey = () => {
   const comic = parseConstant(location?.pathname).comic as string
   return Object.freeze([comic, 'direction', 'mode'].join('.'))
 }
+const getTtbColumnKey = () => {
+  const comic = parseConstant(location?.pathname).comic as string
+  return Object.freeze([comic, 'ttb', 'column'].join('.'))
+}
 
 const imageWidthStorage = genStorage<number>({
   save: (key, value) => GM_setValue(key, value),
@@ -41,6 +45,11 @@ const pageInfoStorage = genStorage<PageInfo>({
 })
 
 const directionModeStorage = genStorage<DirectionMode>({
+  save: (key, value) => GM_setValue(key, value),
+  load: (key) => GM_getValue(key, null),
+})
+
+const ttbColumnStorage = genStorage<number>({
   save: (key, value) => GM_setValue(key, value),
   load: (key) => GM_getValue(key, null),
 })
@@ -84,5 +93,14 @@ export default {
   set directionMode (value: DirectionMode) {
     const directionModeKey = getDirectionModeKey()
     directionModeStorage.set(directionModeKey, value)
+  },
+  get ttbColumn (): 1 | 2 | 3 {
+    const ttbColumnKey = getTtbColumnKey()
+    const value = ttbColumnStorage.get(ttbColumnKey, 1)
+    return [1, 2, 3].includes(value) ? value as 1 | 2 | 3 : 1
+  },
+  set ttbColumn (value: 1 | 2 | 3) {
+    const ttbColumnKey = getTtbColumnKey()
+    ttbColumnStorage.set(ttbColumnKey, value)
   },
 }

@@ -5,17 +5,14 @@ import useDirectionMode from "../../hooks/useDirectionMode";
 import useImageInfoMap from "../../hooks/useImageInfoMap";
 import useImageList from "../../hooks/useImageList";
 import useWhitePage from "../../hooks/useWhitePage";
-import { defineComponent, onMounted, unref, h, watch, ref } from "../../vue";
+import { defineComponent, onMounted, unref, h, watch, ref, computed } from "../../vue";
 import Image from "../Image";
 import css from './style.css'
 import WhitePage from '../WhitePage';
 import flow from "../../../../../../utils/flow";
 import useMouseGrid from "../../hooks/useMouseGrid";
-
-type ImageItem = {
-  component: ReturnType<typeof defineComponent> | string;
-  props: { key: string; pageType: PageType; } & Record<string, any>;
-}
+import ImageGroup, { ImageItem } from "../ImageGroup";
+import useTtbColumn from "../../hooks/useTtbColumn";
 
 export default defineComponent({
   setup () {
@@ -159,6 +156,13 @@ export default defineComponent({
     }
 
     const [mouseGridRef] = useMouseGrid()
+    const [ttbColumnRef] = useTtbColumn()
+    const avgImageHalfHeightRef = computed(() => {
+      const totalHeight = infoMapRef.value.map((info) => info ? info.height : 0)
+        .reduce((a, b) => a + b, 0)
+      const total = unref(imageListRef).length
+      return Math.ceil((total > 0 ? totalHeight / total : 0) / 2)
+    })
     return () => h(
       'div',
       {
@@ -171,27 +175,57 @@ export default defineComponent({
       [
         h(
           'div',
-          { class: cc([
-            'direction-wrapper',
-            'w-dvw',
-            'flex flex-wrap justify-center',
-            'snap-mandatory ltr:snap-y rtl:snap-y',
-          ]) },
-          unref(imagesRef)
-            .map(({ component, props }) => h(
-              'div',
+          {
+            class: cc([
+              'direction-wrapper',
+              'flex flex-row flex-wrap',
+            ]),
+          },
+          [
+            h(
+              ImageGroup,
               {
                 class: cc([
-                  'wrapper',
-                  'ltr:h-(--body-height) rtl:h-(--body-height)',
-                  'ltr:snap-center rtl:snap-center',
-                  'flex',
-                  { 'hidden': unref(directionModeRef) === DirectionMode.TTB && component === WhitePage },
+                  {
+                    'w-dvw': DirectionMode.TTB !== unref(directionModeRef),
+                    'basic-[50%]': DirectionMode.TTB === unref(directionModeRef) && unref(ttbColumnRef) === 2,
+                    'basic-[33%]': DirectionMode.TTB === unref(directionModeRef) && unref(ttbColumnRef) === 3,
+                  },
                 ]),
-                ...Object.fromEntries(Object.entries(props).filter(([k]) => k.startsWith('data-')))
+                images: unref(imagesRef),
               },
-              [h(component, { ...props })],
-            ))),
+            ),
+            h(
+              ImageGroup,
+              {
+                class: cc([
+                  'ltr:hidden rtl:hidden',
+                  {
+                    'hidden': unref(ttbColumnRef) === 1,
+                    'basic-[50%]': unref(ttbColumnRef) === 2,
+                    'basic-[33%]': unref(ttbColumnRef) === 3,
+                  },
+                ]),
+                style: `margin-top: -${avgImageHalfHeightRef.value}px;`,
+                images: unref(imagesRef),
+              },
+            ),
+            h(
+              ImageGroup,
+              {
+                class: cc([
+                  'ltr:hidden rtl:hidden',
+                  {
+                    'hidden': unref(ttbColumnRef) === 1 || unref(ttbColumnRef) === 2,
+                    'basic-[33%]': unref(ttbColumnRef) === 3,
+                  }
+                ]),
+                style: `margin-top: -${avgImageHalfHeightRef.value * 2}px;`,
+                images: unref(imagesRef),
+              },
+            ),
+          ],
+        )
       ],
     )
   },

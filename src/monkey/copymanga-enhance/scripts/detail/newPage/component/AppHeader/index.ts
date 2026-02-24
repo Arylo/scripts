@@ -9,6 +9,11 @@ import useWhitePage from "../../hooks/useWhitePage";
 import { defineComponent, onMounted, unref, computed, h, Fragment } from "../../vue";
 import css from './style.css'
 import useImageWidth from "../../hooks/useImageWidth";
+import useTtbColumn from "../../hooks/useTtbColumn";
+
+const ImageWidths = [
+  100, 90, 80, 70, 60, 50, 40, 30, 20,
+].sort((a, b) => b - a)
 
 export default defineComponent({
   setup () {
@@ -35,6 +40,27 @@ export default defineComponent({
 
     const [directionModeRef, setDirectionMode] = useDirectionMode()
     const [imageWidthRef, setImageWidth] = useImageWidth()
+    const [ttbColumnRef, setTtbColumn] = useTtbColumn()
+    const toggleTtbColumn = () => {
+      const imageWidth = unref(imageWidthRef)
+      const ttbColumn = unref(ttbColumnRef)
+      if (ttbColumn === 1) {
+        setTtbColumn(2)
+        if (ImageWidths.indexOf(imageWidth) !== ImageWidths.length - 1) {
+          setImageWidth(ImageWidths[ImageWidths.indexOf(imageWidth) + 1])
+        }
+      } else if (ttbColumn === 2) {
+        setTtbColumn(3)
+        if (ImageWidths.indexOf(imageWidth) !== ImageWidths.length - 1) {
+          setImageWidth(ImageWidths[ImageWidths.indexOf(imageWidth) + 1])
+        }
+      } else {
+        setTtbColumn(1)
+        if (ImageWidths.indexOf(imageWidth) - 2 >= 0) {
+          setImageWidth(ImageWidths[ImageWidths.indexOf(imageWidth) - 2])
+        }
+      }
+    }
 
     return () => h('div',
       {
@@ -105,17 +131,12 @@ export default defineComponent({
               h('div', { class: 'white-page-toggle text-white cursor-pointer', onClick: () => setWhitePage(!unref(whitePageRef)) }, unref(whitePageRef) ? '已加空白页' : '未加空白页') :
               h(Fragment),
             [DirectionMode.TTB].includes(unref(directionModeRef)) ?
-              h('select', { onChange: (event: Event) => setImageWidth(Number((event.target as HTMLSelectElement).value)) }, [
-                h('option', { value: '100', selected: unref(imageWidthRef) === 100 }, '100%'),
-                h('option', { value: '90', selected: unref(imageWidthRef) === 90 }, '90%'),
-                h('option', { value: '80', selected: unref(imageWidthRef) === 80 }, '80%'),
-                h('option', { value: '70', selected: unref(imageWidthRef) === 70 }, '70%'),
-                h('option', { value: '60', selected: unref(imageWidthRef) === 60 }, '60%'),
-                h('option', { value: '50', selected: unref(imageWidthRef) === 50 }, '50%'),
-                h('option', { value: '40', selected: unref(imageWidthRef) === 40 }, '40%'),
-                h('option', { value: '30', selected: unref(imageWidthRef) === 30 }, '30%'),
-                h('option', { value: '20', selected: unref(imageWidthRef) === 20 }, '20%'),
-              ]) :
+              h('select', { onChange: (event: Event) => setImageWidth(Number((event.target as HTMLSelectElement).value)) }, ImageWidths.map((v) => {
+                return h('option', { value: v, selected: unref(imageWidthRef) === v }, `${v}%`)
+              })) :
+              h(Fragment),
+            [DirectionMode.TTB].includes(unref(directionModeRef)) ?
+              h('div', { class: 'text-white cursor-pointer', onClick: () => toggleTtbColumn() }, unref(ttbColumnRef) === 1 ? '默认模式' : unref(ttbColumnRef) === 2 ? '提前预览' : '超前预览') :
               h(Fragment),
           ],
         ),

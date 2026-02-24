@@ -9,6 +9,8 @@ export const {
   computed,
   isRef,
   unref,
+  toRef,
+  toRefs,
   onMounted,
   watch,
   watchEffect,
