@@ -1,5 +1,5 @@
 import storage from "../../storage"
-import { onMounted, readonly, ref } from "../vue"
+import { onMounted, readonly, ref } from '@scripts/gm-vue'
 
 const whitePageRef = ref<boolean>(storage.whitePage)
 

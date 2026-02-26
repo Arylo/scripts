@@ -1,5 +1,5 @@
 import cc from "classcat";
-import { defineComponent, h } from "../../vue";
+import { defineComponent, h } from '@scripts/gm-vue'
 
 export default defineComponent({
   props: {

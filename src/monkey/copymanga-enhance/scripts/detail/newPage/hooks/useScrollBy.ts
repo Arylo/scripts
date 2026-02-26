@@ -1,5 +1,5 @@
-import { onMounted } from "../vue";
-import genScrollTo from "../../utils/genScrollTo";
+import { onMounted } from '@scripts/gm-vue'
+import genScrollTo from '@scripts/gen-scroll-to'
 
 export default function useScrollBy () {
   let scrollTo: ReturnType<typeof genScrollTo> | null = null

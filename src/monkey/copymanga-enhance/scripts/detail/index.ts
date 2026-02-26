@@ -2,7 +2,7 @@ import html from './template.html'
 import { render } from './newPage'
 import { getPageInfo, refreshImage, windowScrollTo } from './old'
 import storage from './storage'
-import GM_getResourceText from '../../../polyfill/GM_getResourceText'
+import { GM_getResourceText } from '@scripts/gm-polyfill'
 
 const renderNewPage = async () => {
   console.info('PageInfo:', storage.pageInfo)
@@ -18,7 +18,6 @@ const renderNewPage = async () => {
     render()
   }, 50)
 }
-
 
 export default () => {
   setTimeout(() => {

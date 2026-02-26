@@ -4,8 +4,8 @@ import { ROOT_PATH } from '../consts'
 import { buildScript, exportLatestDeployInfo, stringifyBanner } from './monkey.utils'
 import hasBannerFile from './utils/hasBannerFile'
 import parseScriptInfo, { ScriptInfo } from './utils/parseScriptInfo'
-import buildFS, { LS_TYPE } from '../../packages/buildFS'
-import logger from '../../packages/logger'
+import buildFS, { LS_TYPE } from '@scripts/build-fs'
+import logger from '@scripts/logger'
 
 const srcPath = path.resolve(ROOT_PATH, 'src/monkey')
 const outPath = path.resolve(ROOT_PATH, 'dist/monkey')

@@ -1,5 +1,5 @@
 import storage from '../../storage'
-import { ref, onMounted, readonly } from "../vue";
+import { ref, onMounted, readonly } from '@scripts/gm-vue'
 
 export default function usePageInfo () {
   const rawData = ref(storage.pageInfo)

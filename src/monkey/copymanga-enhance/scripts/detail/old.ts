@@ -1,4 +1,4 @@
-import genScrollTo from './utils/genScrollTo'
+import genScrollTo from '@scripts/gen-scroll-to'
 import { PageInfo } from './types'
 
 const getCurrentCount = () => $('.comicContent-list > li > img').length

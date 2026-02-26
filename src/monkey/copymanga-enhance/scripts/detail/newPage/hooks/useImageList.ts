@@ -1,7 +1,7 @@
-import flow from "../../../../../utils/flow"
+import flow from '@scripts/flow'
 import WhitePage from '../component/WhitePage'
 import { DirectionMode, PageType } from "../constant"
-import { defineComponent, onMounted, readonly, ref, unref, watch } from "../vue"
+import { defineComponent, onMounted, readonly, ref, unref, watch } from '@scripts/gm-vue'
 import useDirectionMode from "./useDirectionMode"
 import useImageInfoMap from "./useImageInfoMap"
 import useRawImageList from "./useRawImageList"

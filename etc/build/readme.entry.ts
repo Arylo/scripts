@@ -1,10 +1,10 @@
 import path from 'path'
 import lodash from 'lodash'
-import buildFS from "../../packages/buildFS"
+import buildFS from '@scripts/build-fs'
 import { globSync } from 'glob'
 import { ROOT_PATH } from '../consts'
 import parseScriptInfo from './utils/parseScriptInfo'
-import { genTemplate, readTemplate, MdTools } from '../../packages/MdGenerator'
+import { genTemplate, readTemplate, MdTools } from '@scripts/md-generator'
 
 const CONSTANT = {
   GENERAL: {

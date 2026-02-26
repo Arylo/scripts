@@ -1,4 +1,4 @@
-import genStorage from "../../utils/genStorage"
+import { genStorage } from '@scripts/gen-storage'
 import parseConstant from "../../utils/parseConstant"
 
 export const getWhitePageKey = () => {

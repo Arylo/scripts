@@ -1,7 +1,7 @@
-import GM_addStyle from "../../../../../../polyfill/GM_addStyle";
+import { GM_addStyle } from '@scripts/gm-polyfill'
 import useKeyWatcher from "../../hooks/useKeyWatcher";
 import useMouseWatcher from "../../hooks/useMouseWatcher";
-import { defineComponent, Fragment, h, onMounted } from "../../vue";
+import { defineComponent, Fragment, h, onMounted } from '@scripts/gm-vue'
 import AppBody from "../AppBody";
 import AppHeader from "../AppHeader";
 import css from './style.css'

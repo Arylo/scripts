@@ -1,12 +1,12 @@
 import cc from "classcat";
-import GM_addStyle from "../../../../../../polyfill/GM_addStyle";
+import { GM_addStyle } from '@scripts/gm-polyfill'
 import { DirectionMode } from "../../constant";
 import useDirectionMode from "../../hooks/useDirectionMode";
 import useImageInfoMap from "../../hooks/useImageInfoMap";
 import useRawImageList from "../../hooks/useRawImageList";
 import usePageInfo from "../../hooks/usePageInfo";
 import useWhitePage from "../../hooks/useWhitePage";
-import { defineComponent, onMounted, unref, computed, h, Fragment } from "../../vue";
+import { defineComponent, onMounted, unref, computed, h, Fragment } from '@scripts/gm-vue'
 import css from './style.css'
 import useImageWidth from "../../hooks/useImageWidth";
 

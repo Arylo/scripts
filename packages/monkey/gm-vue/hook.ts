@@ -1,8 +1,6 @@
 declare const Vue: typeof import('vue')
 
 export const {
-  createApp,
-  defineComponent,
   readonly,
   ref,
   reactive,
@@ -15,10 +13,4 @@ export const {
   onUnmounted,
   watch,
   watchEffect,
-  h,
-  compile,
-  Fragment,
 } = Vue
-
-export default Vue
-

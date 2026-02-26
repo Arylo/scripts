@@ -1,6 +1,6 @@
 import storage from "../../storage"
 import { DirectionMode } from "../constant"
-import { onMounted, readonly, ref } from "../vue"
+import { onMounted, readonly, ref } from '@scripts/gm-vue'
 
 const directionModeRef = ref<DirectionMode>(storage.directionMode)
 

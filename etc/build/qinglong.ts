@@ -2,8 +2,8 @@ import path from 'path'
 import fs from 'fs'
 import * as esbuild from 'esbuild'
 import { ROOT_PATH } from '../consts'
-import buildFS from '../../packages/buildFS'
-import logger from '../../packages/logger'
+import buildFS from '@scripts/build-fs'
+import logger from '@scripts/logger'
 
 const buildinDependencies = [
   'fs',

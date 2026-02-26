@@ -1,0 +1,7 @@
+export { GM } from './GM'
+export { GM_addStyle } from './GM_addStyle'
+export { GM_getResourceText } from './GM_getResourceText'
+export { GM_getValue } from './GM_getValue'
+export { GM_setClipboard } from './GM_setClipboard'
+export { GM_setValue } from './GM_setValue'
+export { GM_xmlhttpRequest, GM_xmlhttpRequestAsync } from './GM_xmlhttpRequest'

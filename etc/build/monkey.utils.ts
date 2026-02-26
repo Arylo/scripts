@@ -9,8 +9,8 @@ import { POLYFILL_PATH, ROOT_PATH } from '../consts'
 import CSSMinifyTextPlugin from '../esbuild-plugins/css-minify-text'
 import HTMLMinifyTextPlugin from '../esbuild-plugins/html-minify-text'
 import { ScriptInfo } from './utils/parseScriptInfo'
-import buildFS from '../../packages/buildFS'
-import logger from '../../packages/logger'
+import buildFS from '@scripts/build-fs'
+import logger from '@scripts/logger'
 
 const parseMetaItem = (key: string, value: any) => {
   if (typeof value === 'string') {

@@ -1,4 +1,4 @@
-import { computed, unref } from "../vue"
+import { computed, unref } from '@scripts/gm-vue'
 import usePageInfo from "./usePageInfo"
 
 export default function useRawImageList () {

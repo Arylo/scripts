@@ -1,4 +1,4 @@
-import { readonly, ref } from "../vue"
+import { readonly, ref } from '@scripts/gm-vue'
 
 const mouseFocusRef = ref<number>(-1)
 

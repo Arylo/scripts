@@ -3,7 +3,7 @@ import lodash from 'lodash'
 import TOML from '@iarna/toml'
 import { ROOT_PATH } from '../../consts'
 import { githubRawPrefix } from '../monkey.const'
-import buildFS from '../../../packages/buildFS'
+import buildFS from '@scripts/build-fs'
 
 const pkgInfo = buildFS.readJSONFileSync(path.resolve(ROOT_PATH, 'package.json'))
 

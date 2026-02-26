@@ -1,8 +1,8 @@
-import GM_addStyle from "../../../../../../polyfill/GM_addStyle";
+import { GM_addStyle } from '@scripts/gm-polyfill'
 import cc from 'classcat'
 import { ACTION_GRID_MAP, DirectionMode } from "../../constant";
 import useDirectionMode from "../../hooks/useDirectionMode";
-import { defineComponent, onMounted, unref, h } from "../../vue";
+import { defineComponent, onMounted, unref, h } from '@scripts/gm-vue'
 import css from './style.css'
 import WhitePage from '../WhitePage';
 import useMouseGrid from "../../hooks/useMouseGrid";

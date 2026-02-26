@@ -1,6 +1,5 @@
-import GM_getValue from "../../polyfill/GM_getValue"
-import GM_setValue from "../../polyfill/GM_setValue"
-import genStorage from "../scripts/utils/genStorage"
+import { GM_getValue, GM_setValue } from '@scripts/gm-polyfill'
+import { genStorage } from '@scripts/gen-storage'
 import parseConstant from "../scripts/utils/parseConstant"
 import { DirectionMode } from "../scripts/detail/newPage/constant"
 

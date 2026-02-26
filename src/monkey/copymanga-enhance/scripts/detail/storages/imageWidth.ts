@@ -1,6 +1,5 @@
-import GM_getValue from "../../../../polyfill/GM_getValue"
-import GM_setValue from "../../../../polyfill/GM_setValue"
-import genStorage from "../../utils/genStorage"
+import { GM_getValue, GM_setValue } from '@scripts/gm-polyfill'
+import { genStorage } from '@scripts/gen-storage'
 import parseConstant from "../../utils/parseConstant"
 
 export const getImageWidthKey = () => {

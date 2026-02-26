@@ -1,4 +1,4 @@
-import { computed, onMounted, unref } from "../vue";
+import { computed, onMounted, unref } from '@scripts/gm-vue'
 import usePageInfo from "./usePageInfo";
 import useWhitePage from "./useWhitePage";
 import useScrollBy from "./useScrollBy";

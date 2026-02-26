@@ -1,0 +1,15 @@
+{
+  "name": "@scripts/build-fs",
+  "version": "1.0.0",
+  "private": true,
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "lint": "tsc --noEmit"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "nanoid": "^3.3.8"
+  }
+}

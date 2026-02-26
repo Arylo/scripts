@@ -1,0 +1,16 @@
+{
+  "name": "@scripts/logger",
+  "version": "1.0.0",
+  "private": true,
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "lint": "tsc --noEmit"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@scripts/function-control": "*",
+    "lodash": "^4.17.21"
+  }
+}

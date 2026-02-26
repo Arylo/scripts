@@ -24,6 +24,16 @@
     "node": "24.12.0"
   },
   "dependencies": {
+    "@scripts/build-fs": "*",
+    "@scripts/gen-storage": "*",
+    "@scripts/gen-scroll-to": "*",
+    "@scripts/gm-polyfill": "*",
+    "@scripts/gm-vue": "*",
+    "@scripts/flow": "*",
+    "@scripts/function-control": "*",
+    "@scripts/logger": "*",
+    "@scripts/md-generator": "*",
+    "@scripts/throttle": "*",
     "@js-sh/js-sh": "^0.1.1",
     "classcat": "^5.0.5"
   },
@@ -49,5 +59,8 @@
     "vue": "^3.5.27",
     "vue-demi": "^0.14.10",
     "yn": "^4.0.0"
-  }
+  },
+  "workspaces": [
+    "packages/*/*"
+  ]
 }

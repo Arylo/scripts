@@ -3,7 +3,7 @@ import useDirectionMode from "../../hooks/useDirectionMode";
 import useImageInfoMap from "../../hooks/useImageInfoMap";
 import useRawImageList from "../../hooks/useRawImageList";
 import useImageWidth from "../../hooks/useImageWidth";
-import { defineComponent, h, ref, unref } from "../../vue";
+import { defineComponent, h, ref, unref } from '@scripts/gm-vue'
 
 export default defineComponent({
   props: {

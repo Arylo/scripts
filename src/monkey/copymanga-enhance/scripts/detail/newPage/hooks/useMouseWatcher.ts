@@ -1,6 +1,6 @@
-import throttle from "../../../utils/throttle";
+import throttle from '@scripts/throttle'
 import { ACTION_GRID_MAP, GRID_COLUMN, GRID_ROW } from "../constant";
-import { onMounted, unref } from "../vue";
+import { onMounted, unref } from '@scripts/gm-vue'
 import useMouseGrid from "./useMouseGrid";
 import useScrollBy from "./useScrollBy";
 

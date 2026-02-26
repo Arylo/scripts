@@ -1,0 +1,20 @@
+{
+  "name": "@scripts/gm-polyfill",
+  "version": "1.0.0",
+  "private": true,
+  "main": "index.ts",
+  "types": "index.ts",
+  "files": [
+    "GM.ts",
+    "GM_addStyle.ts",
+    "GM_getResourceText.ts",
+    "GM_getValue.ts",
+    "GM_setClipboard.ts",
+    "GM_setValue.ts",
+    "GM_xmlhttpRequest.ts"
+  ],
+  "scripts": {
+    "lint": "tsc --noEmit"
+  },
+  "license": "MIT"
+}
