@@ -1,7 +1,7 @@
 import { DirectionMode, PageType } from "../../constant";
 import useDirectionMode from "../../hooks/useDirectionMode";
 import useImageInfoMap from "../../hooks/useImageInfoMap";
-import useImageList from "../../hooks/useImageList";
+import useRawImageList from "../../hooks/useRawImageList";
 import useImageWidth from "../../hooks/useImageWidth";
 import { defineComponent, h, ref, unref } from "../../vue";
 
@@ -14,12 +14,12 @@ export default defineComponent({
   },
   setup (props, { emit }) {
     const pageType = ref(PageType.PORTRAIT)
-    const imageListRef = useImageList()
+    const rawImageListRef = useRawImageList()
     const imageInfoMapRef = useImageInfoMap()
     const [directionModeRef] = useDirectionMode()
     const [imageWidthRef] = useImageWidth()
     const onLoad = (e: Event) => {
-      const index = unref(imageListRef).indexOf(props.src)
+      const index = unref(rawImageListRef).indexOf(props.src)
       const element = e.target as HTMLImageElement
       const [width, height] = [element.naturalWidth, element.naturalHeight]
       const type = width > height ? PageType.LANDSCAPE : PageType.PORTRAIT

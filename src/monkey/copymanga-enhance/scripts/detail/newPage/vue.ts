@@ -12,6 +12,7 @@ export const {
   toRef,
   toRefs,
   onMounted,
+  onUnmounted,
   watch,
   watchEffect,
   h,

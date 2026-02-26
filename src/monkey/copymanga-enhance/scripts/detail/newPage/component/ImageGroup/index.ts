@@ -1,9 +1,7 @@
 import cc from "classcat";
 import type { PropType } from "vue";
 import { defineComponent, h, toRefs, unref } from "../../vue";
-import { DirectionMode, PageType } from "../../constant";
-import WhitePage from "../WhitePage";
-import useDirectionMode from "../../hooks/useDirectionMode";
+import { PageType } from "../../constant";
 
 export type ImageItem = {
   component: ReturnType<typeof defineComponent> | string;
@@ -13,7 +11,7 @@ export type ImageItem = {
 export default defineComponent({
   props: {
     images: {
-      type: Array as PropType<ImageItem[]>,
+      type: Array as PropType<Readonly<ImageItem[]>>,
       required: true,
     },
     class: {
@@ -26,7 +24,6 @@ export default defineComponent({
     },
   },
   setup (props) {
-    const [directionModeRef] = useDirectionMode()
     const {
       images: imagesRef,
       class: classRef,
@@ -36,7 +33,7 @@ export default defineComponent({
       'div',
       {
         class: cc([
-          'flex flex-wrap justify-center',
+          'rtl:flex ltr:flex flex-wrap justify-center',
           'snap-mandatory ltr:snap-y rtl:snap-y',
           unref(classRef),
         ]),
@@ -50,8 +47,7 @@ export default defineComponent({
               'wrapper',
               'ltr:h-(--body-height) rtl:h-(--body-height)',
               'ltr:snap-center rtl:snap-center',
-              'flex',
-              { 'hidden': unref(directionModeRef) === DirectionMode.TTB && component === WhitePage },
+              'flex justify-center basic-[100%]',
             ]),
             ...Object.fromEntries(Object.entries(componentProps).filter(([k]) => k.startsWith('data-')))
           },

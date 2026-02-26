@@ -4,5 +4,5 @@ export default defineComponent({
   setup () {
     return {}
   },
-  template: '<div class="white-page portrait size-px"></div>',
+  template: '<div class="white-page portrait size-px ttb:hidden"></div>',
 })

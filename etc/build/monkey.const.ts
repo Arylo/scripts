@@ -12,7 +12,7 @@ export const bannerOrderMap = {
     'icon64',
     'icon64URL',
     'version',
-    'author'
+    'author',
   ],
   tail: [
     'homepage',
@@ -23,7 +23,7 @@ export const bannerOrderMap = {
     'downloadURL',
     'updateURL',
     'run-at',
-    'grant'
+    'grant',
   ],
 }
 

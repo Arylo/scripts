@@ -1,18 +1,5 @@
-import GM_getValue from "../../../polyfill/GM_getValue"
-import GM_setValue from "../../../polyfill/GM_setValue"
 import { DirectionMode } from "../detail/newPage/constant"
-import genStorage from "../utils/genStorage"
-import parseConstant from "../utils/parseConstant"
-
-const directionModeStorage = genStorage<DirectionMode>({
-  save: (key, value) => GM_setValue(key, value),
-  load: (key) => GM_getValue(key, null),
-})
-
-const getDirectionModeKey = () => {
-  const comic = parseConstant(location?.pathname).comic as string
-  return Object.freeze([comic, 'direction', 'mode'].join('.'))
-}
+import { directionModeStorage, getDirectionModeKey } from "../../storages/directionMode"
 
 export default () => {
   const directionModeKey = getDirectionModeKey()

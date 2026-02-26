@@ -3,7 +3,7 @@ import GM_addStyle from "../../../../../../polyfill/GM_addStyle";
 import { DirectionMode } from "../../constant";
 import useDirectionMode from "../../hooks/useDirectionMode";
 import useImageInfoMap from "../../hooks/useImageInfoMap";
-import useImageList from "../../hooks/useImageList";
+import useRawImageList from "../../hooks/useRawImageList";
 import usePageInfo from "../../hooks/usePageInfo";
 import useWhitePage from "../../hooks/useWhitePage";
 import { defineComponent, onMounted, unref, computed, h, Fragment } from "../../vue";
@@ -22,10 +22,10 @@ export default defineComponent({
     const titleUrlRef = computed(() => unref(pageInfoRef).menuUrl)
     const prevUrlRef = computed(() => unref(pageInfoRef).prevUrl)
     const nextUrlRef = computed(() => unref(pageInfoRef).nextUrl)
-    const imageListRef = useImageList()
+    const rawImageListRef = useRawImageList()
     const imageInfoMapRef = useImageInfoMap()
     const loadingStatusRef = computed(() => {
-      const total = unref(imageListRef).length
+      const total = unref(rawImageListRef).length
       const loaded = unref(imageInfoMapRef).filter(info => info).length
       return {
         total,
