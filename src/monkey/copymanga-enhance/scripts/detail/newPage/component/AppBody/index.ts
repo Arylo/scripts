@@ -2,15 +2,11 @@ import GM_addStyle from "../../../../../../polyfill/GM_addStyle";
 import cc from 'classcat'
 import { ACTION_GRID_MAP, DirectionMode } from "../../constant";
 import useDirectionMode from "../../hooks/useDirectionMode";
-import { defineComponent, onMounted, unref, h, ref, watch } from "../../vue";
+import { defineComponent, onMounted, unref, h } from "../../vue";
 import css from './style.css'
+import WhitePage from '../WhitePage';
 import useMouseGrid from "../../hooks/useMouseGrid";
-import ImageGroup from "../ImageGroup";
-import useTtbColumn from "../../hooks/useTtbColumn";
 import useImageList from "../../hooks/useImageList";
-import useImageWidth from "../../hooks/useImageWidth";
-import debounce from "../../../../utils/debounce";
-import { useWindowSize } from "../../hooks/useWindowSize";
 
 export default defineComponent({
   setup () {
@@ -20,31 +16,6 @@ export default defineComponent({
     const [imagesRef] = useImageList()
     const [directionModeRef] = useDirectionMode()
     const [mouseGridRef] = useMouseGrid()
-    const [imageWidthRef] = useImageWidth()
-    const [ttbColumnRef] = useTtbColumn()
-    const { width: windowWidthRef } = useWindowSize()
-
-    const imageGroupHeightRef = ref(0)
-    const imageGroupRef = ref<InstanceType<typeof ImageGroup> | null>(null)
-    const refreshImageGroupHeight = debounce(() => {
-      const list = Array.from<HTMLElement>(unref(imageGroupRef)?.$el.children ?? [])
-      const height = list.reduce((acc, child) => acc + child.clientHeight, 0)
-      imageGroupHeightRef.value = height
-    }, 50)
-    watch(
-      [
-        imagesRef,
-        directionModeRef,
-        ttbColumnRef,
-        imageGroupRef,
-        imageWidthRef,
-        windowWidthRef,
-      ], () => {
-        if (DirectionMode.TTB !== unref(directionModeRef)) return
-        refreshImageGroupHeight()
-      }
-    )
-
     return () => h(
       'div',
       {
@@ -60,60 +31,26 @@ export default defineComponent({
           {
             class: cc([
               'direction-wrapper',
-              'max-h-(--body-height)',
-              'flex flex-row flex-wrap',
-              'overflow-x-hidden overflow-y-auto',
+              'w-dvw',
+              'flex flex-wrap justify-center',
+              'snap-mandatory ltr:snap-y rtl:snap-y',
             ]),
           },
-          [
-            h(
-              ImageGroup,
+          unref(imagesRef)
+            .map(({ component, props }) => h(
+              'div',
               {
                 class: cc([
-                  'ltr:hidden rtl:hidden',
-                  'overflow-hidden',
-                  {
-                    'hidden': unref(ttbColumnRef) === 1 || unref(ttbColumnRef) === 2,
-                    'basic-[33%]': unref(ttbColumnRef) === 3,
-                  }
+                  'wrapper',
+                  'ltr:h-(--body-height) rtl:h-(--body-height)',
+                  'ltr:snap-center rtl:snap-center',
+                  'flex',
+                  { 'hidden': unref(directionModeRef) === DirectionMode.TTB && component === WhitePage },
                 ]),
-                images: unref(imagesRef),
-                style: `height: ${unref(imageGroupHeightRef)}px`,
+                ...Object.fromEntries(Object.entries(props).filter(([k]) => k.startsWith('data-')))
               },
-            ),
-            h(
-              ImageGroup,
-              {
-                class: cc([
-                  'ltr:hidden rtl:hidden',
-                  'overflow-hidden',
-                  {
-                    'hidden': unref(ttbColumnRef) === 1,
-                    'basic-[50%]': unref(ttbColumnRef) === 2,
-                    'basic-[33%]': unref(ttbColumnRef) === 3,
-                  },
-                ]),
-                images: unref(imagesRef),
-                style: `height: ${unref(imageGroupHeightRef)}px`,
-              },
-            ),
-            h(
-              ImageGroup,
-              {
-                class: cc([
-                  {
-                    'w-dvw': DirectionMode.TTB !== unref(directionModeRef),
-                    'flex': unref(ttbColumnRef) === 1,
-                    'basic-[50%]': DirectionMode.TTB === unref(directionModeRef) && unref(ttbColumnRef) === 2,
-                    'basic-[33%]': DirectionMode.TTB === unref(directionModeRef) && unref(ttbColumnRef) === 3,
-                  },
-                ]),
-                images: unref(imagesRef),
-                ref: imageGroupRef,
-              },
-            ),
-          ],
-        )
+              [h(component, { ...props })],
+            ))),
       ],
     )
   },

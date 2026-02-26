@@ -4,7 +4,6 @@ import { getImageWidthKey, imageWidthStorage } from "./storages/imageWidth"
 import { getWhitePageKey, whitePageStorage } from "./storages/whitePage"
 import { getPageInfoKey, pageInfoStorage } from "./storages/pageInfo"
 import { getDirectionModeKey, directionModeStorage } from "../../storages/directionMode"
-import { getTtbColumnKey, ttbColumnStorage } from "./storages/ttbColumn"
 
 export default {
   get imageWidth (): number {
@@ -45,14 +44,5 @@ export default {
   set directionMode (value: DirectionMode) {
     const directionModeKey = getDirectionModeKey()
     directionModeStorage.set(directionModeKey, value)
-  },
-  get ttbColumn (): 1 | 2 | 3 {
-    const ttbColumnKey = getTtbColumnKey()
-    const value = ttbColumnStorage.get(ttbColumnKey, 2)
-    return [1, 2, 3].includes(value) ? value as 1 | 2 | 3 : 2
-  },
-  set ttbColumn (value: 1 | 2 | 3) {
-    const ttbColumnKey = getTtbColumnKey()
-    ttbColumnStorage.set(ttbColumnKey, value)
   },
 }

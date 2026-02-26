@@ -1,8 +1,23 @@
-import { defineComponent } from "../../vue";
+import cc from "classcat";
+import { defineComponent, h } from "../../vue";
 
 export default defineComponent({
-  setup () {
-    return {}
+  props: {
+    class: {
+      type: String,
+      default: () => undefined,
+    },
   },
-  template: '<div class="white-page portrait size-px ttb:hidden"></div>',
+  setup (props) {
+    return () => h(
+      'div',
+      {
+        ...props,
+        class: cc([
+          'white-page portrait size-px',
+          props.class,
+        ]),
+      },
+    )
+  },
 })

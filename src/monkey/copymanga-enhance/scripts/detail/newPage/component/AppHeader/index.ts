@@ -9,7 +9,6 @@ import useWhitePage from "../../hooks/useWhitePage";
 import { defineComponent, onMounted, unref, computed, h, Fragment } from "../../vue";
 import css from './style.css'
 import useImageWidth from "../../hooks/useImageWidth";
-import useTtbColumn from "../../hooks/useTtbColumn";
 
 const ImageWidths = [
   100, 90, 80, 70, 60, 50, 40, 30, 20,
@@ -40,27 +39,6 @@ export default defineComponent({
 
     const [directionModeRef, setDirectionMode] = useDirectionMode()
     const [imageWidthRef, setImageWidth] = useImageWidth()
-    const [ttbColumnRef, setTtbColumn] = useTtbColumn()
-    const toggleTtbColumn = () => {
-      const imageWidth = unref(imageWidthRef)
-      const ttbColumn = unref(ttbColumnRef)
-      if (ttbColumn === 1) {
-        setTtbColumn(2)
-        if (ImageWidths.indexOf(imageWidth) !== ImageWidths.length - 1) {
-          setImageWidth(ImageWidths[ImageWidths.indexOf(imageWidth) + 1])
-        }
-      } else if (ttbColumn === 2) {
-        setTtbColumn(3)
-        if (ImageWidths.indexOf(imageWidth) !== ImageWidths.length - 1) {
-          setImageWidth(ImageWidths[ImageWidths.indexOf(imageWidth) + 1])
-        }
-      } else {
-        setTtbColumn(1)
-        if (ImageWidths.indexOf(imageWidth) - 2 >= 0) {
-          setImageWidth(ImageWidths[ImageWidths.indexOf(imageWidth) - 2])
-        }
-      }
-    }
 
     return () => h('div',
       {
@@ -134,9 +112,6 @@ export default defineComponent({
               h('select', { onChange: (event: Event) => setImageWidth(Number((event.target as HTMLSelectElement).value)) }, ImageWidths.map((v) => {
                 return h('option', { value: v, selected: unref(imageWidthRef) === v }, `${v}%`)
               })) :
-              h(Fragment),
-            [DirectionMode.TTB].includes(unref(directionModeRef)) ?
-              h('div', { class: 'text-white cursor-pointer', onClick: () => toggleTtbColumn() }, unref(ttbColumnRef) === 1 ? '默认模式' : unref(ttbColumnRef) === 2 ? '提前预览' : '超前预览') :
               h(Fragment),
           ],
         ),

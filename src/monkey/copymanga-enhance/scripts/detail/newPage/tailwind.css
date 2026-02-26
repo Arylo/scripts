@@ -1,180 +1,176 @@
-@layer base, direction;
+.cursor-pointer {
+  cursor: pointer;
+}
 
-@layer base {
-  .cursor-pointer {
-    cursor: pointer;
-  }
+.size-px {
+  width: 1px;
+  height: 1px;
+}
 
-  .size-px {
-    width: 1px;
-    height: 1px;
-  }
+.w-dvw {
+  width: 100dvw;
+}
 
-  .w-dvw {
-    width: 100dvw;
-  }
+.min-w-dvw {
+  min-width: 100dvw;
+}
 
-  .min-w-dvw {
-    min-width: 100dvw;
-  }
+.max-w-dvw {
+  max-width: 100dvw;
+}
 
-  .max-w-dvw {
-    max-width: 100dvw;
-  }
+.h-dvh {
+  height: 100dvh;
+}
 
-  .h-dvh {
-    height: 100dvh;
-  }
+.min-w-dvw {
+  min-height: 100dvh;
+}
 
-  .min-w-dvw {
-    min-height: 100dvh;
-  }
+.max-h-dvh {
+  max-height: 100dvh;
+}
 
-  .max-h-dvh {
-    max-height: 100dvh;
-  }
+.h-\(--body-height\) {
+  height: var(--body-height);
+}
 
-  .h-\(--body-height\) {
-    height: var(--body-height);
-  }
+.max-h-\(--body-height\) {
+  max-height: var(--body-height);
+}
 
-  .max-h-\(--body-height\) {
-    max-height: var(--body-height);
-  }
+.grid {
+  display: grid;
+}
 
-  .grid {
-    display: grid;
-  }
+.flex {
+  display: flex;
+}
 
-  .flex {
-    display: flex;
-  }
+.flex-row {
+  flex-direction: row;
+}
 
-  .flex-row {
-    flex-direction: row;
-  }
+.flex-col {
+  flex-direction: column;
+}
 
-  .flex-col {
-    flex-direction: column;
-  }
+.flex-wrap {
+  flex-wrap: wrap;
+}
 
-  .flex-wrap {
-    flex-wrap: wrap;
-  }
+.justify-start {
+  justify-content: flex-start;
+}
 
-  .justify-start {
-    justify-content: flex-start;
-  }
+.justify-end {
+  justify-content: flex-end;
+}
 
-  .justify-end {
-    justify-content: flex-end;
-  }
+.justify-center {
+  justify-content: center;
+}
 
-  .justify-center {
-    justify-content: center;
-  }
+.items-center {
+  align-items: center;
+}
 
-  .items-center {
-    align-items: center;
-  }
+.basic-\[33\%\] {
+  flex-basis: 33%;
+}
+.basic-\[50\%\] {
+  flex-basis: 50%;
+}
+.basic-\[100\%\] {
+  flex-basis: 100%;
+}
 
-  .basic-\[33\%\] {
-    flex-basis: 33%;
-  }
-  .basic-\[50\%\] {
-    flex-basis: 50%;
-  }
-  .basic-\[100\%\] {
-    flex-basis: 100%;
-  }
+.gap-x-\[5px\] {
+  column-gap: 5px;
+}
 
-  .gap-x-\[5px\] {
-    column-gap: 5px;
-  }
+.hidden {
+  display: none;
+}
 
-  .hidden {
-    display: none;
-  }
+.overflow-hidden {
+  overflow: hidden;
+}
+.overflow-auto {
+  overflow: auto;
+}
+.overflow-x-hidden {
+  overflow-x: hidden;
+}
+.overflow-y-auto {
+  overflow-y: auto;
+}
 
-  .overflow-hidden {
-    overflow: hidden;
-  }
-  .overflow-auto {
-    overflow: auto;
-  }
-  .overflow-x-hidden {
-    overflow-x: hidden;
-  }
-  .overflow-y-auto {
-    overflow-y: auto;
-  }
+.text-white {
+  color: white;
+}
 
-  .text-white {
-    color: white;
-  }
+.text-gray {
+  color: gray;
+}
 
-  .text-gray {
-    color: gray;
-  }
+.text-gray\! {
+  color: gray !important;
+}
 
-  .text-gray\! {
-    color: gray !important;
-  }
+.text-center {
+  text-align: center;
+}
 
-  .text-center {
-    text-align: center;
-  }
-
-  .snap-mandatory {
-    --scroll-snap-strictness: mandatory;
-  }
+.snap-mandatory {
+  --scroll-snap-strictness: mandatory;
 }
 
 /* #region Direction */
-@layer direction {
-  .ttb .ttb\:block,
-  .ltr .ltr\:block,
-  .rtl .rtl\:block
-  {
-    display: block;
-  }
 
-  .ttb .ttb\:flex,
-  .ltr .ltr\:flex,
-  .rtl .rtl\:flex
-  {
-    display: flex;
-  }
-
-  .ttb .ttb\:hidden,
-  .ltr .ltr\:hidden,
-  .rtl .rtl\:hidden
-  {
-    display: none;
-  }
-
-  .ltr .ltr\:snap-y,
-  .rtl .rtl\:snap-y
-  {
-    scroll-snap-type: y var(--scroll-snap-strictness);
-  }
-
-  .ltr .ltr\:snap-center,
-  .rtl .rtl\:snap-center
-  {
-    scroll-snap-align: center;
-  }
-
-  .ltr .ltr\:w-auto,
-  .rtl .rtl\:w-auto
-  {
-    width: auto;
-  }
-
-  .ltr .ltr\:h-\(--body-height\),
-  .rtl .rtl\:h-\(--body-height\)
-  {
-    height: var(--body-height);
-  }
+.ttb .ttb\:block,
+.ltr .ltr\:block,
+.rtl .rtl\:block
+{
+  display: block;
 }
+
+.ttb .ttb\:flex,
+.ltr .ltr\:flex,
+.rtl .rtl\:flex
+{
+  display: flex;
+}
+
+.ttb .ttb\:hidden,
+.ltr .ltr\:hidden,
+.rtl .rtl\:hidden
+{
+  display: none;
+}
+
+.ltr .ltr\:snap-y,
+.rtl .rtl\:snap-y
+{
+  scroll-snap-type: y var(--scroll-snap-strictness);
+}
+
+.ltr .ltr\:snap-center,
+.rtl .rtl\:snap-center
+{
+  scroll-snap-align: center;
+}
+
+.ltr .ltr\:w-auto,
+.rtl .rtl\:w-auto
+{
+  width: auto;
+}
+
+.ltr .ltr\:h-\(--body-height\),
+.rtl .rtl\:h-\(--body-height\)
+{
+  height: var(--body-height);
+}
+
 /* #endregion Direction */

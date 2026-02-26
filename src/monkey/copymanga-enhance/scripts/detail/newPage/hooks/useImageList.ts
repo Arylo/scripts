@@ -1,26 +1,29 @@
 import flow from "../../../../../utils/flow"
-import { ImageItem } from "../component/ImageGroup"
-import WhitePage from "../component/WhitePage"
+import WhitePage from '../component/WhitePage'
 import { DirectionMode, PageType } from "../constant"
-import { onMounted, readonly, ref, unref, watch } from "../vue"
+import { defineComponent, onMounted, readonly, ref, unref, watch } from "../vue"
 import useDirectionMode from "./useDirectionMode"
 import useImageInfoMap from "./useImageInfoMap"
 import useRawImageList from "./useRawImageList"
 import useWhitePage from "./useWhitePage"
 import Image from "../component/Image"
 
+type ImageItem = {
+  component: ReturnType<typeof defineComponent> | string;
+  props: { key: string; pageType: PageType; } & Record<string, any>;
+}
+
 export default function useImageList () {
-  const imageListRef = useRawImageList()
+  const rawImageListRef = useRawImageList()
   const infoMapRef = useImageInfoMap()
   const [whitePageRef] = useWhitePage()
   const [directionModeRef] = useDirectionMode()
-
   onMounted(() => refresh())
   watch(
     [
       whitePageRef,
       directionModeRef,
-      imageListRef,
+      rawImageListRef,
       infoMapRef,
     ],
     () => refresh()
@@ -141,11 +144,10 @@ export default function useImageList () {
       })
     })
   }
-
   const imagesRef = ref<ImageItem[]>([])
   function refresh () {
     const list = flow(
-      unref(imageListRef),
+      unref(rawImageListRef),
       parseImages,
       addFirstWhitePage,
       injectWhitePages,
@@ -154,5 +156,5 @@ export default function useImageList () {
     imagesRef.value = list
   }
 
-  return [readonly(imagesRef)] as const
+  return [readonly(imagesRef), refresh] as const
 }

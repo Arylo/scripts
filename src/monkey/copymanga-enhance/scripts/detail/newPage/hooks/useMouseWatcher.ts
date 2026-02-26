@@ -1,3 +1,4 @@
+import throttle from "../../../utils/throttle";
 import { ACTION_GRID_MAP, GRID_COLUMN, GRID_ROW } from "../constant";
 import { onMounted, unref } from "../vue";
 import useMouseGrid from "./useMouseGrid";
@@ -22,12 +23,12 @@ export default function useMouseWatcher () {
       return row * COUNT_COLUMN + col + 1
     }
 
-    const handleGridMove = (info: { x: number, y: number }) => {
+    const handleGridMove = throttle((info: { x: number, y: number }) => {
       const gridIndex = getGridIndex(info.x, info.y)
       const currentGridIndex = unref(mouseGridRef)
       if (gridIndex === currentGridIndex) return
       setMouseGrid(gridIndex)
-    }
+    }, 25)
 
     const handleGridClick = (info: { x: number, y: number }) => {
       const gridIndex = getGridIndex(info.x, info.y)
