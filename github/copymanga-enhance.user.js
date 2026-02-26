@@ -21,7 +21,7 @@
 // @description:zh-TW 對開佈局、支持帶魚屏、自適應圖片高度、快捷翻頁、支持鍵盤操作
 // @description:zh-SG 对开布局、支持带鱼屏、自适应图片高度、快捷翻页、支持键盘操作
 // @description:zh-MY 对开布局、支持带鱼屏、自适应图片高度、快捷翻页、支持键盘操作
-// @version 46
+// @version 47
 // @author Arylo Yeung <arylo.open@gmail.com>
 // @connect unpkg.com
 // @license MIT
@@ -76,12 +76,6 @@
   };
   var parseConstant_default = parseConstant;
 
-  // src/monkey/polyfill/GM_getValue.ts
-  var GM_getValue_default = window.GM_getValue;
-
-  // src/monkey/polyfill/GM_setValue.ts
-  var GM_setValue_default = window.GM_setValue;
-
   // src/monkey/copymanga-enhance/scripts/detail/newPage/constant.ts
   var GRID_CELL_TYPE = {
     PREV: "PREV",
@@ -110,6 +104,12 @@
     return acc;
   }, {});
 
+  // src/monkey/polyfill/GM_getValue.ts
+  var GM_getValue_default = window.GM_getValue;
+
+  // src/monkey/polyfill/GM_setValue.ts
+  var GM_setValue_default = window.GM_setValue;
+
   // src/monkey/copymanga-enhance/scripts/utils/genStorage.ts
   function serializer(value) {
     return JSON.stringify(value);
@@ -136,15 +136,17 @@
     };
   }
 
-  // src/monkey/copymanga-enhance/scripts/table/index.ts
-  var directionModeStorage = genStorage({
-    save: (key, value) => GM_setValue_default(key, value),
-    load: (key) => GM_getValue_default(key, null)
-  });
+  // src/monkey/copymanga-enhance/storages/directionMode.ts
   var getDirectionModeKey = () => {
     const comic2 = parseConstant_default(location?.pathname).comic;
     return Object.freeze([comic2, "direction", "mode"].join("."));
   };
+  var directionModeStorage = genStorage({
+    save: (key, value) => GM_setValue_default(key, value),
+    load: (key) => GM_getValue_default(key, null)
+  });
+
+  // src/monkey/copymanga-enhance/scripts/table/index.ts
   var table_default = () => {
     const directionModeKey = getDirectionModeKey();
     const directionMode = directionModeStorage.get(directionModeKey);
@@ -178,6 +180,7 @@
     toRef,
     toRefs,
     onMounted,
+    onUnmounted,
     watch,
     watchEffect,
     h,
@@ -202,49 +205,49 @@
   }
   var GM_addStyle_default = window.GM_addStyle;
 
-  // src/monkey/copymanga-enhance/scripts/detail/storage.ts
+  // src/monkey/copymanga-enhance/scripts/detail/storages/imageWidth.ts
   var getImageWidthKey = () => {
     const comic2 = parseConstant_default(location?.pathname).comic;
     return Object.freeze([comic2, "image", "width"].join("."));
-  };
-  var getWhitePageKey = () => {
-    const comic2 = parseConstant_default(location?.pathname).comic;
-    const chapter2 = parseConstant_default(location?.pathname).chapter;
-    return Object.freeze([comic2, chapter2, "hasWhitePage"].join("."));
-  };
-  var getPageInfoKey = () => {
-    const comic2 = parseConstant_default(location?.pathname).comic;
-    const chapter2 = parseConstant_default(location?.pathname).chapter;
-    return Object.freeze([comic2, chapter2, "info"].join("."));
-  };
-  var getDirectionModeKey2 = () => {
-    const comic2 = parseConstant_default(location?.pathname).comic;
-    return Object.freeze([comic2, "direction", "mode"].join("."));
-  };
-  var getTtbColumnKey = () => {
-    const comic2 = parseConstant_default(location?.pathname).comic;
-    return Object.freeze([comic2, "ttb", "column"].join("."));
   };
   var imageWidthStorage = genStorage({
     save: (key, value) => GM_setValue_default(key, value),
     load: (key) => GM_getValue_default(key, null)
   });
+
+  // src/monkey/copymanga-enhance/scripts/detail/storages/whitePage.ts
+  var getWhitePageKey = () => {
+    const comic2 = parseConstant_default(location?.pathname).comic;
+    const chapter2 = parseConstant_default(location?.pathname).chapter;
+    return Object.freeze([comic2, chapter2, "hasWhitePage"].join("."));
+  };
   var whitePageStorage = genStorage({
     save: (key, value) => localStorage.setItem(key, value),
     load: (key) => localStorage.getItem(key)
   });
+
+  // src/monkey/copymanga-enhance/scripts/detail/storages/pageInfo.ts
+  var getPageInfoKey = () => {
+    const comic2 = parseConstant_default(location?.pathname).comic;
+    const chapter2 = parseConstant_default(location?.pathname).chapter;
+    return Object.freeze([comic2, chapter2, "info"].join("."));
+  };
   var pageInfoStorage = genStorage({
     save: (key, value) => sessionStorage.setItem(key, value),
     load: (key) => sessionStorage.getItem(key)
   });
-  var directionModeStorage2 = genStorage({
-    save: (key, value) => GM_setValue_default(key, value),
-    load: (key) => GM_getValue_default(key, null)
-  });
+
+  // src/monkey/copymanga-enhance/scripts/detail/storages/ttbColumn.ts
+  var getTtbColumnKey = () => {
+    const comic2 = parseConstant_default(location?.pathname).comic;
+    return Object.freeze([comic2, "ttb", "column"].join("."));
+  };
   var ttbColumnStorage = genStorage({
     save: (key, value) => GM_setValue_default(key, value),
     load: (key) => GM_getValue_default(key, null)
   });
+
+  // src/monkey/copymanga-enhance/scripts/detail/storage.ts
   var storage_default = {
     get imageWidth() {
       const imageWidthKey = getImageWidthKey();
@@ -278,17 +281,17 @@
       pageInfoStorage.set(pageInfoKey, value);
     },
     get directionMode() {
-      const directionModeKey = getDirectionModeKey2();
-      return directionModeStorage2.get(directionModeKey, "rtl" /* RTL */);
+      const directionModeKey = getDirectionModeKey();
+      return directionModeStorage.get(directionModeKey, "rtl" /* RTL */);
     },
     set directionMode(value) {
-      const directionModeKey = getDirectionModeKey2();
-      directionModeStorage2.set(directionModeKey, value);
+      const directionModeKey = getDirectionModeKey();
+      directionModeStorage.set(directionModeKey, value);
     },
     get ttbColumn() {
       const ttbColumnKey = getTtbColumnKey();
-      const value = ttbColumnStorage.get(ttbColumnKey, 1);
-      return [1, 2, 3].includes(value) ? value : 1;
+      const value = ttbColumnStorage.get(ttbColumnKey, 2);
+      return [1, 2, 3].includes(value) ? value : 2;
     },
     set ttbColumn(value) {
       const ttbColumnKey = getTtbColumnKey();
@@ -500,14 +503,93 @@
     return [directionMode, setter];
   }
 
+  // src/monkey/copymanga-enhance/scripts/detail/newPage/component/AppBody/style.css
+  var style_default = ".direction-wrapper>*:nth-child(1){--image-group-padding-1: calc(var(--image-group-padding) * 2);padding-top:var(--image-group-padding-1)}.direction-wrapper>*:nth-child(2){--image-group-padding-2: calc(var(--image-group-padding) * 1);padding-top:var(--image-group-padding-2)}@media (max-aspect-ratio: 5 / 3){.wrapper:has(>.white-page){display:none}}@media (min-aspect-ratio: 5 / 3){:is(.ltr,.rtl) .wrapper:has(>.portrait){flex-basis:50%}.wrapper{order:attr(data-index number)}.wrapper[data-side=L]{justify-content:flex-end;padding-left:5px}.wrapper[data-side=R]{justify-content:flex-start;padding-right:5px}}@media (min-aspect-ratio: 5 / 3) and (max-aspect-ratio: 9 / 3){:is(.ltr,.rtl) .wrapper:has(>.white-page):nth-last-child(2),:is(.ltr,.rtl) .wrapper:has(>.white-page):nth-last-child(2)+.wrapper:has(>.white-page){display:none}}@media (min-aspect-ratio: 9 / 3){:is(.ltr,.rtl) .wrapper:has(>.portrait){flex-basis:25%}}\n";
+
+  // src/monkey/copymanga-enhance/scripts/detail/newPage/component/ImageGroup/index.ts
+  var ImageGroup_default = defineComponent({
+    props: {
+      images: {
+        type: Array,
+        required: true
+      },
+      class: {
+        type: String,
+        default: () => void 0
+      },
+      style: {
+        type: String,
+        default: () => void 0
+      }
+    },
+    setup(props) {
+      const {
+        images: imagesRef,
+        class: classRef,
+        style: styleRef
+      } = toRefs(props);
+      return () => h(
+        "div",
+        {
+          class: cc([
+            "rtl:flex ltr:flex flex-wrap justify-center",
+            "snap-mandatory ltr:snap-y rtl:snap-y",
+            unref(classRef)
+          ]),
+          style: unref(styleRef)
+        },
+        unref(imagesRef).map(({ component, props: componentProps = {} }) => h(
+          "div",
+          {
+            class: cc([
+              "wrapper",
+              "ltr:h-(--body-height) rtl:h-(--body-height)",
+              "ltr:snap-center rtl:snap-center",
+              "flex justify-center basic-[100%]"
+            ]),
+            ...Object.fromEntries(Object.entries(componentProps).filter(([k]) => k.startsWith("data-")))
+          },
+          [h(component, { ...componentProps })]
+        ))
+      );
+    }
+  });
+
+  // src/monkey/copymanga-enhance/scripts/detail/newPage/hooks/useTtbColumn.ts
+  var ttbColumnRef = ref(storage_default.ttbColumn);
+  function useTtbColumn() {
+    const ttbColumn = readonly(ttbColumnRef);
+    function setter(value) {
+      ttbColumnRef.value = value;
+      storage_default.ttbColumn = value;
+    }
+    onMounted(() => {
+      setter(storage_default.ttbColumn);
+    });
+    return [ttbColumn, setter];
+  }
+
+  // src/monkey/utils/flow.ts
+  function flow(source, ...fns) {
+    return fns.reduce((prev, fn) => fn(prev), source);
+  }
+
+  // src/monkey/copymanga-enhance/scripts/detail/newPage/component/WhitePage/index.ts
+  var WhitePage_default = defineComponent({
+    setup() {
+      return {};
+    },
+    template: '<div class="white-page portrait size-px ttb:hidden"></div>'
+  });
+
   // src/monkey/copymanga-enhance/scripts/detail/newPage/hooks/useImageInfoMap.ts
   var statusMap = ref([]);
   function useImageInfoMap() {
     return statusMap;
   }
 
-  // src/monkey/copymanga-enhance/scripts/detail/newPage/hooks/useImageList.ts
-  function useImageList() {
+  // src/monkey/copymanga-enhance/scripts/detail/newPage/hooks/useRawImageList.ts
+  function useRawImageList() {
     const pageInfoRef = usePageInfo();
     const imagesRef = computed(() => unref(pageInfoRef).images ?? []);
     return imagesRef;
@@ -537,12 +619,12 @@
     },
     setup(props, { emit }) {
       const pageType = ref("portrait" /* PORTRAIT */);
-      const imageListRef = useImageList();
+      const rawImageListRef = useRawImageList();
       const imageInfoMapRef = useImageInfoMap();
       const [directionModeRef2] = useDirectionMode();
       const [imageWidthRef2] = useImageWidth();
       const onLoad = (e) => {
-        const index = unref(imageListRef).indexOf(props.src);
+        const index = unref(rawImageListRef).indexOf(props.src);
         const element = e.target;
         const [width, height] = [element.naturalWidth, element.naturalHeight];
         const type = width > height ? "landscape" /* LANDSCAPE */ : "portrait" /* PORTRAIT */;
@@ -566,229 +648,237 @@
     }
   });
 
-  // src/monkey/copymanga-enhance/scripts/detail/newPage/component/AppBody/style.css
-  var style_default = ".direction-wrapper{max-height:var(--body-height);overflow-y:scroll}.wrapper{flex-basis:100%;justify-content:center}@media (max-aspect-ratio: 5 / 3){.wrapper:has(>.white-page){display:none}}@media (min-aspect-ratio: 5 / 3){:is(.ltr,.rtl) .wrapper:has(>.portrait){flex-basis:50%}.wrapper{order:attr(data-index number)}.wrapper[data-side=L]{justify-content:flex-end;padding-left:5px}.wrapper[data-side=R]{justify-content:flex-start;padding-right:5px}}@media (min-aspect-ratio: 5 / 3) and (max-aspect-ratio: 9 / 3){:is(.ltr,.rtl) .wrapper:has(>.white-page):nth-last-child(2),:is(.ltr,.rtl) .wrapper:has(>.white-page):nth-last-child(2)+.wrapper:has(>.white-page){display:none}}@media (min-aspect-ratio: 9 / 3){:is(.ltr,.rtl) .wrapper:has(>.portrait){flex-basis:25%}}\n";
-
-  // src/monkey/copymanga-enhance/scripts/detail/newPage/component/WhitePage/index.ts
-  var WhitePage_default = defineComponent({
-    setup() {
-      return {};
-    },
-    template: '<div class="white-page portrait size-px"></div>'
-  });
-
-  // src/monkey/utils/flow.ts
-  function flow(source, ...fns) {
-    return fns.reduce((prev, fn) => fn(prev), source);
+  // src/monkey/copymanga-enhance/scripts/detail/newPage/hooks/useImageList.ts
+  function useImageList() {
+    const imageListRef = useRawImageList();
+    const infoMapRef = useImageInfoMap();
+    const [whitePageRef2] = useWhitePage();
+    const [directionModeRef2] = useDirectionMode();
+    onMounted(() => refresh());
+    watch(
+      [
+        whitePageRef2,
+        directionModeRef2,
+        imageListRef,
+        infoMapRef
+      ],
+      () => refresh()
+    );
+    const onLoaded = () => {
+      refresh();
+    };
+    const parseImages = (urls = []) => {
+      const infoMap = unref(infoMapRef);
+      return urls.map((src, index) => {
+        const info = infoMap[index];
+        const pageType = info && info.type === "landscape" /* LANDSCAPE */ ? "landscape" /* LANDSCAPE */ : "portrait" /* PORTRAIT */;
+        return {
+          component: Image_default,
+          props: {
+            src,
+            onLoaded,
+            key: `image-${index}`,
+            pageType
+          }
+        };
+      });
+    };
+    const addFirstWhitePage = (list) => {
+      if (list.length === 0) return list;
+      if (!unref(whitePageRef2)) return list;
+      if (!["rtl" /* RTL */, "ltr" /* LTR */].includes(unref(directionModeRef2))) return list;
+      let anchorIndex = -1;
+      for (let index = 0; index < list.length; index++) {
+        const { props } = list[index];
+        if (props.pageType === "landscape" /* LANDSCAPE */) {
+          anchorIndex = -1;
+          continue;
+        }
+        if (anchorIndex === -1) {
+          anchorIndex = index;
+          continue;
+        }
+        if (index - anchorIndex > 2) {
+          list.splice(anchorIndex, 0, {
+            component: WhitePage_default,
+            props: { key: `white-page-${anchorIndex}`, class: "manual", pageType: "portrait" /* PORTRAIT */ }
+          });
+          break;
+        }
+      }
+      return list;
+    };
+    const injectWhitePages = (list) => {
+      if (list.length === 0) return list;
+      if (!["rtl" /* RTL */, "ltr" /* LTR */].includes(unref(directionModeRef2))) return list;
+      const tempList = [];
+      for (let index = 0; index < list.length; index++) {
+        const { props: { pageType } } = list[index];
+        let lastGroupPageType = tempList.length > 0 ? tempList[tempList.length - 1][0].props.pageType : null;
+        if (pageType !== lastGroupPageType) {
+          tempList.push([]);
+        }
+        tempList[tempList.length - 1].push(list[index]);
+      }
+      for (let groupIndex = 0; groupIndex < tempList.length; groupIndex++) {
+        const group = tempList[groupIndex];
+        if (group[0].props.pageType === "landscape" /* LANDSCAPE */) continue;
+        if (group.length % 2 === 0) continue;
+        group.push({
+          component: WhitePage_default,
+          props: { key: `white-page-group-${groupIndex}`, class: "auto", pageType: "portrait" /* PORTRAIT */ }
+        });
+      }
+      if (tempList[tempList.length - 1][0].props.pageType === "portrait" /* PORTRAIT */ && tempList[tempList.length - 1].length % 4 !== 0) {
+        const groupIndex = tempList.length - 1;
+        const group = tempList[groupIndex];
+        Array.from({ length: 4 - group.length % 4 }).forEach((_, index) => {
+          group.push({
+            component: WhitePage_default,
+            props: { key: `white-page-group-${groupIndex + index}-end`, class: "auto end", pageType: "portrait" /* PORTRAIT */ }
+          });
+        });
+      }
+      return tempList.flat();
+    };
+    const injectDataIndex = (list) => {
+      let portraitCount = 0;
+      return list.map((item, index) => {
+        let targetIndex = index + 1;
+        let side = "A";
+        if (item.props.pageType === "landscape" /* LANDSCAPE */) {
+          portraitCount = 0;
+          side = "A";
+        } else {
+          portraitCount++;
+          if ("rtl" /* RTL */ === unref(directionModeRef2)) {
+            if (portraitCount % 2 === 0) {
+              targetIndex -= 1;
+            } else {
+              targetIndex += 1;
+            }
+            side = portraitCount % 2 === 1 ? "R" : "L";
+          }
+          if ("ltr" /* LTR */ === unref(directionModeRef2)) {
+            side = portraitCount % 2 === 1 ? "L" : "R";
+          }
+        }
+        return {
+          ...item,
+          props: {
+            ...item.props,
+            "data-index": targetIndex,
+            "data-side": side
+          }
+        };
+      });
+    };
+    const imagesRef = ref([]);
+    function refresh() {
+      const list = flow(
+        unref(imageListRef),
+        parseImages,
+        addFirstWhitePage,
+        injectWhitePages,
+        injectDataIndex
+      );
+      imagesRef.value = list;
+    }
+    return [readonly(imagesRef)];
   }
 
-  // src/monkey/copymanga-enhance/scripts/detail/newPage/component/ImageGroup/index.ts
-  var ImageGroup_default = defineComponent({
-    props: {
-      images: {
-        type: Array,
-        required: true
-      },
-      class: {
-        type: String,
-        default: () => void 0
-      },
-      style: {
-        type: String,
-        default: () => void 0
+  // src/monkey/copymanga-enhance/scripts/utils/debounce.ts
+  function debounce(fn, wait = 0) {
+    let timer;
+    let latestArgs;
+    let latestThis;
+    let result;
+    const invoke = () => {
+      timer = void 0;
+      if (!latestArgs) {
+        return result;
       }
-    },
-    setup(props) {
-      const [directionModeRef2] = useDirectionMode();
-      const {
-        images: imagesRef,
-        class: classRef,
-        style: styleRef
-      } = toRefs(props);
-      return () => h(
-        "div",
-        {
-          class: cc([
-            "flex flex-wrap justify-center",
-            "snap-mandatory ltr:snap-y rtl:snap-y",
-            unref(classRef)
-          ]),
-          style: unref(styleRef)
-        },
-        unref(imagesRef).map(({ component, props: componentProps = {} }) => h(
-          "div",
-          {
-            class: cc([
-              "wrapper",
-              "ltr:h-(--body-height) rtl:h-(--body-height)",
-              "ltr:snap-center rtl:snap-center",
-              "flex",
-              { "hidden": unref(directionModeRef2) === "ttb" /* TTB */ && component === WhitePage_default }
-            ]),
-            ...Object.fromEntries(Object.entries(componentProps).filter(([k]) => k.startsWith("data-")))
-          },
-          [h(component, { ...componentProps })]
-        ))
-      );
-    }
-  });
+      result = fn.apply(latestThis, latestArgs);
+      latestArgs = void 0;
+      return result;
+    };
+    const debounced = function(...args) {
+      latestArgs = args;
+      latestThis = this;
+      if (timer) {
+        clearTimeout(timer);
+      }
+      timer = setTimeout(() => {
+        invoke();
+      }, wait);
+    };
+    debounced.cancel = () => {
+      if (timer) {
+        clearTimeout(timer);
+        timer = void 0;
+      }
+      latestArgs = void 0;
+    };
+    debounced.flush = () => {
+      if (!timer) {
+        return result;
+      }
+      clearTimeout(timer);
+      return invoke();
+    };
+    return debounced;
+  }
 
-  // src/monkey/copymanga-enhance/scripts/detail/newPage/hooks/useTtbColumn.ts
-  var ttbColumnRef = ref(storage_default.ttbColumn);
-  function useTtbColumn() {
-    const ttbColumn = readonly(ttbColumnRef);
-    function setter(value) {
-      ttbColumnRef.value = value;
-      storage_default.ttbColumn = value;
-    }
+  // src/monkey/copymanga-enhance/scripts/detail/newPage/hooks/useWindowSize.ts
+  function useWindowSize() {
+    const width = ref(window.innerWidth);
+    const height = ref(window.innerHeight);
+    const updateSize = () => {
+      width.value = window.innerWidth;
+      height.value = window.innerHeight;
+    };
     onMounted(() => {
-      setter(storage_default.ttbColumn);
+      window.addEventListener("resize", updateSize);
     });
-    return [ttbColumn, setter];
+    onUnmounted(() => {
+      window.removeEventListener("resize", updateSize);
+    });
+    return { width, height };
   }
 
   // src/monkey/copymanga-enhance/scripts/detail/newPage/component/AppBody/index.ts
   var AppBody_default = defineComponent({
     setup() {
-      const [whitePageRef2] = useWhitePage();
-      const [directionModeRef2] = useDirectionMode();
-      const imageListRef = useImageList();
-      const infoMapRef = useImageInfoMap();
       onMounted(() => {
         GM_addStyle_default(style_default);
-        refresh();
       });
-      watch(whitePageRef2, () => refresh());
-      watch(directionModeRef2, () => refresh());
-      watch(imageListRef, () => refresh());
-      watch(infoMapRef, () => refresh());
-      const onLoaded = () => {
-        refresh();
-      };
-      const parseImages = (urls = []) => {
-        const infoMap = unref(infoMapRef);
-        return urls.map((src, index) => {
-          const info = infoMap[index];
-          const pageType = info && info.type === "landscape" /* LANDSCAPE */ ? "landscape" /* LANDSCAPE */ : "portrait" /* PORTRAIT */;
-          return {
-            component: Image_default,
-            props: {
-              src,
-              onLoaded,
-              key: `image-${index}`,
-              pageType
-            }
-          };
-        });
-      };
-      const addFirstWhitePage = (list) => {
-        if (list.length === 0) return list;
-        if (!unref(whitePageRef2)) return list;
-        if (!["rtl" /* RTL */, "ltr" /* LTR */].includes(unref(directionModeRef2))) return list;
-        let anchorIndex = -1;
-        for (let index = 0; index < list.length; index++) {
-          const { props } = list[index];
-          if (props.pageType === "landscape" /* LANDSCAPE */) {
-            anchorIndex = -1;
-            continue;
-          }
-          if (anchorIndex === -1) {
-            anchorIndex = index;
-            continue;
-          }
-          if (index - anchorIndex > 2) {
-            list.splice(anchorIndex, 0, {
-              component: WhitePage_default,
-              props: { key: `white-page-${anchorIndex}`, class: "manual", pageType: "portrait" /* PORTRAIT */ }
-            });
-            break;
-          }
-        }
-        return list;
-      };
-      const injectWhitePages = (list) => {
-        if (list.length === 0) return list;
-        if (!["rtl" /* RTL */, "ltr" /* LTR */].includes(unref(directionModeRef2))) return list;
-        const tempList = [];
-        for (let index = 0; index < list.length; index++) {
-          const { props: { pageType } } = list[index];
-          let lastGroupPageType = tempList.length > 0 ? tempList[tempList.length - 1][0].props.pageType : null;
-          if (pageType !== lastGroupPageType) {
-            tempList.push([]);
-          }
-          tempList[tempList.length - 1].push(list[index]);
-        }
-        for (let groupIndex = 0; groupIndex < tempList.length; groupIndex++) {
-          const group = tempList[groupIndex];
-          if (group[0].props.pageType === "landscape" /* LANDSCAPE */) continue;
-          if (group.length % 2 === 0) continue;
-          group.push({
-            component: WhitePage_default,
-            props: { key: `white-page-group-${groupIndex}`, class: "auto", pageType: "portrait" /* PORTRAIT */ }
-          });
-        }
-        if (tempList[tempList.length - 1][0].props.pageType === "portrait" /* PORTRAIT */ && tempList[tempList.length - 1].length % 4 !== 0) {
-          const groupIndex = tempList.length - 1;
-          const group = tempList[groupIndex];
-          Array.from({ length: 4 - group.length % 4 }).forEach((_, index) => {
-            group.push({
-              component: WhitePage_default,
-              props: { key: `white-page-group-${groupIndex + index}-end`, class: "auto end", pageType: "portrait" /* PORTRAIT */ }
-            });
-          });
-        }
-        return tempList.flat();
-      };
-      const injectDataIndex = (list) => {
-        let portraitCount = 0;
-        return list.map((item, index) => {
-          let targetIndex = index + 1;
-          let side = "A";
-          if (item.props.pageType === "landscape" /* LANDSCAPE */) {
-            portraitCount = 0;
-            side = "A";
-          } else {
-            portraitCount++;
-            if ("rtl" /* RTL */ === unref(directionModeRef2)) {
-              if (portraitCount % 2 === 0) {
-                targetIndex -= 1;
-              } else {
-                targetIndex += 1;
-              }
-              side = portraitCount % 2 === 1 ? "R" : "L";
-            }
-            if ("ltr" /* LTR */ === unref(directionModeRef2)) {
-              side = portraitCount % 2 === 1 ? "L" : "R";
-            }
-          }
-          return {
-            ...item,
-            props: {
-              ...item.props,
-              "data-index": targetIndex,
-              "data-side": side
-            }
-          };
-        });
-      };
-      const imagesRef = ref([]);
-      const refresh = () => {
-        const list = flow(
-          unref(imageListRef),
-          parseImages,
-          addFirstWhitePage,
-          injectWhitePages,
-          injectDataIndex
-        );
-        imagesRef.value = list;
-      };
+      const [imagesRef] = useImageList();
+      const [directionModeRef2] = useDirectionMode();
       const [mouseGridRef] = useMouseGrid();
+      const [imageWidthRef2] = useImageWidth();
       const [ttbColumnRef2] = useTtbColumn();
-      const avgImageHalfHeightRef = computed(() => {
-        const totalHeight = infoMapRef.value.map((info) => info ? info.height : 0).reduce((a, b) => a + b, 0);
-        const total = unref(imageListRef).length;
-        return Math.ceil((total > 0 ? totalHeight / total : 0) / 2);
-      });
+      const { width: windowWidthRef } = useWindowSize();
+      const imageGroupHeightRef = ref(0);
+      const imageGroupRef = ref(null);
+      const refreshImageGroupHeight = debounce(() => {
+        const list = Array.from(unref(imageGroupRef)?.$el.children ?? []);
+        const height = list.reduce((acc, child) => acc + child.clientHeight, 0);
+        imageGroupHeightRef.value = height;
+      }, 50);
+      watch(
+        [
+          imagesRef,
+          directionModeRef2,
+          ttbColumnRef2,
+          imageGroupRef,
+          imageWidthRef2,
+          windowWidthRef
+        ],
+        () => {
+          if ("ttb" /* TTB */ !== unref(directionModeRef2)) return;
+          refreshImageGroupHeight();
+        }
+      );
       return () => h(
         "div",
         {
@@ -804,7 +894,9 @@
             {
               class: cc([
                 "direction-wrapper",
-                "flex flex-row flex-wrap"
+                "max-h-(--body-height)",
+                "flex flex-row flex-wrap",
+                "overflow-x-hidden overflow-y-auto"
               ])
             },
             [
@@ -812,13 +904,15 @@
                 ImageGroup_default,
                 {
                   class: cc([
+                    "ltr:hidden rtl:hidden",
+                    "overflow-hidden",
                     {
-                      "w-dvw": "ttb" /* TTB */ !== unref(directionModeRef2),
-                      "basic-[50%]": "ttb" /* TTB */ === unref(directionModeRef2) && unref(ttbColumnRef2) === 2,
-                      "basic-[33%]": "ttb" /* TTB */ === unref(directionModeRef2) && unref(ttbColumnRef2) === 3
+                      "hidden": unref(ttbColumnRef2) === 1 || unref(ttbColumnRef2) === 2,
+                      "basic-[33%]": unref(ttbColumnRef2) === 3
                     }
                   ]),
-                  images: unref(imagesRef)
+                  images: unref(imagesRef),
+                  style: `height: ${unref(imageGroupHeightRef)}px`
                 }
               ),
               h(
@@ -826,28 +920,30 @@
                 {
                   class: cc([
                     "ltr:hidden rtl:hidden",
+                    "overflow-hidden",
                     {
                       "hidden": unref(ttbColumnRef2) === 1,
                       "basic-[50%]": unref(ttbColumnRef2) === 2,
                       "basic-[33%]": unref(ttbColumnRef2) === 3
                     }
                   ]),
-                  style: `margin-top: -${avgImageHalfHeightRef.value}px;`,
-                  images: unref(imagesRef)
+                  images: unref(imagesRef),
+                  style: `height: ${unref(imageGroupHeightRef)}px`
                 }
               ),
               h(
                 ImageGroup_default,
                 {
                   class: cc([
-                    "ltr:hidden rtl:hidden",
                     {
-                      "hidden": unref(ttbColumnRef2) === 1 || unref(ttbColumnRef2) === 2,
-                      "basic-[33%]": unref(ttbColumnRef2) === 3
+                      "w-dvw": "ttb" /* TTB */ !== unref(directionModeRef2),
+                      "flex": unref(ttbColumnRef2) === 1,
+                      "basic-[50%]": "ttb" /* TTB */ === unref(directionModeRef2) && unref(ttbColumnRef2) === 2,
+                      "basic-[33%]": "ttb" /* TTB */ === unref(directionModeRef2) && unref(ttbColumnRef2) === 3
                     }
                   ]),
-                  style: `margin-top: -${avgImageHalfHeightRef.value * 2}px;`,
-                  images: unref(imagesRef)
+                  images: unref(imagesRef),
+                  ref: imageGroupRef
                 }
               )
             ]
@@ -879,10 +975,10 @@
       const titleUrlRef = computed(() => unref(pageInfoRef).menuUrl);
       const prevUrlRef = computed(() => unref(pageInfoRef).prevUrl);
       const nextUrlRef = computed(() => unref(pageInfoRef).nextUrl);
-      const imageListRef = useImageList();
+      const rawImageListRef = useRawImageList();
       const imageInfoMapRef = useImageInfoMap();
       const loadingStatusRef = computed(() => {
-        const total = unref(imageListRef).length;
+        const total = unref(rawImageListRef).length;
         const loaded = unref(imageInfoMapRef).filter((info) => info).length;
         return {
           total,
@@ -997,7 +1093,7 @@
   });
 
   // src/monkey/copymanga-enhance/scripts/detail/newPage/component/App/style.css
-  var style_default3 = ":root{--header-height: 30px;--body-height: calc(100dvh - var(--header-height))}#app{grid-template-rows:var(--header-height) auto}\n";
+  var style_default3 = ":root{--header-height: 30px;--body-height: calc(100dvh - var(--header-height));--image-group-padding: calc(var(--body-height) / 6 * 5)}#app{grid-template-rows:var(--header-height) auto}\n";
 
   // src/monkey/copymanga-enhance/scripts/detail/newPage/component/App/index.ts
   var App_default = defineComponent({
@@ -1015,7 +1111,7 @@
   });
 
   // src/monkey/copymanga-enhance/scripts/detail/newPage/tailwind.css
-  var tailwind_default = ".cursor-pointer{cursor:pointer}.size-px{width:1px;height:1px}.w-dvw{width:100dvw}.min-w-dvw{min-width:100dvw}.max-w-dvw{max-width:100dvw}.h-dvh{height:100dvh}.min-w-dvw{min-height:100dvh}.max-h-dvh{max-height:100dvh}.grid{display:grid}.flex{display:flex}.flex-row{flex-direction:row}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.justify-start{justify-content:flex-start}.justify-end{justify-content:flex-end}.justify-center{justify-content:center}.items-center{align-items:center}.basic-\\[33\\%\\]{flex-basis:33%}.basic-\\[50\\%\\]{flex-basis:50%}.gap-x-\\[5px\\]{column-gap:5px}.hidden{display:none}.overflow-hidden{overflow:hidden}.overflow-auto{overflow:auto}.text-white{color:#fff}.text-gray{color:gray}.text-gray\\!{color:gray!important}.text-center{text-align:center}.snap-mandatory{--scroll-snap-strictness: mandatory}.ttb .ttb\\:hidden,.ltr .ltr\\:hidden,.rtl .rtl\\:hidden{display:none}.ltr .ltr\\:snap-y,.rtl .rtl\\:snap-y{scroll-snap-type:y var(--scroll-snap-strictness)}.ltr .ltr\\:snap-center,.rtl .rtl\\:snap-center{scroll-snap-align:center}.ltr .ltr\\:w-auto,.rtl .rtl\\:w-auto{width:auto}.ltr .ltr\\:h-\\(--body-height\\),.rtl .rtl\\:h-\\(--body-height\\){height:var(--body-height)}\n";
+  var tailwind_default = "@layer base,direction;@layer base{.cursor-pointer{cursor:pointer}.size-px{width:1px;height:1px}.w-dvw{width:100dvw}.min-w-dvw{min-width:100dvw}.max-w-dvw{max-width:100dvw}.h-dvh{height:100dvh}.min-w-dvw{min-height:100dvh}.max-h-dvh{max-height:100dvh}.h-\\(--body-height\\){height:var(--body-height)}.max-h-\\(--body-height\\){max-height:var(--body-height)}.grid{display:grid}.flex{display:flex}.flex-row{flex-direction:row}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.justify-start{justify-content:flex-start}.justify-end{justify-content:flex-end}.justify-center{justify-content:center}.items-center{align-items:center}.basic-\\[33\\%\\]{flex-basis:33%}.basic-\\[50\\%\\]{flex-basis:50%}.basic-\\[100\\%\\]{flex-basis:100%}.gap-x-\\[5px\\]{column-gap:5px}.hidden{display:none}.overflow-hidden{overflow:hidden}.overflow-auto{overflow:auto}.overflow-x-hidden{overflow-x:hidden}.overflow-y-auto{overflow-y:auto}.text-white{color:#fff}.text-gray{color:gray}.text-gray\\!{color:gray!important}.text-center{text-align:center}.snap-mandatory{--scroll-snap-strictness: mandatory}}@layer direction{.ttb .ttb\\:block,.ltr .ltr\\:block,.rtl .rtl\\:block{display:block}.ttb .ttb\\:flex,.ltr .ltr\\:flex,.rtl .rtl\\:flex{display:flex}.ttb .ttb\\:hidden,.ltr .ltr\\:hidden,.rtl .rtl\\:hidden{display:none}.ltr .ltr\\:snap-y,.rtl .rtl\\:snap-y{scroll-snap-type:y var(--scroll-snap-strictness)}.ltr .ltr\\:snap-center,.rtl .rtl\\:snap-center{scroll-snap-align:center}.ltr .ltr\\:w-auto,.rtl .rtl\\:w-auto{width:auto}.ltr .ltr\\:h-\\(--body-height\\),.rtl .rtl\\:h-\\(--body-height\\){height:var(--body-height)}}\n";
 
   // src/monkey/copymanga-enhance/scripts/detail/newPage/index.ts
   var render = () => {
