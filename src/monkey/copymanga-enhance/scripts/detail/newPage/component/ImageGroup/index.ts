@@ -1,7 +1,8 @@
 import cc from "classcat";
 import type { PropType } from "vue";
 import { defineComponent, h, toRefs, unref } from "../../vue";
-import { PageType } from "../../constant";
+import { DirectionMode, PageType } from "../../constant";
+import useDirectionMode from "../../hooks/useDirectionMode";
 
 export type ImageItem = {
   component: ReturnType<typeof defineComponent> | string;
@@ -29,6 +30,7 @@ export default defineComponent({
       class: classRef,
       style: styleRef,
     } = toRefs(props)
+    const [directionModeRef] = useDirectionMode()
     return () => h(
       'div',
       {
@@ -47,7 +49,10 @@ export default defineComponent({
               'wrapper',
               'ltr:h-(--body-height) rtl:h-(--body-height)',
               'ltr:snap-center rtl:snap-center',
-              'flex justify-center basic-[100%]',
+              'flex justify-center',
+              {
+                'basic-[100%]': unref(directionModeRef) === DirectionMode.TTB
+              },
             ]),
             ...Object.fromEntries(Object.entries(componentProps).filter(([k]) => k.startsWith('data-')))
           },
