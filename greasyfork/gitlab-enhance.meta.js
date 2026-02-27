@@ -28,8 +28,8 @@
 // @include /^https:\/\/(git(lab)?|code)\.[^/]+\/.*\/-\/merge_requests\/\d+/edit\b/
 // @include /^https:\/\/(git(lab)?|code)\.[^/]+\/dashboard\/merge_requests\b/
 // @license MIT
-// @homepage https://greasyfork.org/zh-CN/scripts/519026
-// @supportURL https://greasyfork.org/zh-CN/scripts/519026/feedback
+// @homepage https://greasyfork.org/scripts/519026
+// @supportURL https://greasyfork.org/scripts/519026/feedback
 // @downloadURL https://update.greasyfork.org/scripts/519026/Enhance%20some%20features%20of%20the%20Self-managed%20Gitlab.user.js
 // @updateURL https://update.greasyfork.org/scripts/519026/Enhance%20some%20features%20of%20the%20Self-managed%20Gitlab.meta.js
 // @run-at document-end

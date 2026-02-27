@@ -21,7 +21,7 @@
 // @description:zh-TW 對開佈局、支持帶魚屏、自適應圖片高度、快捷翻頁、支持鍵盤操作
 // @description:zh-SG 对开布局、支持带鱼屏、自适应图片高度、快捷翻页、支持键盘操作
 // @description:zh-MY 对开布局、支持带鱼屏、自适应图片高度、快捷翻页、支持键盘操作
-// @version 50
+// @version 51
 // @author Arylo Yeung <arylo.open@gmail.com>
 // @connect unpkg.com
 // @license MIT
@@ -209,6 +209,7 @@
   });
 
   // src/monkey/copymanga-enhance/scripts/table/index.ts
+  var hasJapanese = (text) => /[\u0800-\u4e00]/.test(text);
   var table_default = () => {
     const directionModeKey = getDirectionModeKey();
     const directionMode = directionModeStorage.get(directionModeKey);
@@ -218,8 +219,20 @@
       directionModeStorage.set(directionModeKey, "ttb" /* TTB */);
       return;
     }
+    const bookName = $("h6").text();
+    if (hasJapanese(bookName)) {
+      console.log("Found Japanese book name");
+      directionModeStorage.set(directionModeKey, "rtl" /* RTL */);
+      return;
+    }
+    const bookAliasName = $("li:has(h6) + li > p").text();
+    if (hasJapanese(bookAliasName)) {
+      console.log("Found Japanese book alias name");
+      directionModeStorage.set(directionModeKey, "rtl" /* RTL */);
+      return;
+    }
     const authors = $('a[href^="/author"]').text();
-    if (/[\u0800-\u4e00]/.test(authors)) {
+    if (hasJapanese(authors)) {
       console.log("Found Japanese author");
       directionModeStorage.set(directionModeKey, "rtl" /* RTL */);
       return;

@@ -61,8 +61,8 @@
 // @include https://developers.weixin.qq.com/miniprogram/*
 // @license MIT
 // @resource font_css https://cdn.jsdelivr.net/npm/firacode@6.2.0/distr/fira_code.css
-// @homepage https://greasyfork.org/zh-CN/scripts/519936
-// @supportURL https://greasyfork.org/zh-CN/scripts/519936/feedback
+// @homepage https://greasyfork.org/scripts/519936
+// @supportURL https://greasyfork.org/scripts/519936/feedback
 // @downloadURL https://update.greasyfork.org/scripts/519936/Set%20Fira%20Code%20as%20font%20in%20development%20websites.user.js
 // @updateURL https://update.greasyfork.org/scripts/519936/Set%20Fira%20Code%20as%20font%20in%20development%20websites.meta.js
 // @run-at document-idle
