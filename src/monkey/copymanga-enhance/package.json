@@ -1,0 +1,23 @@
+{
+  "name": "@scripts/monkey-copymanga-enhance",
+  "version": "1.0.0",
+  "private": true,
+  "main": "index.ts",
+  "types": "index.ts",
+  "scripts": {
+    "lint": "concurrently npm:lint:*",
+    "lint:type-check": "tsc --noEmit",
+    "lint:oxlint": "oxlint"
+  },
+  "devDependencies": {
+    "@scripts/flow": "*",
+    "@scripts/gen-scroll-to": "*",
+    "@scripts/gen-storage": "*",
+    "@scripts/gm-polyfill": "*",
+    "@scripts/gm-vue": "*",
+    "@scripts/throttle": "*",
+    "concurrently": "^8.2.2",
+    "oxlint": "^1.24.0"
+  },
+  "license": "MIT"
+}

@@ -5,6 +5,9 @@
   "private": true,
   "main": "index.js",
   "scripts": {
+    "prebuild": "turbo run build",
+    "prelint": "turbo run lint",
+    "pretest": "turbo run test",
     "build": "concurrently npm:build:*",
     "build:qinglong": "ts-node ./etc/build/qinglong.ts",
     "build:monkey": "ts-node ./etc/build/monkey.ts",
@@ -23,17 +26,11 @@
   "engines": {
     "node": "24.12.0"
   },
+  "packageManager": "npm@11.6.2",
   "dependencies": {
     "@scripts/build-fs": "*",
-    "@scripts/gen-storage": "*",
-    "@scripts/gen-scroll-to": "*",
-    "@scripts/gm-polyfill": "*",
-    "@scripts/gm-vue": "*",
-    "@scripts/flow": "*",
-    "@scripts/function-control": "*",
     "@scripts/logger": "*",
     "@scripts/md-generator": "*",
-    "@scripts/throttle": "*",
     "@js-sh/js-sh": "^0.1.1",
     "classcat": "^5.0.5"
   },
@@ -54,6 +51,7 @@
     "md5-file": "^5.0.0",
     "nanoid": "^3.3.8",
     "ts-node": "^10.9.2",
+    "turbo": "^2.4.4",
     "typescript": "^5.4.5",
     "vitest": "^1.6.0",
     "vue": "^3.5.27",
@@ -61,6 +59,7 @@
     "yn": "^4.0.0"
   },
   "workspaces": [
-    "packages/*/*"
+    "packages/*/*",
+    "src/monkey/*"
   ]
 }
