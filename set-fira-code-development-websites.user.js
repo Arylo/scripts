@@ -3,7 +3,7 @@
 // @name:zh-CN 将Fira Code 作为开发用网站的代码字体
 // @description Unified use of `Fira Code` as the code font to enhance developers' awareness of the code on the page
 // @description:zh-CN 统一将`Fira Code`作为代码字体, 提高开发者对页面中的代码的感知度
-// @version 12
+// @version 13
 // @author Arylo Yeung <arylo.open@gmail.com>
 // @include https://webpack.js.org/*
 // @include https://rollupjs.org/*
@@ -52,24 +52,30 @@
 // ==/UserScript==
 "use strict";
 (() => {
-  // src/monkey/polyfill/GM_addStyle.ts
-  if (typeof window.GM_addStyle === "undefined") {
-    window.GM_addStyle = function GM_addStyle(cssContent) {
-      const head = document.getElementsByTagName("head")[0];
-      if (head) {
-        const styleElement = document.createElement("style");
-        styleElement.setAttribute("type", "text/css");
-        styleElement.textContent = cssContent;
-        head.appendChild(styleElement);
-        return styleElement;
-      }
-      return null;
-    };
+  // packages/monkey/gm-polyfill/GM_addStyle.ts
+  function GM_addStyle(...args) {
+    if (typeof window.GM_addStyle === "function") {
+      return window.GM_addStyle(...args);
+    }
+    const [cssContent] = args;
+    const head = document.getElementsByTagName("head")[0];
+    if (head) {
+      const styleElement = document.createElement("style");
+      styleElement.setAttribute("type", "text/css");
+      styleElement.textContent = cssContent;
+      head.appendChild(styleElement);
+      return styleElement;
+    }
+    return null;
   }
-  var GM_addStyle_default = window.GM_addStyle;
 
-  // src/monkey/polyfill/GM_getResourceText.ts
-  var GM_getResourceText_default = window.GM_getResourceText;
+  // packages/monkey/gm-polyfill/GM_getResourceText.ts
+  function GM_getResourceText(...args) {
+    if (typeof window.GM_getResourceText !== "function") {
+      throw new Error("GM_getResourceText is not available");
+    }
+    return window.GM_getResourceText(...args);
+  }
 
   // src/monkey/set-fira-code-development-websites/styles/template.css
   var template_default = '*{font-family:Fira Code,monospace!important;font-variant-ligatures:contextual;font-feature-settings:"calt"}\n';
@@ -97,8 +103,8 @@
     return template_default.replace(/\*/g, selectors.join(", "));
   }
   setTimeout(async () => {
-    const fontCssContent = (await GM_getResourceText_default("font_css")).replace(/(\burl\(["'])/g, "$1https://cdn.jsdelivr.net/npm/firacode@6.2.0/distr/");
-    GM_addStyle_default(fontCssContent);
+    const fontCssContent = (await GM_getResourceText("font_css")).replace(/(\burl\(["'])/g, "$1https://cdn.jsdelivr.net/npm/firacode@6.2.0/distr/");
+    GM_addStyle(fontCssContent);
     const codeSelectors = DEFAULT_CODE_SELECTORS;
     const parentSelectors = DEFAULT_PARENT_SELECTORS;
     const selectors = parseSelectors(codeSelectors, parentSelectors);
@@ -111,6 +117,6 @@
         selectors.push(".w3-code");
         break;
     }
-    GM_addStyle_default(parseFontString(selectors));
+    GM_addStyle(parseFontString(selectors));
   }, 25);
 })();

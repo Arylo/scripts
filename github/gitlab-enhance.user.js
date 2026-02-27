@@ -14,7 +14,7 @@
 // @description:zh-HK 強化自託管 Gitlab 的一些功能，如 CI/CD 設置頁面、合併請求創建/編輯頁面等。
 // @description:zh-Hant 強化自託管 Gitlab 的一些功能，如 CI/CD 設置頁面、合併請求創建/編輯頁面等。
 // @icon data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/PjwhRE9DVFlQRSBzdmcgIFBVQkxJQyAnLS8vVzNDLy9EVEQgU1ZHIDEuMS8vRU4nICAnaHR0cDovL3d3dy53My5vcmcvR3JhcGhpY3MvU1ZHLzEuMS9EVEQvc3ZnMTEuZHRkJz48c3ZnIGhlaWdodD0iNTEycHgiIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMCAwIDUxMiA1MTI7IiB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCA1MTIgNTEyIiB3aWR0aD0iNTEycHgiIHhtbDpzcGFjZT0icHJlc2VydmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPjxnIGlkPSJfeDMxXzQ0LWdpdGxhYiI+PGc+PGcgaWQ9IlhNTElEXzZfIj48Zz48Zz48cGF0aCBkPSJNNTIuNzUyLDIwNS41MDFsMjAzLjE4LDI2NC4wN2wtMjIyLjctMTY1LjI5Yy02LjExLTQuNTktOC43Mi0xMi41OC02LjM4LTE5Ljc3MWwyNS44Ny03OS4wNSAgICAgICBMNTIuNzUyLDIwNS41MDF6IiBzdHlsZT0iZmlsbDojRkNBMzI2OyIvPjwvZz48Zz48cG9seWdvbiBwb2ludHM9IjE3MS4zMDIsMjA1LjQ2MSAyNTYuMDEyLDQ2OS41NDEgMjU1LjkzMiw0NjkuNTcxIDUyLjc1MiwyMDUuNTAxIDUyLjgxMiwyMDUuNDYxICAgICAgICAgICAgICIgc3R5bGU9ImZpbGw6I0ZDNkQyNjsiLz48L2c+PGc+PHBvbHlnb24gcG9pbnRzPSIzNDAuNzMxLDIwNS40NjEgMjU2LjAyMSw0NjkuNTcxIDI1Ni4wMTIsNDY5LjU0MSAxNzEuMzAyLDIwNS40NjEgMTcxLjM5MiwyMDUuNDYxICAgICAgICAzNDAuNjQyLDIwNS40NjEgICAgICAiIHN0eWxlPSJmaWxsOiNFMjQzMjk7Ii8+PC9nPjxnPjxwb2x5Z29uIHBvaW50cz0iNDU5LjI5MiwyMDUuNTAxIDI1Ni4wMjEsNDY5LjU3MSAzNDAuNzMxLDIwNS40NjEgNDU5LjIzMSwyMDUuNDYxICAgICAgIiBzdHlsZT0iZmlsbDojRkM2RDI2OyIvPjwvZz48Zz48cGF0aCBkPSJNNDg1LjE5MSwyODQuNTExYzIuMjQsNy4xOS0wLjI3LDE1LjE4MS02LjQ3LDE5Ljc3MWwtMjIyLjcsMTY1LjI5bDIwMy4yNzEtMjY0LjA3bDAuMDI5LTAuMDQgICAgICAgTDQ4NS4xOTEsMjg0LjUxMXoiIHN0eWxlPSJmaWxsOiNGQ0EzMjY7Ii8+PC9nPjxnPjxwYXRoIGQ9Ik00MDguNDcyLDQ4LjQyMWw1MC43NiwxNTcuMDRoLTExOC41aC0wLjA5bDUwLjg1LTE1Ny4wNCAgICAgICBDMzk0LjM2MSw0MC40MzEsNDA1LjY4Miw0MC40MzEsNDA4LjQ3Miw0OC40MjF6IiBzdHlsZT0iZmlsbDojRTI0MzI5OyIvPjwvZz48Zz48cGF0aCBkPSJNMTcxLjM5MiwyMDUuNDYxaC0wLjA5SDUyLjgxMmw1MC43Ni0xNTcuMDRjMi44Ny03Ljk5LDE0LjE5LTcuOTksMTYuOTgsMCAgICAgICBDMTIwLjU1Miw0OC40MjEsMTcxLjMwMiwyMDUuNDYxLDE3MS4zOTIsMjA1LjQ2MXoiIHN0eWxlPSJmaWxsOiNFMjQzMjk7Ii8+PC9nPjwvZz48L2c+PC9nPjwvZz48ZyBpZD0iTGF5ZXJfMSIvPjwvc3ZnPg==
-// @version 15
+// @version 16
 // @author Arylo
 // @include /^https:\/\/(git(lab)?|code)\.[^/]+\/.*\/-\/settings\/ci_cd$/
 // @include /^https:\/\/(git(lab)?|code)\.[^/]+\/.*\/-\/merge_requests\/new\b/
@@ -31,28 +31,37 @@
 // ==/UserScript==
 "use strict";
 (() => {
-  // src/monkey/polyfill/GM_addStyle.ts
-  if (typeof window.GM_addStyle === "undefined") {
-    window.GM_addStyle = function GM_addStyle(cssContent) {
-      const head = document.getElementsByTagName("head")[0];
-      if (head) {
-        const styleElement = document.createElement("style");
-        styleElement.setAttribute("type", "text/css");
-        styleElement.textContent = cssContent;
-        head.appendChild(styleElement);
-        return styleElement;
-      }
-      return null;
-    };
+  // packages/monkey/gm-polyfill/GM_addStyle.ts
+  function GM_addStyle(...args) {
+    if (typeof window.GM_addStyle === "function") {
+      return window.GM_addStyle(...args);
+    }
+    const [cssContent] = args;
+    const head = document.getElementsByTagName("head")[0];
+    if (head) {
+      const styleElement = document.createElement("style");
+      styleElement.setAttribute("type", "text/css");
+      styleElement.textContent = cssContent;
+      head.appendChild(styleElement);
+      return styleElement;
+    }
+    return null;
   }
-  var GM_addStyle_default = window.GM_addStyle;
+
+  // packages/monkey/gm-polyfill/GM_setClipboard.ts
+  function GM_setClipboard(...args) {
+    if (typeof window.GM_setClipboard !== "function") {
+      throw new Error("GM_setClipboard is not available");
+    }
+    return window.GM_setClipboard(...args);
+  }
 
   // src/monkey/gitlab-enhance/settings/ci_cd.css
   var ci_cd_default = ".content-wrapper nav{max-width:100%}.content-wrapper .container-fluid{max-width:100%}.ci-variable-table table colgroup col:nth-child(3){width:100px}.ci-variable-table table colgroup col:nth-child(4){width:200px}.ci-variable-table table colgroup col:nth-child(5){width:50px}\n";
 
   // src/monkey/gitlab-enhance/settings/ci_cd.ts
   if (location.pathname.endsWith("/-/settings/ci_cd")) {
-    setTimeout(() => GM_addStyle_default(ci_cd_default), 25);
+    setTimeout(() => GM_addStyle(ci_cd_default), 25);
   }
 
   // src/monkey/gitlab-enhance/dashboard/merge_requests.ts
@@ -74,13 +83,13 @@
     setTimeout(hyperlinkResource, 1e3);
   }
 
-  // src/monkey/gitlab-enhance/utils.ts
+  // src/monkey/gitlab-enhance/utils/getButtonElement.ts
   var getButtonElement = (text2) => {
     const classnames = "gl-font-sm! gl-ml-3 gl-button btn btn-default btn-sm";
     return $(`<a class="${classnames}">${text2}</a>`);
   };
 
-  // packages/MdGenerator/MdTools.ts
+  // packages/general/MdGenerator/MdTools.ts
   var INDENT_SPACE_LENGTH = 2;
   function indent(level, content = "") {
     return `${Array((level - 1) * INDENT_SPACE_LENGTH).fill(" ").join("")}${content}`;
@@ -129,7 +138,7 @@
     return `[${selected ? "x" : " "}] ${text2}`.trimEnd();
   }
 
-  // packages/MdGenerator/index.ts
+  // packages/general/MdGenerator/index.ts
   function getOption(options, key, defaultValue) {
     return options[key] ?? defaultValue;
   }
@@ -279,9 +288,6 @@
   // src/monkey/gitlab-enhance/merge_requests/template.css
   var template_default = ".gl-display-flex:has([for=merge_request_description]){align-items:baseline}\n";
 
-  // src/monkey/polyfill/GM_setClipboard.ts
-  var GM_setClipboard_default = window.GM_setClipboard;
-
   // src/monkey/gitlab-enhance/merge_requests/template.ts
   var getBranchType = () => {
     const fromBranchName = $(".align-self-center code:not([data-branch-name])").text();
@@ -325,7 +331,7 @@
     });
   };
   var appendTemplateButton = () => {
-    GM_addStyle_default(template_default);
+    GM_addStyle(template_default);
     const text2 = "Copy Template";
     const btnElement = getButtonElement(text2);
     const templateContent = generateTemplate();
@@ -336,7 +342,7 @@
       setTimeoutId && clearTimeout(setTimeoutId);
       hint.text("Copying...");
       btnElement.after(hint);
-      await GM_setClipboard_default(templateContent, "text", () => {
+      await GM_setClipboard(templateContent, "text", () => {
         hint.text("Copied!");
         setTimeoutId = setTimeout(() => hint.remove(), 3e3);
       });

@@ -21,7 +21,7 @@
 // @description:zh-TW 對開佈局、支持帶魚屏、自適應圖片高度、快捷翻頁、支持鍵盤操作
 // @description:zh-SG 对开布局、支持带鱼屏、自适应图片高度、快捷翻页、支持键盘操作
 // @description:zh-MY 对开布局、支持带鱼屏、自适应图片高度、快捷翻页、支持键盘操作
-// @version 49
+// @version 50
 // @author Arylo Yeung <arylo.open@gmail.com>
 // @connect unpkg.com
 // @license MIT
@@ -104,24 +104,86 @@
     return acc;
   }, {});
 
-  // src/monkey/polyfill/GM_getValue.ts
-  var GM_getValue_default = window.GM_getValue;
+  // packages/monkey/gm-polyfill/GM_addStyle.ts
+  function GM_addStyle(...args) {
+    if (typeof window.GM_addStyle === "function") {
+      return window.GM_addStyle(...args);
+    }
+    const [cssContent] = args;
+    const head = document.getElementsByTagName("head")[0];
+    if (head) {
+      const styleElement = document.createElement("style");
+      styleElement.setAttribute("type", "text/css");
+      styleElement.textContent = cssContent;
+      head.appendChild(styleElement);
+      return styleElement;
+    }
+    return null;
+  }
 
-  // src/monkey/polyfill/GM_setValue.ts
-  var GM_setValue_default = window.GM_setValue;
+  // packages/monkey/gm-polyfill/GM_getResourceText.ts
+  function GM_getResourceText(...args) {
+    if (typeof window.GM_getResourceText !== "function") {
+      throw new Error("GM_getResourceText is not available");
+    }
+    return window.GM_getResourceText(...args);
+  }
 
-  // src/monkey/copymanga-enhance/scripts/utils/genStorage.ts
-  function serializer(value) {
+  // packages/monkey/gm-polyfill/GM_getValue.ts
+  function GM_getValue(...args) {
+    if (typeof window.GM_getValue !== "function") {
+      throw new Error("GM_getValue is not available");
+    }
+    return window.GM_getValue(...args);
+  }
+
+  // packages/monkey/gm-polyfill/GM_setValue.ts
+  function GM_setValue(...args) {
+    if (typeof window.GM_setValue !== "function") {
+      throw new Error("GM_setValue is not available");
+    }
+    return window.GM_setValue(...args);
+  }
+
+  // packages/general/genStorage/shared.ts
+  function defaultSerializer(value) {
     return JSON.stringify(value);
   }
-  function deserializer(value) {
+  function defaultDeserializer(value) {
     return JSON.parse(value);
   }
+  function resolveStorageOptions(options) {
+    const {
+      serializer = defaultSerializer,
+      deserializer = defaultDeserializer,
+      useCache = true
+    } = options || {};
+    return {
+      serializer,
+      deserializer,
+      useCache,
+      cacheMap: /* @__PURE__ */ new Map()
+    };
+  }
+  function getCachedValue(cacheMap, useCache, key) {
+    return useCache ? cacheMap.get(key) : null;
+  }
+  function setCachedValue(cacheMap, useCache, key, value) {
+    if (useCache) {
+      cacheMap.set(key, value);
+    }
+  }
+  function hasStorageValue(value) {
+    return typeof value !== "undefined" && value !== null;
+  }
+
+  // packages/general/genStorage/genStorage.ts
   function genStorage(options) {
-    const cacheMap = /* @__PURE__ */ new Map();
+    const { serializer, deserializer, useCache, cacheMap } = resolveStorageOptions(options);
     function getter(key, defaultValue) {
-      const result = cacheMap.get(key) ?? options?.load(key);
-      if (typeof result !== "undefined" && result !== null) {
+      const cached = getCachedValue(cacheMap, useCache, key);
+      const result = hasStorageValue(cached) ? cached : options?.load(key);
+      if (hasStorageValue(result)) {
         return deserializer(result);
       }
       return defaultValue;
@@ -131,7 +193,7 @@
       set(key, value) {
         const result = serializer(value);
         options?.save(key, result);
-        cacheMap.set(key, result);
+        setCachedValue(cacheMap, useCache, key, result);
       }
     };
   }
@@ -142,8 +204,8 @@
     return Object.freeze([comic2, "direction", "mode"].join("."));
   };
   var directionModeStorage = genStorage({
-    save: (key, value) => GM_setValue_default(key, value),
-    load: (key) => GM_getValue_default(key, null)
+    save: (key, value) => GM_setValue(key, value),
+    load: (key) => GM_getValue(key, null)
   });
 
   // src/monkey/copymanga-enhance/scripts/table/index.ts
@@ -167,43 +229,29 @@
   // src/monkey/copymanga-enhance/scripts/detail/template.html
   var template_default = '<div id="app" class="grid h-dvh max-h-dvh max-w-dvw min-h-dvh min-w-dvw overflow-hidden w-dvw"></div>';
 
-  // src/monkey/copymanga-enhance/scripts/detail/newPage/vue.ts
-  var {
-    createApp,
-    defineComponent,
-    readonly,
-    ref,
-    reactive,
-    computed,
-    isRef,
-    unref,
-    toRef,
-    toRefs,
-    onMounted,
-    onUnmounted,
-    watch,
-    watchEffect,
-    h,
-    compile,
-    Fragment
-  } = Vue;
-  var vue_default = Vue;
-
-  // src/monkey/polyfill/GM_addStyle.ts
-  if (typeof window.GM_addStyle === "undefined") {
-    window.GM_addStyle = function GM_addStyle(cssContent) {
-      const head = document.getElementsByTagName("head")[0];
-      if (head) {
-        const styleElement = document.createElement("style");
-        styleElement.setAttribute("type", "text/css");
-        styleElement.textContent = cssContent;
-        head.appendChild(styleElement);
-        return styleElement;
-      }
-      return null;
-    };
+  // packages/monkey/gm-vue/shared.ts
+  function getVueValue(key) {
+    return Vue[key];
   }
-  var GM_addStyle_default = window.GM_addStyle;
+
+  // packages/monkey/gm-vue/global.ts
+  var createApp = /* @__PURE__ */ getVueValue("createApp");
+  var defineComponent = /* @__PURE__ */ getVueValue("defineComponent");
+
+  // packages/monkey/gm-vue/render.ts
+  var h = /* @__PURE__ */ getVueValue("h");
+  var mergeProps = /* @__PURE__ */ getVueValue("mergeProps");
+
+  // packages/monkey/gm-vue/component.ts
+  var Fragment = /* @__PURE__ */ getVueValue("Fragment");
+
+  // packages/monkey/gm-vue/composition-api.ts
+  var readonly = /* @__PURE__ */ getVueValue("readonly");
+  var ref = /* @__PURE__ */ getVueValue("ref");
+  var computed = /* @__PURE__ */ getVueValue("computed");
+  var watch = /* @__PURE__ */ getVueValue("watch");
+  var unref = /* @__PURE__ */ getVueValue("unref");
+  var onMounted = /* @__PURE__ */ getVueValue("onMounted");
 
   // src/monkey/copymanga-enhance/scripts/detail/storages/imageWidth.ts
   var getImageWidthKey = () => {
@@ -211,8 +259,8 @@
     return Object.freeze([comic2, "image", "width"].join("."));
   };
   var imageWidthStorage = genStorage({
-    save: (key, value) => GM_setValue_default(key, value),
-    load: (key) => GM_getValue_default(key, null)
+    save: (key, value) => GM_setValue(key, value),
+    load: (key) => GM_getValue(key, null)
   });
 
   // src/monkey/copymanga-enhance/scripts/detail/storages/whitePage.ts
@@ -303,7 +351,7 @@
     return [whitePage, setter];
   }
 
-  // src/monkey/copymanga-enhance/scripts/detail/utils/genScrollTo.ts
+  // packages/browser/genScrollTo/index.ts
   var genScrollTo = (el) => (top, isSmooth = false) => el.scrollTo({
     top,
     left: 0,
@@ -352,10 +400,10 @@
         const { code } = event;
         switch (code.toLowerCase()) {
           case "ArrowLeft".toLowerCase():
-            prevUrl && (window.location.href = prevUrl);
+            if (prevUrl) window.location.href = prevUrl;
             break;
           case "ArrowRight".toLowerCase():
-            nextUrl && (window.location.href = nextUrl);
+            if (nextUrl) window.location.href = nextUrl;
             break;
           case "ArrowUp".toLowerCase():
             event.preventDefault();
@@ -379,7 +427,7 @@
     });
   }
 
-  // src/monkey/copymanga-enhance/scripts/utils/throttle.ts
+  // packages/general/throttle/index.ts
   function throttle(fn, wait = 300, options = {}) {
     const { leading = true, trailing = true } = options;
     let timer = null;
@@ -564,18 +612,14 @@
     setup(props) {
       return () => h(
         "div",
-        {
-          ...props,
-          class: cc([
-            "white-page portrait size-px",
-            props.class
-          ])
-        }
+        mergeProps({
+          class: "white-page portrait size-px"
+        }, props)
       );
     }
   });
 
-  // src/monkey/utils/flow.ts
+  // packages/general/flow/index.ts
   function flow(source, ...fns) {
     return fns.reduce((prev, fn) => fn(prev), source);
   }
@@ -789,7 +833,7 @@
   var AppBody_default = defineComponent({
     setup() {
       onMounted(() => {
-        GM_addStyle_default(style_default);
+        GM_addStyle(style_default);
       });
       const [imagesRef] = useImageList();
       const [directionModeRef2] = useDirectionMode();
@@ -869,7 +913,7 @@
       });
       const [whitePageRef2, setWhitePage] = useWhitePage();
       onMounted(() => {
-        GM_addStyle_default(style_default2);
+        GM_addStyle(style_default2);
       });
       const [directionModeRef2, setDirectionMode] = useDirectionMode();
       const [imageWidthRef2, setImageWidth] = useImageWidth();
@@ -960,7 +1004,7 @@
       useKeyWatcher();
       useMouseWatcher();
       onMounted(() => {
-        GM_addStyle_default(style_default3);
+        GM_addStyle(style_default3);
       });
       return () => h(Fragment, [
         h(AppHeader_default, { class: "app-header" }),
@@ -976,7 +1020,7 @@
   var render = () => {
     const app = createApp({
       setup() {
-        GM_addStyle_default(tailwind_default);
+        GM_addStyle(tailwind_default);
         return () => h(App_default);
       }
     });
@@ -991,7 +1035,7 @@
   var refreshImage = (cb) => {
     const nextTime = 15;
     let [cur, total] = [getCurrentCount(), getTotalCount()];
-    pre !== cur && console.log("Process:", getCurrentCount(), "/", getTotalCount());
+    if (pre !== cur) console.log("Process:", getCurrentCount(), "/", getTotalCount());
     if (total === 0 || cur < total) {
       windowScrollTo(document.getElementsByClassName("comicContent")[0].clientHeight, true);
       cur = getCurrentCount();
@@ -1020,16 +1064,13 @@
     return info;
   };
 
-  // src/monkey/polyfill/GM_getResourceText.ts
-  var GM_getResourceText_default = window.GM_getResourceText;
-
   // src/monkey/copymanga-enhance/scripts/detail/index.ts
   var renderNewPage = async () => {
     console.info("PageInfo:", storage_default.pageInfo);
     windowScrollTo(0);
     document.body.innerHTML = template_default;
     console.info("Start request vue library");
-    const textContent = await GM_getResourceText_default("vue");
+    const textContent = await GM_getResourceText("vue");
     const script = document.createElement("script");
     script.textContent = textContent;
     document.head.appendChild(script);
