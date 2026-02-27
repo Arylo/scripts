@@ -1,5 +1,4 @@
-import cc from "classcat";
-import { defineComponent, h } from '@scripts/gm-vue'
+import { defineComponent, h, mergeProps } from '@scripts/gm-vue'
 
 export default defineComponent({
   props: {
@@ -11,13 +10,9 @@ export default defineComponent({
   setup (props) {
     return () => h(
       'div',
-      {
-        ...props,
-        class: cc([
-          'white-page portrait size-px',
-          props.class,
-        ]),
-      },
+      mergeProps({
+        class: 'white-page portrait size-px',
+      }, props),
     )
   },
 })

@@ -1,3 +1,5 @@
-export * from './core'
+export * from './global'
+export * from './render'
 export * from './component'
-export * from './hook'
+export * from './composition-api'
+export * from './type.d'

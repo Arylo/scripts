@@ -9,8 +9,8 @@
   },
   "include": [
     "index.ts",
-    "core.ts",
+    "render.ts",
     "component.ts",
-    "hook.ts"
+    "composition-api.ts"
   ]
 }

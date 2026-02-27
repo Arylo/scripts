@@ -1,8 +1,13 @@
-declare const Vue: typeof import('vue')
+import { getVueValue } from './shared'
 
-export type { PropType } from 'vue'
+export const Fragment = /* @__PURE__ */ getVueValue('Fragment')
 
-export const {
-  Fragment,
-} = Vue
+export const KeepAlive = /* @__PURE__ */ getVueValue('KeepAlive')
 
+export const Transition = /* @__PURE__ */ getVueValue('Transition')
+
+export const TransitionGroup = /* @__PURE__ */ getVueValue('TransitionGroup')
+
+export const Teleport = /* @__PURE__ */ getVueValue('Teleport')
+
+export const Suspense = /* @__PURE__ */ getVueValue('Suspense')
