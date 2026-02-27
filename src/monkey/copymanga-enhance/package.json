@@ -4,11 +4,15 @@
   "private": true,
   "main": "index.ts",
   "types": "index.ts",
+  "license": "MIT",
   "scripts": {
     "test": "vitest run",
     "lint": "concurrently npm:lint:*",
     "lint:type-check": "tsc --noEmit",
     "lint:oxlint": "oxlint"
+  },
+  "dependencies": {
+    "classcat": "^5.0.5"
   },
   "devDependencies": {
     "@scripts/flow": "*",
@@ -19,6 +23,5 @@
     "@scripts/throttle": "*",
     "concurrently": "^8.2.2",
     "oxlint": "^1.24.0"
-  },
-  "license": "MIT"
+  }
 }

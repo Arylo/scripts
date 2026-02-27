@@ -16,10 +16,10 @@ export default function useKeyWatcher () {
       const { code } = event
       switch (code.toLowerCase()) {
         case 'ArrowLeft'.toLowerCase():
-          prevUrl && (window.location.href = prevUrl)
+          if (prevUrl) window.location.href = prevUrl
           break
         case 'ArrowRight'.toLowerCase():
-          nextUrl && (window.location.href = nextUrl)
+          if (nextUrl) window.location.href = nextUrl
           break
         case 'ArrowUp'.toLowerCase():
           event.preventDefault()

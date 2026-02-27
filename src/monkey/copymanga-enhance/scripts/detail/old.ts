@@ -10,7 +10,7 @@ let pre = -1
 export const refreshImage = (cb: Function) => {
   const nextTime = 15
   let [cur, total] = [getCurrentCount(), getTotalCount()]
-  pre !== cur && console.log('Process:', getCurrentCount(), '/', getTotalCount())
+  if (pre !== cur) console.log('Process:', getCurrentCount(), '/', getTotalCount())
   if (total === 0 || cur < total) {
     windowScrollTo(document.getElementsByClassName('comicContent')[0].clientHeight, true)
     cur = getCurrentCount()

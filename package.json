@@ -5,12 +5,14 @@
   "private": true,
   "main": "index.js",
   "scripts": {
-    "prebuild": "turbo run build",
-    "prelint": "turbo run lint",
+    "prebuild": "concurrently npm:prebuild:*",
+    "prebuild:monorepo": "turbo run build",
     "build": "concurrently npm:build:*",
     "build:qinglong": "ts-node ./etc/build/qinglong.ts",
     "build:monkey": "ts-node ./etc/build/monkey.ts",
     "build:readme": "ts-node ./etc/build/readme.ts",
+    "prelint": "concurrently npm:prelint:*",
+    "prelint:monorepo": "turbo run lint",
     "lint": "concurrently npm:lint:*",
     "lint:type-check": "tsc --noEmit",
     "test": "turbo run test"
@@ -30,8 +32,7 @@
     "@js-sh/js-sh": "^0.1.1",
     "@scripts/build-fs": "*",
     "@scripts/logger": "*",
-    "@scripts/md-generator": "*",
-    "classcat": "^5.0.5"
+    "@scripts/md-generator": "*"
   },
   "devDependencies": {
     "@iarna/toml": "^2.2.5",

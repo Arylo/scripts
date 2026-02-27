@@ -21,7 +21,8 @@ jobs:
             src/qinglong/**
             etc/**
             !etc/build/readme*
-            packages/**
+            packages/general/**
+            packages/node/**
             package*.json
             tsconfig.json
       - name: List all changed files
@@ -39,7 +40,9 @@ jobs:
             src/monkey/**
             etc/**
             !etc/build/readme*
-            packages/**
+            packages/general/**
+            packages/browser/**
+            packages/monkey/**
             package*.json
             tsconfig.json
       - name: List all changed files
@@ -86,9 +89,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Install dependencies
-        run: npm ci
+        run: npm ci --workspaces --include-workspace-root
       - name: TS Type Check
         run: npm run lint:type-check
+      - name: Lint for monorepo
+        run: npm run prelint:monorepo
       - name: unit test
         run: npm run test
   monkey_actions:
@@ -129,9 +134,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Install dependencies
-        run: npm ci
+        run: npm ci --workspaces --include-workspace-root
       - name: Generate Readme files
-        run: npm run build:readme
+        run: npm run prebuild:monorepo && npm run build:readme
       - name: Deploy Readme files
         if: github.event_name == 'push' && github.ref_name == github.event.repository.default_branch
         uses: JamesIves/github-pages-deploy-action@v4
