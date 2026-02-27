@@ -1,4 +1,4 @@
-import { getButtonElement } from "../utils"
+import { getButtonElement } from "../utils/getButtonElement"
 import { appendTemplateButton } from "./template"
 
 const appendAsTitleButton = () => {

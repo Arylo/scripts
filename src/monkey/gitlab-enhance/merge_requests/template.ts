@@ -1,7 +1,7 @@
 import { GM_addStyle } from '@scripts/gm-polyfill'
 import * as templateUtils from '@scripts/md-generator'
 import templateCss from './template.css'
-import { getButtonElement } from '../utils'
+import { getButtonElement } from '../utils/getButtonElement'
 import { GM_setClipboard } from '@scripts/gm-polyfill'
 
 enum BRANCH_TYPE {

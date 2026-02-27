@@ -7,14 +7,13 @@
   "scripts": {
     "prebuild": "turbo run build",
     "prelint": "turbo run lint",
-    "pretest": "turbo run test",
     "build": "concurrently npm:build:*",
     "build:qinglong": "ts-node ./etc/build/qinglong.ts",
     "build:monkey": "ts-node ./etc/build/monkey.ts",
     "build:readme": "ts-node ./etc/build/readme.ts",
     "lint": "concurrently npm:lint:*",
     "lint:type-check": "tsc --noEmit",
-    "test": "vitest"
+    "test": "turbo run test"
   },
   "keywords": [],
   "author": "Arylo Yeung <arylo.open@gmail.com>",
@@ -28,16 +27,15 @@
   },
   "packageManager": "npm@11.6.2",
   "dependencies": {
+    "@js-sh/js-sh": "^0.1.1",
     "@scripts/build-fs": "*",
     "@scripts/logger": "*",
     "@scripts/md-generator": "*",
-    "@js-sh/js-sh": "^0.1.1",
     "classcat": "^5.0.5"
   },
   "devDependencies": {
     "@iarna/toml": "^2.2.5",
     "@types/download": "^8.0.5",
-    "@types/jquery": "^3.5.30",
     "@types/lodash": "^4.17.13",
     "@types/md5": "^2.3.5",
     "@vitest/coverage-v8": "^1.6.0",
@@ -53,7 +51,6 @@
     "ts-node": "^10.9.2",
     "turbo": "^2.4.4",
     "typescript": "^5.4.5",
-    "vitest": "^1.6.0",
     "vue": "^3.5.27",
     "vue-demi": "^0.14.10",
     "yn": "^4.0.0"
