@@ -1,13 +1,13 @@
-import { defineComponent, h, unref, watch, onMounted, computed } from "@scripts/gm-vue";
-import useToastList from "../../hooks/useToastList";
-import cc from "classcat";
+import { GM_addStyle } from '@scripts/gm-polyfill'
+import { computed, defineComponent, h, onMounted, unref, watch } from '@scripts/gm-vue'
+import cc from 'classcat'
+import { GRID_MAP } from '../../constant'
+import useMouseOverPoint from '../../hooks/useMouseOverPoint'
+import useToastList from '../../hooks/useToastList'
 import css from './style.css'
-import { GM_addStyle } from "@scripts/gm-polyfill";
-import useMouseOverPoint from "../../hooks/useMouseOverPoint";
-import { GRID_MAP } from "../../constant";
 
 export default defineComponent({
-  setup () {
+  setup() {
     onMounted(() => {
       GM_addStyle(css)
     })
@@ -18,9 +18,8 @@ export default defineComponent({
       if (timer) clearTimeout(timer)
       if (toastList.length === 0) return
       const nearestExpiredAtToastList = toastList
-        .filter(t => typeof t.expiredAt === 'number')
-        .sort((a, b) => a.expiredAt! - b.expiredAt!)
-        [0]
+        .filter((t) => typeof t.expiredAt === 'number')
+        .sort((a, b) => a.expiredAt! - b.expiredAt!)[0]
       if (!nearestExpiredAtToastList) return
       const duration = nearestExpiredAtToastList.expiredAt! - Date.now()
       if (duration <= 0) {
@@ -33,6 +32,7 @@ export default defineComponent({
     })
     const [mouseOverPointRef] = useMouseOverPoint()
     const overPointRef = computed(() => {
+      /* oxfmt-ignore */
       let [
         top, left, bottom, right,
         topLeft, topRight, bottomLeft, bottomRight,
@@ -60,36 +60,39 @@ export default defineComponent({
     })
     const isNonOver = computed(() => {
       const { top, bottom, left, right } = unref(overPointRef)
-      return [top, bottom, left, right].every(v => v === false)
+      return [top, bottom, left, right].every((v) => v === false)
     })
 
-    return () => h(
-      'div',
-      {
-        popover: 'manual',
-        id: 'toast-group',
-        class: cc([
-          'm-0 p-[5px] border-0 w-fit h-fit',
-          'fixed left-0 w-dvw bg-transparent',
-          {
-            'top-auto': unref(overPointRef).top,
-            'top-(--header-height)': unref(overPointRef).bottom || unref(isNonOver),
-          },
-          'flex gap-[5px] items-center',
-          {
-            'flex-col-reverse': unref(overPointRef).top,
-            'flex-col': unref(overPointRef).bottom || unref(isNonOver),
-          },
-        ])
-      },
-      unref(toastListRef).map(toast => h(
+    return () =>
+      h(
         'div',
         {
-          key: toast.id,
-          class: 'toast-item text-white w-fit flex items-center',
+          popover: 'manual',
+          id: 'toast-group',
+          class: cc([
+            'm-0 p-[5px] border-0 w-fit h-fit',
+            'fixed left-0 w-dvw bg-transparent',
+            {
+              'top-auto': unref(overPointRef).top,
+              'top-(--header-height)': unref(overPointRef).bottom || unref(isNonOver),
+            },
+            'flex gap-[5px] items-center',
+            {
+              'flex-col-reverse': unref(overPointRef).top,
+              'flex-col': unref(overPointRef).bottom || unref(isNonOver),
+            },
+          ]),
         },
-        toast.content
-      ))
-    )
+        unref(toastListRef).map((toast) =>
+          h(
+            'div',
+            {
+              key: toast.id,
+              class: 'toast-item text-white w-fit flex items-center',
+            },
+            toast.content,
+          ),
+        ),
+      )
   },
 })

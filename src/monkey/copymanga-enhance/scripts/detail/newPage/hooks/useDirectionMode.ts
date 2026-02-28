@@ -1,12 +1,12 @@
-import storage from "../../storage"
-import { DirectionMode } from "../constant"
 import { onMounted, readonly, ref } from '@scripts/gm-vue'
+import storage from '../../storage'
+import { DirectionMode } from '../constant'
 
 const directionModeRef = ref<DirectionMode>(storage.directionMode)
 
-export default function useDirectionMode () {
+export default function useDirectionMode() {
   const directionMode = readonly(directionModeRef)
-  function setter (mode: DirectionMode) {
+  function setter(mode: DirectionMode) {
     directionModeRef.value = mode
     storage.directionMode = mode
   }

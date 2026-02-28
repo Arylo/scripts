@@ -1,6 +1,6 @@
-import parseConstant from "./scripts/utils/parseConstant";
-import startTable from './scripts/table';
-import startDetail from './scripts/detail';
+import startDetail from './scripts/detail'
+import startTable from './scripts/table'
+import parseConstant from './scripts/utils/parseConstant'
 
 const { comic, chapter } = parseConstant(location?.pathname)
 

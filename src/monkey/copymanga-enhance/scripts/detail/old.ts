@@ -2,7 +2,8 @@ import genScrollTo from '@scripts/gen-scroll-to'
 import { PageInfo } from './types'
 
 const getCurrentCount = () => $('.comicContent-list > li > img').length
-const getTotalCount = () => Number((document.getElementsByClassName('comicCount')[0] as HTMLDivElement).innerText)
+const getTotalCount = () =>
+  Number((document.getElementsByClassName('comicCount')[0] as HTMLDivElement).innerText)
 export const windowScrollTo = genScrollTo(window)
 
 let pre = -1
@@ -34,8 +35,12 @@ export const getPageInfo = () => {
     images: list,
     title: $('.header').get(0)?.innerText,
     menuUrl: footerElements.get(3)?.href,
-    prevUrl: footerElements.get(1)?.className.includes('prev-null') ? undefined : footerElements.get(1)?.href,
-    nextUrl: footerElements.get(2)?.className.includes('prev-null') ? undefined : footerElements.get(2)?.href,
+    prevUrl: footerElements.get(1)?.className.includes('prev-null')
+      ? undefined
+      : footerElements.get(1)?.href,
+    nextUrl: footerElements.get(2)?.className.includes('prev-null')
+      ? undefined
+      : footerElements.get(2)?.href,
   }
   return info
 }

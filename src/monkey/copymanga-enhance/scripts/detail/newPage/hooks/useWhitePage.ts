@@ -1,11 +1,11 @@
-import storage from "../../storage"
 import { onMounted, readonly, ref } from '@scripts/gm-vue'
+import storage from '../../storage'
 
 const whitePageRef = ref<boolean>(storage.whitePage)
 
-export default function useWhitePage () {
+export default function useWhitePage() {
   const whitePage = readonly(whitePageRef)
-  function setter (value: boolean) {
+  function setter(value: boolean) {
     whitePageRef.value = value
     storage.whitePage = value
   }

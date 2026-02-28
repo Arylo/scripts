@@ -1,23 +1,24 @@
 import { GM_addStyle } from '@scripts/gm-polyfill'
-import useKeyWatcher from "../../hooks/useKeyWatcher";
-import useMouseWatcher from "../../hooks/useMouseWatcher";
-import { defineComponent, Fragment, h, onMounted } from '@scripts/gm-vue'
-import AppBody from "../AppBody";
-import AppHeader from "../AppHeader";
-import ToastGroup from "../ToastGroup";
+import { Fragment, defineComponent, h, onMounted } from '@scripts/gm-vue'
+import useKeyWatcher from '../../hooks/useKeyWatcher'
+import useMouseWatcher from '../../hooks/useMouseWatcher'
+import AppBody from '../AppBody'
+import AppHeader from '../AppHeader'
+import ToastGroup from '../ToastGroup'
 import css from './style.css'
 
 export default defineComponent({
-  setup () {
+  setup() {
     useKeyWatcher()
     useMouseWatcher()
     onMounted(() => {
       GM_addStyle(css)
     })
-    return () => h(Fragment, [
-      h(AppHeader, { class: 'app-header' }),
-      h(AppBody, { class: 'app-body' }, 'Comic Content'),
-      h(ToastGroup),
-    ])
+    return () =>
+      h(Fragment, [
+        h(AppHeader, { class: 'app-header' }),
+        h(AppBody, { class: 'app-body' }, 'Comic Content'),
+        h(ToastGroup),
+      ])
   },
 })

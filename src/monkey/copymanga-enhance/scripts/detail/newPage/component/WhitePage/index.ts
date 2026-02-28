@@ -7,12 +7,16 @@ export default defineComponent({
       default: () => undefined,
     },
   },
-  setup (props) {
-    return () => h(
-      'div',
-      mergeProps({
-        class: 'white-page portrait size-px',
-      }, props),
-    )
+  setup(props) {
+    return () =>
+      h(
+        'div',
+        mergeProps(
+          {
+            class: 'white-page portrait size-px',
+          },
+          props,
+        ),
+      )
   },
 })

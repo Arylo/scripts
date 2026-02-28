@@ -1,53 +1,45 @@
 import flow from '@scripts/flow'
-import WhitePage from '../component/WhitePage'
-import { DirectionMode, PageType } from "../constant"
 import { defineComponent, onMounted, readonly, ref, unref, watch } from '@scripts/gm-vue'
-import useDirectionMode from "./useDirectionMode"
-import useImageInfoMap from "./useImageInfoMap"
-import useRawImageList from "./useRawImageList"
-import useWhitePage from "./useWhitePage"
-import Image from "../component/Image"
+import Image from '../component/Image'
+import WhitePage from '../component/WhitePage'
+import { DirectionMode, PageType } from '../constant'
+import useDirectionMode from './useDirectionMode'
+import useImageInfoMap from './useImageInfoMap'
+import useRawImageList from './useRawImageList'
+import useWhitePage from './useWhitePage'
 
 type ImageItem = {
-  component: ReturnType<typeof defineComponent> | string;
-  props: { key: string; pageType: PageType; } & Record<string, any>;
+  component: ReturnType<typeof defineComponent> | string
+  props: { key: string; pageType: PageType } & Record<string, any>
 }
 
-export default function useImageList () {
+export default function useImageList() {
   const rawImageListRef = useRawImageList()
   const infoMapRef = useImageInfoMap()
   const [whitePageRef] = useWhitePage()
   const [directionModeRef] = useDirectionMode()
   onMounted(() => refresh())
-  watch(
-    [
-      whitePageRef,
-      directionModeRef,
-      rawImageListRef,
-      infoMapRef,
-    ],
-    () => refresh()
-  )
+  watch([whitePageRef, directionModeRef, rawImageListRef, infoMapRef], () => refresh())
 
   const onLoaded = () => {
     refresh()
   }
   const parseImages = (urls: readonly string[] = []): ImageItem[] => {
     const infoMap = unref(infoMapRef)
-    return urls
-      .map((src, index) => {
-        const info = infoMap[index]
-        const pageType: PageType = info && info.type === PageType.LANDSCAPE ? PageType.LANDSCAPE : PageType.PORTRAIT
-        return {
-          component: Image,
-          props: {
-            src,
-            onLoaded,
-            key: `image-${index}`,
-            pageType,
-          },
-        }
-      })
+    return urls.map((src, index) => {
+      const info = infoMap[index]
+      const pageType: PageType =
+        info && info.type === PageType.LANDSCAPE ? PageType.LANDSCAPE : PageType.PORTRAIT
+      return {
+        component: Image,
+        props: {
+          src,
+          onLoaded,
+          key: `image-${index}`,
+          pageType,
+        },
+      }
+    })
   }
   const addFirstWhitePage = (list: ImageItem[]): ImageItem[] => {
     if (list.length === 0) return list
@@ -81,8 +73,11 @@ export default function useImageList () {
 
     const tempList: ImageItem[][] = []
     for (let index = 0; index < list.length; index++) {
-      const { props: { pageType } } = list[index]
-      let lastGroupPageType = tempList.length > 0 ? tempList[tempList.length - 1][0].props.pageType : null
+      const {
+        props: { pageType },
+      } = list[index]
+      let lastGroupPageType =
+        tempList.length > 0 ? tempList[tempList.length - 1][0].props.pageType : null
       if (pageType !== lastGroupPageType) {
         tempList.push([])
       }
@@ -94,7 +89,11 @@ export default function useImageList () {
       if (group.length % 2 === 0) continue
       group.push({
         component: WhitePage,
-        props: { key: `white-page-group-${groupIndex}`, class: 'auto', pageType: PageType.PORTRAIT },
+        props: {
+          key: `white-page-group-${groupIndex}`,
+          class: 'auto',
+          pageType: PageType.PORTRAIT,
+        },
       })
     }
     if (
@@ -106,11 +105,15 @@ export default function useImageList () {
       Array.from({ length: 4 - (group.length % 4) }).forEach((_, index) => {
         group.push({
           component: WhitePage,
-          props: { key: `white-page-group-${groupIndex + index}-end`, class: 'auto end', pageType: PageType.PORTRAIT },
+          props: {
+            key: `white-page-group-${groupIndex + index}-end`,
+            class: 'auto end',
+            pageType: PageType.PORTRAIT,
+          },
         })
       })
     }
-    return tempList.flat();
+    return tempList.flat()
   }
   const injectDataIndex = (list: ImageItem[]): ImageItem[] => {
     let portraitCount = 0
@@ -134,24 +137,24 @@ export default function useImageList () {
           side = portraitCount % 2 === 1 ? 'L' : 'R'
         }
       }
-      return ({
+      return {
         ...item,
         props: {
           ...item.props,
           'data-index': targetIndex,
           'data-side': side,
         },
-      })
+      }
     })
   }
   const imagesRef = ref<ImageItem[]>([])
-  function refresh () {
+  function refresh() {
     const list = flow(
       unref(rawImageListRef),
       parseImages,
       addFirstWhitePage,
       injectWhitePages,
-      injectDataIndex
+      injectDataIndex,
     )
     imagesRef.value = list
   }

@@ -17,7 +17,7 @@ export const GRID_CELL_TYPE = {
   SPACE: 'SPACE',
 } as const
 
-type GRID_CELL_TYPE = typeof GRID_CELL_TYPE[keyof typeof GRID_CELL_TYPE]
+type GRID_CELL_TYPE = (typeof GRID_CELL_TYPE)[keyof typeof GRID_CELL_TYPE]
 
 const fill = (value: GRID_CELL_TYPE, length: number) => Array.from({ length }, () => value)
 

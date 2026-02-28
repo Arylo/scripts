@@ -1,6 +1,6 @@
 import { genStorage } from '@scripts/gen-storage'
-import parseConstant from "../../utils/parseConstant"
-import { PageInfo } from "../types"
+import parseConstant from '../../utils/parseConstant'
+import { PageInfo } from '../types'
 
 export const getPageInfoKey = () => {
   const comic = parseConstant(location?.pathname).comic as string

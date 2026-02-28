@@ -1,9 +1,9 @@
-import { DirectionMode, PageType } from "../../constant";
-import useDirectionMode from "../../hooks/useDirectionMode";
-import useImageInfoMap from "../../hooks/useImageInfoMap";
-import useRawImageList from "../../hooks/useRawImageList";
-import useImageWidth from "../../hooks/useImageWidth";
 import { defineComponent, h, ref, unref } from '@scripts/gm-vue'
+import { DirectionMode, PageType } from '../../constant'
+import useDirectionMode from '../../hooks/useDirectionMode'
+import useImageInfoMap from '../../hooks/useImageInfoMap'
+import useImageWidth from '../../hooks/useImageWidth'
+import useRawImageList from '../../hooks/useRawImageList'
 
 export default defineComponent({
   props: {
@@ -12,7 +12,7 @@ export default defineComponent({
       required: true,
     },
   },
-  setup (props, { emit }) {
+  setup(props, { emit }) {
     const pageType = ref(PageType.PORTRAIT)
     const rawImageListRef = useRawImageList()
     const imageInfoMapRef = useImageInfoMap()
@@ -31,14 +31,15 @@ export default defineComponent({
       pageType.value = type
       emit('loaded')
     }
-    return () => h(
-      'img',
-      {
+    return () =>
+      h('img', {
         class: `comic-image ${unref(pageType)} ltr:w-auto ltr:h-(--body-height) rtl:w-auto rtl:h-(--body-height)`,
-        style: unref(directionModeRef) === DirectionMode.TTB ? { 'max-width': `${unref(imageWidthRef)}%` } : {},
+        style:
+          unref(directionModeRef) === DirectionMode.TTB
+            ? { 'max-width': `${unref(imageWidthRef)}%` }
+            : {},
         src: props.src,
         onLoad,
-      },
-    )
+      })
   },
 })

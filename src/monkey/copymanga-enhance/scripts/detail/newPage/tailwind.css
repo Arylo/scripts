@@ -182,46 +182,39 @@
 
 .ttb .ttb\:block,
 .ltr .ltr\:block,
-.rtl .rtl\:block
-{
+.rtl .rtl\:block {
   display: block;
 }
 
 .ttb .ttb\:flex,
 .ltr .ltr\:flex,
-.rtl .rtl\:flex
-{
+.rtl .rtl\:flex {
   display: flex;
 }
 
 .ttb .ttb\:hidden,
 .ltr .ltr\:hidden,
-.rtl .rtl\:hidden
-{
+.rtl .rtl\:hidden {
   display: none;
 }
 
 .ltr .ltr\:snap-y,
-.rtl .rtl\:snap-y
-{
+.rtl .rtl\:snap-y {
   scroll-snap-type: y var(--scroll-snap-strictness);
 }
 
 .ltr .ltr\:snap-center,
-.rtl .rtl\:snap-center
-{
+.rtl .rtl\:snap-center {
   scroll-snap-align: center;
 }
 
 .ltr .ltr\:w-auto,
-.rtl .rtl\:w-auto
-{
+.rtl .rtl\:w-auto {
   width: auto;
 }
 
 .ltr .ltr\:h-\(--body-height\),
-.rtl .rtl\:h-\(--body-height\)
-{
+.rtl .rtl\:h-\(--body-height\) {
   height: var(--body-height);
 }
 

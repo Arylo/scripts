@@ -1,7 +1,7 @@
-import { useId } from "@scripts/gm-vue";
-import useToastList from "./useToastList";
+import { useId } from '@scripts/gm-vue'
+import useToastList from './useToastList'
 
-export default function useToast () {
+export default function useToast() {
   const id = useId()
   const [_, { pushToast, removeToast, updateToastContent, getToast }] = useToastList()
   const hideToast = () => {

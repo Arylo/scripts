@@ -1,7 +1,7 @@
-import { onMounted } from '@scripts/gm-vue'
 import genScrollTo from '@scripts/gen-scroll-to'
+import { onMounted } from '@scripts/gm-vue'
 
-export default function useScrollBy () {
+export default function useScrollBy() {
   let scrollTo: ReturnType<typeof genScrollTo> | null = null
 
   const getScrollElement = () => {
@@ -29,7 +29,6 @@ export default function useScrollBy () {
   onMounted(() => {
     scrollTo = genScrollTo(getScrollElement()!)
   })
-
 
   return { scrollUp, scrollDown }
 }

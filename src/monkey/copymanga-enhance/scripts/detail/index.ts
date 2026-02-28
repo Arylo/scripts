@@ -1,8 +1,8 @@
-import html from './template.html'
+import { GM_getResourceText } from '@scripts/gm-polyfill'
 import { render } from './newPage'
 import { getPageInfo, refreshImage, windowScrollTo } from './old'
 import storage from './storage'
-import { GM_getResourceText } from '@scripts/gm-polyfill'
+import html from './template.html'
 
 const renderNewPage = async () => {
   console.info('PageInfo:', storage.pageInfo)
@@ -31,11 +31,14 @@ export default () => {
     console.info('Non found cache')
     refreshImage(() => {
       const info = getPageInfo()
-      storage.pageInfo = Object.assign({
-        prevUrl: void 0,
-        nextUrl: void 0,
-        menuUrl: void 0,
-      }, info)
+      storage.pageInfo = Object.assign(
+        {
+          prevUrl: void 0,
+          nextUrl: void 0,
+          menuUrl: void 0,
+        },
+        info,
+      )
       renderNewPage()
     })
   }, 25)

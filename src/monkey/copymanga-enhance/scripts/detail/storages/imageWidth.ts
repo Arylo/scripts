@@ -1,6 +1,6 @@
-import { GM_getValue, GM_setValue } from '@scripts/gm-polyfill'
 import { genStorage } from '@scripts/gen-storage'
-import parseConstant from "../../utils/parseConstant"
+import { GM_getValue, GM_setValue } from '@scripts/gm-polyfill'
+import parseConstant from '../../utils/parseConstant'
 
 export const getImageWidthKey = () => {
   const comic = parseConstant(location?.pathname).comic as string

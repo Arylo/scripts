@@ -1,7 +1,7 @@
 #toast-group .toast-item {
   animation: fade-in-up 0.3s ease-out;
   border-radius: 7px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   background: #333;
   padding: 6px 14px;
 }

@@ -1,0 +1,11 @@
+{
+  "singleQuote": true,
+  "semi": false,
+  "sortImports": {
+    "newlinesBetween": false
+  },
+  "ignorePatterns": [
+    "*.md",
+    "*.json"
+  ]
+}

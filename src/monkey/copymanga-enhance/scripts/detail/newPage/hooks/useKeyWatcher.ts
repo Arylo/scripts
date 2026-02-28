@@ -1,9 +1,9 @@
 import { computed, onMounted, unref } from '@scripts/gm-vue'
-import usePageInfo from "./usePageInfo";
-import useWhitePage from "./useWhitePage";
-import useScrollBy from "./useScrollBy";
+import usePageInfo from './usePageInfo'
+import useScrollBy from './useScrollBy'
+import useWhitePage from './useWhitePage'
 
-export default function useKeyWatcher () {
+export default function useKeyWatcher() {
   const pageInfoRef = usePageInfo()
   const prevUrlRef = computed(() => unref(pageInfoRef).prevUrl)
   const nextUrlRef = computed(() => unref(pageInfoRef).nextUrl)

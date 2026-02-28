@@ -1,12 +1,12 @@
-import throttle from '@scripts/throttle'
-import { GRID_CELL_TYPE, GRID_MAP } from "../constant";
 import { onMounted, ref, unref, watch } from '@scripts/gm-vue'
-import useScrollBy from "./useScrollBy";
-import useMouseOverPoint from './useMouseOverPoint';
-import useMouseType from './useMouseType';
-import useToast from './useToast';
+import throttle from '@scripts/throttle'
+import { GRID_CELL_TYPE, GRID_MAP } from '../constant'
+import useMouseOverPoint from './useMouseOverPoint'
+import useMouseType from './useMouseType'
+import useScrollBy from './useScrollBy'
+import useToast from './useToast'
 
-export default function useMouseWatcher () {
+export default function useMouseWatcher() {
   const { scrollUp, scrollDown } = useScrollBy()
   const [_, setMouseOverPoint] = useMouseOverPoint()
   const actionPointRef = ref({ col: -1, row: -1 })
@@ -20,7 +20,8 @@ export default function useMouseWatcher () {
       const COUNT_COLUMN = GRID_MAP[0].length
       const COUNT_ROW = GRID_MAP.length
       const rect = appBody.getBoundingClientRect()
-      if (x < rect.left || x > rect.right || y < rect.top || y > rect.bottom) return { col: -1, row: -1 }
+      if (x < rect.left || x > rect.right || y < rect.top || y > rect.bottom)
+        return { col: -1, row: -1 }
       const colWidth = rect.width / COUNT_COLUMN
       const rowHeight = rect.height / COUNT_ROW
       const col = Math.min(COUNT_COLUMN - 1, Math.max(0, Math.floor((x - rect.left) / colWidth)))
@@ -28,7 +29,7 @@ export default function useMouseWatcher () {
       return { col, row }
     }
 
-    const handleGridMove = throttle((info: { x: number, y: number }) => {
+    const handleGridMove = throttle((info: { x: number; y: number }) => {
       setMouseOverPoint(getGridPoint(info.x, info.y))
     }, 25)
 
@@ -46,8 +47,10 @@ export default function useMouseWatcher () {
 
     const handleGridClick = () => {
       switch (unref(actionMouseTypeRef)) {
-        case GRID_CELL_TYPE.PREV: return scrollUp()
-        case GRID_CELL_TYPE.NEXT: return scrollDown()
+        case GRID_CELL_TYPE.PREV:
+          return scrollUp()
+        case GRID_CELL_TYPE.NEXT:
+          return scrollDown()
       }
     }
 
