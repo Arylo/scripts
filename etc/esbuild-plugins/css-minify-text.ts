@@ -5,7 +5,7 @@ export const CSSMinifyTextPlugin: () => Plugin = () => ({
   name: 'CSSMinifyTextPlugin',
   setup (build) {
     build.onLoad({ filter: /\.css$/ }, async (args) => {
-      const fileContent = await fs.promises.readFile(args.path)
+      const fileContent = await fs.promises.readFile(args.path, 'utf-8')
       const css = await transform(fileContent, {
         loader: 'css',
         minify: true,

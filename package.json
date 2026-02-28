@@ -6,7 +6,7 @@
   "main": "index.js",
   "scripts": {
     "prebuild": "concurrently npm:prebuild:*",
-    "prebuild:monorepo": "turbo run build",
+    "prebuild:packages": "turbo run build -F='./packages/*/*'",
     "build": "concurrently npm:build:*",
     "build:qinglong": "ts-node ./etc/build/qinglong.ts",
     "build:monkey": "ts-node ./etc/build/monkey.ts",
