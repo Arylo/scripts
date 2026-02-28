@@ -8,14 +8,16 @@ const renderNewPage = async () => {
   console.info('PageInfo:', storage.pageInfo)
   windowScrollTo(0)
   document.body.innerHTML = html
-  console.info('Start request vue library')
+  console.info('Request vue library ...')
   const textContent = await GM_getResourceText('vue')
   const script = document.createElement('script')
   script.textContent = textContent
   document.head.appendChild(script)
+  console.info('Request vue library ... Done')
   setTimeout(() => {
-    console.info('Start render new page')
+    console.info('Inject custom image controller component ...')
     render()
+    console.info('Inject custom image controller component ... Done')
   }, 50)
 }
 

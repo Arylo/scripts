@@ -11,31 +11,27 @@ export enum PageType {
   WHITE_PAGE = 'white_page',
 }
 
-const GRID_CELL_TYPE = {
+export const GRID_CELL_TYPE = {
   PREV: 'PREV',
   NEXT: 'NEXT',
   SPACE: 'SPACE',
 } as const
 
-const GRID_MAP = (() => {
+type GRID_CELL_TYPE = typeof GRID_CELL_TYPE[keyof typeof GRID_CELL_TYPE]
+
+const fill = (value: GRID_CELL_TYPE, length: number) => Array.from({ length }, () => value)
+
+export const GRID_MAP = (() => {
   const P = GRID_CELL_TYPE.PREV
   const N = GRID_CELL_TYPE.NEXT
   const S = GRID_CELL_TYPE.SPACE
   return [
-    [P, P, P, P, P, P, P],
-    [P, P, P, P, P, P, P],
-    [P, P, S, S, N, N, N],
-    [P, P, S, S, N, N, N],
-    [P, P, S, S, N, N, N],
+    [...fill(P, 8)],
+    [...fill(P, 8)],
+    [...fill(P, 8)],
+    [...fill(P, 3), ...fill(S, 2), ...fill(N, 3)],
+    [...fill(P, 3), ...fill(S, 2), ...fill(N, 3)],
+    [...fill(P, 3), ...fill(S, 2), ...fill(N, 3)],
+    [...fill(P, 3), ...fill(S, 2), ...fill(N, 3)],
   ]
 })()
-
-export const GRID_COLUMN = Math.max(...GRID_MAP.map(row => row.length))
-export const GRID_ROW = GRID_MAP.length
-export const ACTION_GRID_MAP = GRID_MAP.reduce((acc, row, rowIndex) => {
-  row.forEach((cell, cellIndex) => {
-    acc[cell] = acc[cell] || []
-    acc[cell].push(rowIndex * GRID_COLUMN + cellIndex + 1)
-  })
-  return acc
-}, {} as Record<typeof GRID_CELL_TYPE[keyof typeof GRID_CELL_TYPE], number []>)

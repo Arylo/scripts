@@ -4,6 +4,7 @@ import useMouseWatcher from "../../hooks/useMouseWatcher";
 import { defineComponent, Fragment, h, onMounted } from '@scripts/gm-vue'
 import AppBody from "../AppBody";
 import AppHeader from "../AppHeader";
+import ToastGroup from "../ToastGroup";
 import css from './style.css'
 
 export default defineComponent({
@@ -16,6 +17,7 @@ export default defineComponent({
     return () => h(Fragment, [
       h(AppHeader, { class: 'app-header' }),
       h(AppBody, { class: 'app-body' }, 'Comic Content'),
+      h(ToastGroup),
     ])
   },
 })

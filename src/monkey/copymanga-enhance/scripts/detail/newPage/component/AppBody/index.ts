@@ -1,12 +1,12 @@
 import { GM_addStyle } from '@scripts/gm-polyfill'
 import cc from 'classcat'
-import { ACTION_GRID_MAP, DirectionMode } from "../../constant";
+import { DirectionMode, GRID_CELL_TYPE } from "../../constant";
 import useDirectionMode from "../../hooks/useDirectionMode";
 import { defineComponent, onMounted, unref, h } from '@scripts/gm-vue'
 import css from './style.css'
 import WhitePage from '../WhitePage';
-import useMouseGrid from "../../hooks/useMouseGrid";
 import useImageList from "../../hooks/useImageList";
+import useMouseType from '../../hooks/useMouseType';
 
 export default defineComponent({
   setup () {
@@ -15,14 +15,15 @@ export default defineComponent({
     })
     const [imagesRef] = useImageList()
     const [directionModeRef] = useDirectionMode()
-    const [mouseGridRef] = useMouseGrid()
+    const [mouseTypeRef] = useMouseType()
     return () => h(
       'div',
       {
+        id: 'app-body',
         class: cc([
           'app-body max-w-dvw',
           unref(directionModeRef),
-          { 'cursor-pointer': [...ACTION_GRID_MAP.PREV, ...ACTION_GRID_MAP.NEXT].includes(unref(mouseGridRef)) },
+          { 'cursor-pointer': unref(mouseTypeRef) === GRID_CELL_TYPE.PREV || unref(mouseTypeRef) === GRID_CELL_TYPE.NEXT },
         ])
       },
       [

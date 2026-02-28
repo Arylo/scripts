@@ -6,9 +6,10 @@ import useImageInfoMap from "../../hooks/useImageInfoMap";
 import useRawImageList from "../../hooks/useRawImageList";
 import usePageInfo from "../../hooks/usePageInfo";
 import useWhitePage from "../../hooks/useWhitePage";
-import { defineComponent, onMounted, unref, computed, h, Fragment } from '@scripts/gm-vue'
+import { defineComponent, onMounted, unref, computed, h, Fragment, watch } from '@scripts/gm-vue'
 import css from './style.css'
 import useImageWidth from "../../hooks/useImageWidth";
+import useToast from "../../hooks/useToast";
 
 const ImageWidths = [
   100, 90, 80, 70, 60, 50, 40, 30, 20,
@@ -16,6 +17,9 @@ const ImageWidths = [
 
 export default defineComponent({
   setup () {
+    onMounted(() => {
+      GM_addStyle(css)
+    })
     const pageInfoRef = usePageInfo()
     const titleRef = computed(() => unref(pageInfoRef).title)
     const titleUrlRef = computed(() => unref(pageInfoRef).menuUrl)
@@ -23,6 +27,8 @@ export default defineComponent({
     const nextUrlRef = computed(() => unref(pageInfoRef).nextUrl)
     const rawImageListRef = useRawImageList()
     const imageInfoMapRef = useImageInfoMap()
+
+    const { showToast, hideToast } = useToast()
     const loadingStatusRef = computed(() => {
       const total = unref(rawImageListRef).length
       const loaded = unref(imageInfoMapRef).filter(info => info).length
@@ -32,16 +38,23 @@ export default defineComponent({
         hint: loaded === total ? '' : `已加载 (${loaded} / ${total})`,
       }
     })
-    const [whitePageRef, setWhitePage] = useWhitePage()
-    onMounted(() => {
-      GM_addStyle(css)
+    watch(loadingStatusRef, (loadingStatus) => {
+      if (loadingStatus.hint) {
+        showToast(loadingStatus.hint)
+      } else {
+        hideToast()
+      }
     })
+
+
+    const [whitePageRef, setWhitePage] = useWhitePage()
 
     const [directionModeRef, setDirectionMode] = useDirectionMode()
     const [imageWidthRef, setImageWidth] = useImageWidth()
 
     return () => h('div',
       {
+        id: 'app-header',
         class: cc([
           'app-header',
           'max-w-dvw',
@@ -58,7 +71,6 @@ export default defineComponent({
             ]),
           },
           [
-            unref(loadingStatusRef).hint ? h('div', { class: 'loading-hint text-white' }, unref(loadingStatusRef).hint) : h(Fragment),
             h('select', { onChange: (event: Event) => setDirectionMode((event.target as HTMLSelectElement).value as DirectionMode) }, [
               h('option', { value: DirectionMode.RTL, selected: unref(directionModeRef) === DirectionMode.RTL }, '日漫模式'),
               h('option', { value: DirectionMode.LTR, selected: unref(directionModeRef) === DirectionMode.LTR }, '普通模式'),
