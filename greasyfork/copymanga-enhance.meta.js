@@ -10,6 +10,7 @@
 // @name:zh-TW 快樂看拷貝
 // @name:zh-SG 快乐看拷贝
 // @name:zh-MY 快乐看拷贝
+// @namespace https://greasyfork.org/users/1133279
 // @description support ultra-wide screen, adaptive image height, quick page turning, keyboard operation
 // @description:en support ultra-wide screen, adaptive image height, quick page turning, keyboard operation
 // @description:zh 对开布局、支持带鱼屏、自适应图片高度、快捷翻页、支持键盘操作
@@ -51,10 +52,10 @@
 // @match https://*.2026copy.com/comic/*
 // @require https://unpkg.com/vue@3/dist/vue.global.prod.js
 // @resource vue https://unpkg.com/vue@3/dist/vue.global.prod.js
-// @homepage https://github.com/Arylo/scripts#readme
-// @supportURL https://github.com/Arylo/scripts/issues
-// @downloadURL https://raw.githubusercontent.com/Arylo/scripts/monkey/copymanga-enhance.user.js
-// @updateURL https://raw.githubusercontent.com/Arylo/scripts/monkey/copymanga-enhance.meta.js
+// @homepage https://greasyfork.org/scripts/567817
+// @supportURL https://greasyfork.org/scripts/567817/feedback
+// @downloadURL https://update.greasyfork.org/scripts/567817/Enhance%20the%20copy%20manga%20site.user.js
+// @updateURL https://update.greasyfork.org/scripts/567817/Enhance%20the%20copy%20manga%20site.meta.js
 // @run-at document-end
 // @grant GM_getResourceText
 // @grant GM_addStyle

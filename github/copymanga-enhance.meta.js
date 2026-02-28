@@ -22,7 +22,7 @@
 // @description:zh-SG 对开布局、支持带鱼屏、自适应图片高度、快捷翻页、支持键盘操作
 // @description:zh-MY 对开布局、支持带鱼屏、自适应图片高度、快捷翻页、支持键盘操作
 // @version 52
-// @author Arylo Yeung <arylo.open@gmail.com>
+// @author Arylo
 // @connect unpkg.com
 // @license MIT
 // @match https://copymanga.com/comic/*
