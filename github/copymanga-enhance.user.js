@@ -21,7 +21,7 @@
 // @description:zh-TW 對開佈局、支持帶魚屏、自適應圖片高度、快捷翻頁、支持鍵盤操作
 // @description:zh-SG 对开布局、支持带鱼屏、自适应图片高度、快捷翻页、支持键盘操作
 // @description:zh-MY 对开布局、支持带鱼屏、自适应图片高度、快捷翻页、支持键盘操作
-// @version 51
+// @version 52
 // @author Arylo Yeung <arylo.open@gmail.com>
 // @connect unpkg.com
 // @license MIT
@@ -63,47 +63,6 @@
 // ==/UserScript==
 "use strict";
 (() => {
-  // src/monkey/copymanga-enhance/scripts/utils/parseConstant.ts
-  var parseConstant = (pathname) => {
-    const match = pathname.match(/\/comic\/(\w+)(?:\/chapter\/(\w+))?/);
-    if (!match) {
-      return {};
-    }
-    return {
-      comic: match[1],
-      chapter: match[2]
-    };
-  };
-  var parseConstant_default = parseConstant;
-
-  // src/monkey/copymanga-enhance/scripts/detail/newPage/constant.ts
-  var GRID_CELL_TYPE = {
-    PREV: "PREV",
-    NEXT: "NEXT",
-    SPACE: "SPACE"
-  };
-  var GRID_MAP = (() => {
-    const P = GRID_CELL_TYPE.PREV;
-    const N = GRID_CELL_TYPE.NEXT;
-    const S = GRID_CELL_TYPE.SPACE;
-    return [
-      [P, P, P, P, P, P, P],
-      [P, P, P, P, P, P, P],
-      [P, P, S, S, N, N, N],
-      [P, P, S, S, N, N, N],
-      [P, P, S, S, N, N, N]
-    ];
-  })();
-  var GRID_COLUMN = Math.max(...GRID_MAP.map((row) => row.length));
-  var GRID_ROW = GRID_MAP.length;
-  var ACTION_GRID_MAP = GRID_MAP.reduce((acc, row, rowIndex) => {
-    row.forEach((cell, cellIndex) => {
-      acc[cell] = acc[cell] || [];
-      acc[cell].push(rowIndex * GRID_COLUMN + cellIndex + 1);
-    });
-    return acc;
-  }, {});
-
   // packages/monkey/gm-polyfill/GM_addStyle.ts
   function GM_addStyle(...args) {
     if (typeof window.GM_addStyle === "function") {
@@ -144,6 +103,31 @@
     }
     return window.GM_setValue(...args);
   }
+
+  // packages/monkey/gm-vue/shared.ts
+  function getVueValue(key) {
+    return Vue[key];
+  }
+
+  // packages/monkey/gm-vue/global.ts
+  var createApp = /* @__PURE__ */ getVueValue("createApp");
+  var defineComponent = /* @__PURE__ */ getVueValue("defineComponent");
+
+  // packages/monkey/gm-vue/render.ts
+  var h = /* @__PURE__ */ getVueValue("h");
+  var mergeProps = /* @__PURE__ */ getVueValue("mergeProps");
+
+  // packages/monkey/gm-vue/component.ts
+  var Fragment = /* @__PURE__ */ getVueValue("Fragment");
+
+  // packages/monkey/gm-vue/composition-api.ts
+  var readonly = /* @__PURE__ */ getVueValue("readonly");
+  var ref = /* @__PURE__ */ getVueValue("ref");
+  var computed = /* @__PURE__ */ getVueValue("computed");
+  var watch = /* @__PURE__ */ getVueValue("watch");
+  var unref = /* @__PURE__ */ getVueValue("unref");
+  var onMounted = /* @__PURE__ */ getVueValue("onMounted");
+  var useId = /* @__PURE__ */ getVueValue("useId");
 
   // packages/general/genStorage/shared.ts
   function defaultSerializer(value) {
@@ -198,6 +182,19 @@
     };
   }
 
+  // src/monkey/copymanga-enhance/scripts/utils/parseConstant.ts
+  var parseConstant = (pathname) => {
+    const match = pathname.match(/\/comic\/(\w+)(?:\/chapter\/(\w+))?/);
+    if (!match) {
+      return {};
+    }
+    return {
+      comic: match[1],
+      chapter: match[2]
+    };
+  };
+  var parseConstant_default = parseConstant;
+
   // src/monkey/copymanga-enhance/storages/directionMode.ts
   var getDirectionModeKey = () => {
     const comic2 = parseConstant_default(location?.pathname).comic;
@@ -208,63 +205,27 @@
     load: (key) => GM_getValue(key, null)
   });
 
-  // src/monkey/copymanga-enhance/scripts/table/index.ts
-  var hasJapanese = (text) => /[\u0800-\u4e00]/.test(text);
-  var table_default = () => {
-    const directionModeKey = getDirectionModeKey();
-    const directionMode = directionModeStorage.get(directionModeKey);
-    if (directionMode) return;
-    const changeTiaoTag = $('a[href^="/comics?theme=changtiao"]');
-    if (changeTiaoTag.length) {
-      directionModeStorage.set(directionModeKey, "ttb" /* TTB */);
-      return;
-    }
-    const bookName = $("h6").text();
-    if (hasJapanese(bookName)) {
-      console.log("Found Japanese book name");
-      directionModeStorage.set(directionModeKey, "rtl" /* RTL */);
-      return;
-    }
-    const bookAliasName = $("li:has(h6) + li > p").text();
-    if (hasJapanese(bookAliasName)) {
-      console.log("Found Japanese book alias name");
-      directionModeStorage.set(directionModeKey, "rtl" /* RTL */);
-      return;
-    }
-    const authors = $('a[href^="/author"]').text();
-    if (hasJapanese(authors)) {
-      console.log("Found Japanese author");
-      directionModeStorage.set(directionModeKey, "rtl" /* RTL */);
-      return;
-    }
+  // src/monkey/copymanga-enhance/scripts/detail/newPage/constant.ts
+  var GRID_CELL_TYPE = {
+    PREV: "PREV",
+    NEXT: "NEXT",
+    SPACE: "SPACE"
   };
-
-  // src/monkey/copymanga-enhance/scripts/detail/template.html
-  var template_default = '<div id="app" class="grid h-dvh max-h-dvh max-w-dvw min-h-dvh min-w-dvw overflow-hidden w-dvw"></div>';
-
-  // packages/monkey/gm-vue/shared.ts
-  function getVueValue(key) {
-    return Vue[key];
-  }
-
-  // packages/monkey/gm-vue/global.ts
-  var createApp = /* @__PURE__ */ getVueValue("createApp");
-  var defineComponent = /* @__PURE__ */ getVueValue("defineComponent");
-
-  // packages/monkey/gm-vue/render.ts
-  var h = /* @__PURE__ */ getVueValue("h");
-  var mergeProps = /* @__PURE__ */ getVueValue("mergeProps");
-
-  // packages/monkey/gm-vue/component.ts
-  var Fragment = /* @__PURE__ */ getVueValue("Fragment");
-
-  // packages/monkey/gm-vue/composition-api.ts
-  var readonly = /* @__PURE__ */ getVueValue("readonly");
-  var ref = /* @__PURE__ */ getVueValue("ref");
-  var computed = /* @__PURE__ */ getVueValue("computed");
-  var watch = /* @__PURE__ */ getVueValue("watch");
-  var unref = /* @__PURE__ */ getVueValue("unref");
-  var onMounted = /* @__PURE__ */ getVueValue("onMounted");
+  var fill = (value, length) => Array.from({ length }, () => value);
+  var GRID_MAP = (() => {
+    const P = GRID_CELL_TYPE.PREV;
+    const N = GRID_CELL_TYPE.NEXT;
+    const S = GRID_CELL_TYPE.SPACE;
+    return [
+      [...fill(P, 8)],
+      [...fill(P, 8)],
+      [...fill(P, 8)],
+      [...fill(P, 3), ...fill(S, 2), ...fill(N, 3)],
+      [...fill(P, 3), ...fill(S, 2), ...fill(N, 3)],
+      [...fill(P, 3), ...fill(S, 2), ...fill(N, 3)],
+      [...fill(P, 3), ...fill(S, 2), ...fill(N, 3)]
+    ];
+  })();
 
   // src/monkey/copymanga-enhance/scripts/detail/storages/imageWidth.ts
   var getImageWidthKey = () => {
@@ -276,17 +237,6 @@
     load: (key) => GM_getValue(key, null)
   });
 
-  // src/monkey/copymanga-enhance/scripts/detail/storages/whitePage.ts
-  var getWhitePageKey = () => {
-    const comic2 = parseConstant_default(location?.pathname).comic;
-    const chapter2 = parseConstant_default(location?.pathname).chapter;
-    return Object.freeze([comic2, chapter2, "hasWhitePage"].join("."));
-  };
-  var whitePageStorage = genStorage({
-    save: (key, value) => localStorage.setItem(key, value),
-    load: (key) => localStorage.getItem(key)
-  });
-
   // src/monkey/copymanga-enhance/scripts/detail/storages/pageInfo.ts
   var getPageInfoKey = () => {
     const comic2 = parseConstant_default(location?.pathname).comic;
@@ -296,6 +246,17 @@
   var pageInfoStorage = genStorage({
     save: (key, value) => sessionStorage.setItem(key, value),
     load: (key) => sessionStorage.getItem(key)
+  });
+
+  // src/monkey/copymanga-enhance/scripts/detail/storages/whitePage.ts
+  var getWhitePageKey = () => {
+    const comic2 = parseConstant_default(location?.pathname).comic;
+    const chapter2 = parseConstant_default(location?.pathname).chapter;
+    return Object.freeze([comic2, chapter2, "hasWhitePage"].join("."));
+  };
+  var whitePageStorage = genStorage({
+    save: (key, value) => localStorage.setItem(key, value),
+    load: (key) => localStorage.getItem(key)
   });
 
   // src/monkey/copymanga-enhance/scripts/detail/storage.ts
@@ -350,20 +311,6 @@
     return readonly(rawData);
   }
 
-  // src/monkey/copymanga-enhance/scripts/detail/newPage/hooks/useWhitePage.ts
-  var whitePageRef = ref(storage_default.whitePage);
-  function useWhitePage() {
-    const whitePage = readonly(whitePageRef);
-    function setter(value) {
-      whitePageRef.value = value;
-      storage_default.whitePage = value;
-    }
-    onMounted(() => {
-      setter(storage_default.whitePage);
-    });
-    return [whitePage, setter];
-  }
-
   // packages/browser/genScrollTo/index.ts
   var genScrollTo = (el) => (top, isSmooth = false) => el.scrollTo({
     top,
@@ -397,6 +344,20 @@
       scrollTo = genScrollTo_default(getScrollElement());
     });
     return { scrollUp, scrollDown };
+  }
+
+  // src/monkey/copymanga-enhance/scripts/detail/newPage/hooks/useWhitePage.ts
+  var whitePageRef = ref(storage_default.whitePage);
+  function useWhitePage() {
+    const whitePage = readonly(whitePageRef);
+    function setter(value) {
+      whitePageRef.value = value;
+      storage_default.whitePage = value;
+    }
+    onMounted(() => {
+      setter(storage_default.whitePage);
+    });
+    return [whitePage, setter];
   }
 
   // src/monkey/copymanga-enhance/scripts/detail/newPage/hooks/useKeyWatcher.ts
@@ -506,49 +467,119 @@
     return throttled;
   }
 
-  // src/monkey/copymanga-enhance/scripts/detail/newPage/hooks/useMouseGrid.ts
-  var mouseFocusRef = ref(-1);
-  function useMouseGrid() {
-    const mouseGrid = readonly(mouseFocusRef);
+  // src/monkey/copymanga-enhance/scripts/detail/newPage/hooks/useMouseOverPoint.ts
+  var mouseOverPointRef = ref({ col: -1, row: -1 });
+  function useMouseOverPoint() {
+    const mouseOverPoint = readonly(mouseOverPointRef);
     function setter(value) {
-      mouseFocusRef.value = value;
+      mouseOverPointRef.value = value;
     }
-    return [mouseGrid, setter];
+    return [mouseOverPoint, setter];
+  }
+
+  // src/monkey/copymanga-enhance/scripts/detail/newPage/hooks/useMouseType.ts
+  function useMouseType(options) {
+    const [mouseOverPointRef2] = useMouseOverPoint();
+    const mouseTypeRef = computed(() => {
+      const { col, row } = unref(options) ?? unref(mouseOverPointRef2);
+      const result = col === -1 || row === -1 ? GRID_CELL_TYPE.SPACE : GRID_MAP[row]?.[col] ?? GRID_CELL_TYPE.SPACE;
+      return result;
+    });
+    return [mouseTypeRef];
+  }
+
+  // src/monkey/copymanga-enhance/scripts/detail/newPage/hooks/useToastList.ts
+  var toastListRef = ref([]);
+  function useToastList() {
+    const pushToast = (toast) => {
+      if (toast.expiredAt && toast.expiredAt <= Date.now()) {
+        return;
+      }
+      const toastList = unref(toastListRef);
+      toastList.push(toast);
+      toastListRef.value = toastList;
+    };
+    const removeToast = (id) => {
+      const toastList = unref(toastListRef);
+      const index = toastList.findIndex((t) => t.id === id);
+      if (index !== -1) {
+        toastList.splice(index, 1);
+        toastListRef.value = toastList;
+      }
+    };
+    const updateToastContent = (id, content) => {
+      const toastList = unref(toastListRef);
+      const toast = toastList.find((t) => t.id === id);
+      if (toast) {
+        toast.content = content;
+        toastListRef.value = toastList;
+      }
+    };
+    const hasToast = (id) => {
+      return toastListRef.value.some((t) => t.id === id);
+    };
+    const getToast = (id) => {
+      const toastList = unref(toastListRef);
+      return toastList.find((t) => t.id === id);
+    };
+    return [
+      readonly(toastListRef),
+      { pushToast, removeToast, updateToastContent, hasToast, getToast }
+    ];
+  }
+
+  // src/monkey/copymanga-enhance/scripts/detail/newPage/hooks/useToast.ts
+  function useToast() {
+    const id = useId();
+    const [_, { pushToast, removeToast, updateToastContent, getToast }] = useToastList();
+    const hideToast = () => {
+      removeToast(id);
+    };
+    const updateToast = (content) => {
+      updateToastContent(id, content);
+      return {
+        hide: () => hideToast(),
+        update: (newContent) => updateToast(newContent)
+      };
+    };
+    const showToast = (content, duration) => {
+      const currentToast = getToast(id);
+      if (currentToast) {
+        return updateToastContent(id, content);
+      }
+      pushToast({ id, content, expiredAt: duration ? Date.now() + duration : void 0 });
+      return {
+        hide: () => hideToast(),
+        update: (newContent) => updateToast(newContent)
+      };
+    };
+    return { showToast, hideToast };
   }
 
   // src/monkey/copymanga-enhance/scripts/detail/newPage/hooks/useMouseWatcher.ts
   function useMouseWatcher() {
     const { scrollUp, scrollDown } = useScrollBy();
-    const [mouseGridRef, setMouseGrid] = useMouseGrid();
+    const [_, setMouseOverPoint] = useMouseOverPoint();
+    const actionPointRef = ref({ col: -1, row: -1 });
+    const [actionMouseTypeRef] = useMouseType(actionPointRef);
     onMounted(() => {
       const appBody = document.querySelector(".app-body");
       if (!appBody) return;
-      const getGridIndex = (x, y) => {
-        const COUNT_COLUMN = GRID_COLUMN;
-        const COUNT_ROW = GRID_ROW;
+      const getGridPoint = (x, y) => {
+        const COUNT_COLUMN = GRID_MAP[0].length;
+        const COUNT_ROW = GRID_MAP.length;
         const rect = appBody.getBoundingClientRect();
-        if (x < rect.left || x > rect.right || y < rect.top || y > rect.bottom) return -1;
+        if (x < rect.left || x > rect.right || y < rect.top || y > rect.bottom)
+          return { col: -1, row: -1 };
         const colWidth = rect.width / COUNT_COLUMN;
         const rowHeight = rect.height / COUNT_ROW;
         const col = Math.min(COUNT_COLUMN - 1, Math.max(0, Math.floor((x - rect.left) / colWidth)));
         const row = Math.min(COUNT_ROW - 1, Math.max(0, Math.floor((y - rect.top) / rowHeight)));
-        return row * COUNT_COLUMN + col + 1;
+        return { col, row };
       };
       const handleGridMove = throttle((info) => {
-        const gridIndex = getGridIndex(info.x, info.y);
-        const currentGridIndex = unref(mouseGridRef);
-        if (gridIndex === currentGridIndex) return;
-        setMouseGrid(gridIndex);
+        setMouseOverPoint(getGridPoint(info.x, info.y));
       }, 25);
-      const handleGridClick = (info) => {
-        const gridIndex = getGridIndex(info.x, info.y);
-        if (ACTION_GRID_MAP.PREV.includes(gridIndex)) {
-          return scrollUp();
-        }
-        if (ACTION_GRID_MAP.NEXT.includes(gridIndex)) {
-          return scrollDown();
-        }
-      };
       appBody.addEventListener("mousemove", (event) => {
         const info = {
           x: event.clientX,
@@ -557,24 +588,40 @@
         handleGridMove(info);
       });
       appBody.addEventListener("mouseleave", () => {
-        setMouseGrid(-1);
+        setMouseOverPoint({ col: -1, row: -1 });
       });
+      const handleGridClick = () => {
+        switch (unref(actionMouseTypeRef)) {
+          case GRID_CELL_TYPE.PREV:
+            return scrollUp();
+          case GRID_CELL_TYPE.NEXT:
+            return scrollDown();
+        }
+      };
       appBody.addEventListener("click", (event) => {
-        const info = {
-          x: event.clientX,
-          y: event.clientY
-        };
-        handleGridClick(info);
+        actionPointRef.value = getGridPoint(event.clientX, event.clientY);
+        handleGridClick();
       });
       appBody.addEventListener("touchstart", (event) => {
         const touch = event.touches[0];
         if (!touch) return;
-        const info = {
-          x: touch.clientX,
-          y: touch.clientY
-        };
-        handleGridClick(info);
+        actionPointRef.value = getGridPoint(touch.clientX, touch.clientY);
+        handleGridClick();
       });
+    });
+    const [overMouseTypeRef] = useMouseType();
+    const { showToast, hideToast } = useToast();
+    watch(overMouseTypeRef, (type) => {
+      switch (type) {
+        case GRID_CELL_TYPE.PREV:
+          showToast("\u4E0A\u4E00\u9875");
+          break;
+        case GRID_CELL_TYPE.NEXT:
+          showToast("\u4E0B\u4E00\u9875");
+          break;
+        default:
+          hideToast();
+      }
     });
     return {};
   }
@@ -611,27 +658,6 @@
     return [directionMode, setter];
   }
 
-  // src/monkey/copymanga-enhance/scripts/detail/newPage/component/AppBody/style.css
-  var style_default = ".direction-wrapper{max-height:var(--body-height);overflow-y:scroll}.wrapper{flex-basis:100%;justify-content:center}@media (max-aspect-ratio: 5 / 3){.wrapper:has(>.white-page){display:none}}@media (min-aspect-ratio: 5 / 3){:is(.ltr,.rtl) .wrapper:has(>.portrait){flex-basis:50%}.wrapper{order:attr(data-index number)}.wrapper[data-side=L]{justify-content:flex-end;padding-left:5px}.wrapper[data-side=R]{justify-content:flex-start;padding-right:5px}}@media (min-aspect-ratio: 5 / 3) and (max-aspect-ratio: 9 / 3){:is(.ltr,.rtl) .wrapper:has(>.white-page):nth-last-child(2),:is(.ltr,.rtl) .wrapper:has(>.white-page):nth-last-child(2)+.wrapper:has(>.white-page){display:none}}@media (min-aspect-ratio: 9 / 3){:is(.ltr,.rtl) .wrapper:has(>.portrait){flex-basis:25%}}\n";
-
-  // src/monkey/copymanga-enhance/scripts/detail/newPage/component/WhitePage/index.ts
-  var WhitePage_default = defineComponent({
-    props: {
-      class: {
-        type: String,
-        default: () => void 0
-      }
-    },
-    setup(props) {
-      return () => h(
-        "div",
-        mergeProps({
-          class: "white-page portrait size-px"
-        }, props)
-      );
-    }
-  });
-
   // packages/general/flow/index.ts
   function flow(source, ...fns) {
     return fns.reduce((prev, fn) => fn(prev), source);
@@ -641,13 +667,6 @@
   var statusMap = ref([]);
   function useImageInfoMap() {
     return statusMap;
-  }
-
-  // src/monkey/copymanga-enhance/scripts/detail/newPage/hooks/useRawImageList.ts
-  function useRawImageList() {
-    const pageInfoRef = usePageInfo();
-    const imagesRef = computed(() => unref(pageInfoRef).images ?? []);
-    return imagesRef;
   }
 
   // src/monkey/copymanga-enhance/scripts/detail/newPage/hooks/useImageWidth.ts
@@ -662,6 +681,13 @@
       setter(storage_default.imageWidth);
     });
     return [imageWidth, setter];
+  }
+
+  // src/monkey/copymanga-enhance/scripts/detail/newPage/hooks/useRawImageList.ts
+  function useRawImageList() {
+    const pageInfoRef = usePageInfo();
+    const imagesRef = computed(() => unref(pageInfoRef).images ?? []);
+    return imagesRef;
   }
 
   // src/monkey/copymanga-enhance/scripts/detail/newPage/component/Image/index.ts
@@ -691,14 +717,32 @@
         pageType.value = type;
         emit("loaded");
       };
+      return () => h("img", {
+        class: `comic-image ${unref(pageType)} ltr:w-auto ltr:h-(--body-height) rtl:w-auto rtl:h-(--body-height)`,
+        style: unref(directionModeRef2) === "ttb" /* TTB */ ? { "max-width": `${unref(imageWidthRef2)}%` } : {},
+        src: props.src,
+        onLoad
+      });
+    }
+  });
+
+  // src/monkey/copymanga-enhance/scripts/detail/newPage/component/WhitePage/index.ts
+  var WhitePage_default = defineComponent({
+    props: {
+      class: {
+        type: String,
+        default: () => void 0
+      }
+    },
+    setup(props) {
       return () => h(
-        "img",
-        {
-          class: `comic-image ${unref(pageType)} ltr:w-auto ltr:h-(--body-height) rtl:w-auto rtl:h-(--body-height)`,
-          style: unref(directionModeRef2) === "ttb" /* TTB */ ? { "max-width": `${unref(imageWidthRef2)}%` } : {},
-          src: props.src,
-          onLoad
-        }
+        "div",
+        mergeProps(
+          {
+            class: "white-page portrait size-px"
+          },
+          props
+        )
       );
     }
   });
@@ -710,15 +754,7 @@
     const [whitePageRef2] = useWhitePage();
     const [directionModeRef2] = useDirectionMode();
     onMounted(() => refresh());
-    watch(
-      [
-        whitePageRef2,
-        directionModeRef2,
-        rawImageListRef,
-        infoMapRef
-      ],
-      () => refresh()
-    );
+    watch([whitePageRef2, directionModeRef2, rawImageListRef, infoMapRef], () => refresh());
     const onLoaded = () => {
       refresh();
     };
@@ -768,7 +804,9 @@
       if (!["rtl" /* RTL */, "ltr" /* LTR */].includes(unref(directionModeRef2))) return list;
       const tempList = [];
       for (let index = 0; index < list.length; index++) {
-        const { props: { pageType } } = list[index];
+        const {
+          props: { pageType }
+        } = list[index];
         let lastGroupPageType = tempList.length > 0 ? tempList[tempList.length - 1][0].props.pageType : null;
         if (pageType !== lastGroupPageType) {
           tempList.push([]);
@@ -781,7 +819,11 @@
         if (group.length % 2 === 0) continue;
         group.push({
           component: WhitePage_default,
-          props: { key: `white-page-group-${groupIndex}`, class: "auto", pageType: "portrait" /* PORTRAIT */ }
+          props: {
+            key: `white-page-group-${groupIndex}`,
+            class: "auto",
+            pageType: "portrait" /* PORTRAIT */
+          }
         });
       }
       if (tempList[tempList.length - 1][0].props.pageType === "portrait" /* PORTRAIT */ && tempList[tempList.length - 1].length % 4 !== 0) {
@@ -790,7 +832,11 @@
         Array.from({ length: 4 - group.length % 4 }).forEach((_, index) => {
           group.push({
             component: WhitePage_default,
-            props: { key: `white-page-group-${groupIndex + index}-end`, class: "auto end", pageType: "portrait" /* PORTRAIT */ }
+            props: {
+              key: `white-page-group-${groupIndex + index}-end`,
+              class: "auto end",
+              pageType: "portrait" /* PORTRAIT */
+            }
           });
         });
       }
@@ -842,6 +888,9 @@
     return [readonly(imagesRef), refresh];
   }
 
+  // src/monkey/copymanga-enhance/scripts/detail/newPage/component/AppBody/style.css
+  var style_default = ".direction-wrapper{max-height:var(--body-height);overflow-y:scroll}.wrapper{flex-basis:100%;justify-content:center}@media (max-aspect-ratio: 5 / 3){.wrapper:has(>.white-page){display:none}}@media (min-aspect-ratio: 5 / 3){:is(.ltr,.rtl) .wrapper:has(>.portrait){flex-basis:50%}.wrapper{order:attr(data-index number)}.wrapper[data-side=L]{justify-content:flex-end;padding-left:5px}.wrapper[data-side=R]{justify-content:flex-start;padding-right:5px}}@media (min-aspect-ratio: 5 / 3) and (max-aspect-ratio: 9 / 3){:is(.ltr,.rtl) .wrapper:has(>.white-page):nth-last-child(2),:is(.ltr,.rtl) .wrapper:has(>.white-page):nth-last-child(2)+.wrapper:has(>.white-page){display:none}}@media (min-aspect-ratio: 9 / 3){:is(.ltr,.rtl) .wrapper:has(>.portrait){flex-basis:25%}}\n";
+
   // src/monkey/copymanga-enhance/scripts/detail/newPage/component/AppBody/index.ts
   var AppBody_default = defineComponent({
     setup() {
@@ -850,14 +899,17 @@
       });
       const [imagesRef] = useImageList();
       const [directionModeRef2] = useDirectionMode();
-      const [mouseGridRef] = useMouseGrid();
+      const [mouseTypeRef] = useMouseType();
       return () => h(
         "div",
         {
+          id: "app-body",
           class: cc([
             "app-body max-w-dvw",
             unref(directionModeRef2),
-            { "cursor-pointer": [...ACTION_GRID_MAP.PREV, ...ACTION_GRID_MAP.NEXT].includes(unref(mouseGridRef)) }
+            {
+              "cursor-pointer": unref(mouseTypeRef) === GRID_CELL_TYPE.PREV || unref(mouseTypeRef) === GRID_CELL_TYPE.NEXT
+            }
           ])
         },
         [
@@ -871,20 +923,26 @@
                 "snap-mandatory ltr:snap-y rtl:snap-y"
               ])
             },
-            unref(imagesRef).map(({ component, props }) => h(
-              "div",
-              {
-                class: cc([
-                  "wrapper",
-                  "ltr:h-(--body-height) rtl:h-(--body-height)",
-                  "ltr:snap-center rtl:snap-center",
-                  "flex",
-                  { "hidden": unref(directionModeRef2) === "ttb" /* TTB */ && component === WhitePage_default }
-                ]),
-                ...Object.fromEntries(Object.entries(props).filter(([k]) => k.startsWith("data-")))
-              },
-              [h(component, { ...props })]
-            ))
+            unref(imagesRef).map(
+              ({ component, props }) => h(
+                "div",
+                {
+                  class: cc([
+                    "wrapper",
+                    "ltr:h-(--body-height) rtl:h-(--body-height)",
+                    "ltr:snap-center rtl:snap-center",
+                    "flex",
+                    {
+                      hidden: unref(directionModeRef2) === "ttb" /* TTB */ && component === WhitePage_default
+                    }
+                  ]),
+                  ...Object.fromEntries(
+                    Object.entries(props).filter(([k]) => k.startsWith("data-"))
+                  )
+                },
+                [h(component, { ...props })]
+              )
+            )
           )
         ]
       );
@@ -895,19 +953,12 @@
   var style_default2 = ".app-header{grid-template-columns:1fr 60px auto 60px 1fr}\n";
 
   // src/monkey/copymanga-enhance/scripts/detail/newPage/component/AppHeader/index.ts
-  var ImageWidths = [
-    100,
-    90,
-    80,
-    70,
-    60,
-    50,
-    40,
-    30,
-    20
-  ].sort((a, b) => b - a);
+  var ImageWidths = [100, 90, 80, 70, 60, 50, 40, 30, 20].sort((a, b) => b - a);
   var AppHeader_default = defineComponent({
     setup() {
+      onMounted(() => {
+        GM_addStyle(style_default2);
+      });
       const pageInfoRef = usePageInfo();
       const titleRef = computed(() => unref(pageInfoRef).title);
       const titleUrlRef = computed(() => unref(pageInfoRef).menuUrl);
@@ -915,6 +966,7 @@
       const nextUrlRef = computed(() => unref(pageInfoRef).nextUrl);
       const rawImageListRef = useRawImageList();
       const imageInfoMapRef = useImageInfoMap();
+      const { showToast, hideToast } = useToast();
       const loadingStatusRef = computed(() => {
         const total = unref(rawImageListRef).length;
         const loaded = unref(imageInfoMapRef).filter((info) => info).length;
@@ -924,37 +976,61 @@
           hint: loaded === total ? "" : `\u5DF2\u52A0\u8F7D (${loaded} / ${total})`
         };
       });
-      const [whitePageRef2, setWhitePage] = useWhitePage();
-      onMounted(() => {
-        GM_addStyle(style_default2);
+      watch(loadingStatusRef, (loadingStatus) => {
+        if (loadingStatus.hint) {
+          showToast(loadingStatus.hint);
+        } else {
+          hideToast();
+        }
       });
+      const [whitePageRef2, setWhitePage] = useWhitePage();
       const [directionModeRef2, setDirectionMode] = useDirectionMode();
       const [imageWidthRef2, setImageWidth] = useImageWidth();
       return () => h(
         "div",
         {
-          class: cc([
-            "app-header",
-            "max-w-dvw",
-            "grid items-center gap-x-[5px]"
-          ])
+          id: "app-header",
+          class: cc(["app-header", "max-w-dvw", "grid items-center gap-x-[5px]"])
         },
         [
           h(
             "div",
             {
-              class: cc([
-                "left-space",
-                "flex flex-row justify-end items-center gap-x-[5px]"
-              ])
+              class: cc(["left-space", "flex flex-row justify-end items-center gap-x-[5px]"])
             },
             [
-              unref(loadingStatusRef).hint ? h("div", { class: "loading-hint text-white" }, unref(loadingStatusRef).hint) : h(Fragment),
-              h("select", { onChange: (event) => setDirectionMode(event.target.value) }, [
-                h("option", { value: "rtl" /* RTL */, selected: unref(directionModeRef2) === "rtl" /* RTL */ }, "\u65E5\u6F2B\u6A21\u5F0F"),
-                h("option", { value: "ltr" /* LTR */, selected: unref(directionModeRef2) === "ltr" /* LTR */ }, "\u666E\u901A\u6A21\u5F0F"),
-                h("option", { value: "ttb" /* TTB */, selected: unref(directionModeRef2) === "ttb" /* TTB */ }, "\u56FD\u6F2B\u6A21\u5F0F")
-              ])
+              h(
+                "select",
+                {
+                  onChange: (event) => setDirectionMode(event.target.value)
+                },
+                [
+                  h(
+                    "option",
+                    {
+                      value: "rtl" /* RTL */,
+                      selected: unref(directionModeRef2) === "rtl" /* RTL */
+                    },
+                    "\u65E5\u6F2B\u6A21\u5F0F"
+                  ),
+                  h(
+                    "option",
+                    {
+                      value: "ltr" /* LTR */,
+                      selected: unref(directionModeRef2) === "ltr" /* LTR */
+                    },
+                    "\u666E\u901A\u6A21\u5F0F"
+                  ),
+                  h(
+                    "option",
+                    {
+                      value: "ttb" /* TTB */,
+                      selected: unref(directionModeRef2) === "ttb" /* TTB */
+                    },
+                    "\u56FD\u6F2B\u6A21\u5F0F"
+                  )
+                ]
+              )
             ]
           ),
           h(
@@ -972,7 +1048,11 @@
             },
             "\u4E0A\u4E00\u9875"
           ),
-          h("a", { class: "comic-title text-white cursor-pointer", href: unref(titleUrlRef) }, unref(titleRef)),
+          h(
+            "a",
+            { class: "comic-title text-white cursor-pointer", href: unref(titleUrlRef) },
+            unref(titleRef)
+          ),
           h(
             "a",
             {
@@ -991,16 +1071,30 @@
           h(
             "div",
             {
-              class: cc([
-                "right-space",
-                "flex flex-row justify-start items-center gap-x-[5px]"
-              ])
+              class: cc(["right-space", "flex flex-row justify-start items-center gap-x-[5px]"])
             },
             [
-              ["rtl" /* RTL */, "ltr" /* LTR */].includes(unref(directionModeRef2)) ? h("div", { class: "white-page-toggle text-white cursor-pointer", onClick: () => setWhitePage(!unref(whitePageRef2)) }, unref(whitePageRef2) ? "\u5DF2\u52A0\u7A7A\u767D\u9875" : "\u672A\u52A0\u7A7A\u767D\u9875") : h(Fragment),
-              ["ttb" /* TTB */].includes(unref(directionModeRef2)) ? h("select", { onChange: (event) => setImageWidth(Number(event.target.value)) }, ImageWidths.map((v) => {
-                return h("option", { value: v, selected: unref(imageWidthRef2) === v }, `${v}%`);
-              })) : h(Fragment)
+              ["rtl" /* RTL */, "ltr" /* LTR */].includes(unref(directionModeRef2)) ? h(
+                "div",
+                {
+                  class: "white-page-toggle text-white cursor-pointer",
+                  onClick: () => setWhitePage(!unref(whitePageRef2))
+                },
+                unref(whitePageRef2) ? "\u5DF2\u52A0\u7A7A\u767D\u9875" : "\u672A\u52A0\u7A7A\u767D\u9875"
+              ) : h(Fragment),
+              ["ttb" /* TTB */].includes(unref(directionModeRef2)) ? h(
+                "select",
+                {
+                  onChange: (event) => setImageWidth(Number(event.target.value))
+                },
+                ImageWidths.map((v) => {
+                  return h(
+                    "option",
+                    { value: v, selected: unref(imageWidthRef2) === v },
+                    `${v}%`
+                  );
+                })
+              ) : h(Fragment)
             ]
           )
         ]
@@ -1008,8 +1102,109 @@
     }
   });
 
+  // src/monkey/copymanga-enhance/scripts/detail/newPage/component/ToastGroup/style.css
+  var style_default3 = "#toast-group .toast-item{animation:fade-in-up .3s ease-out;border-radius:7px;box-shadow:0 4px 12px #00000026;background:#333;padding:6px 14px}\n";
+
+  // src/monkey/copymanga-enhance/scripts/detail/newPage/component/ToastGroup/index.ts
+  var ToastGroup_default = defineComponent({
+    setup() {
+      onMounted(() => {
+        GM_addStyle(style_default3);
+      });
+      const [toastListRef2, { removeToast }] = useToastList();
+      let timer = null;
+      watch(toastListRef2, (toastList) => {
+        if (timer) clearTimeout(timer);
+        if (toastList.length === 0) return;
+        const nearestExpiredAtToastList = toastList.filter((t) => typeof t.expiredAt === "number").sort((a, b) => a.expiredAt - b.expiredAt)[0];
+        if (!nearestExpiredAtToastList) return;
+        const duration = nearestExpiredAtToastList.expiredAt - Date.now();
+        if (duration <= 0) {
+          removeToast(nearestExpiredAtToastList.id);
+          return;
+        }
+        timer = setTimeout(() => {
+          removeToast(nearestExpiredAtToastList.id);
+        }, duration);
+      });
+      const [mouseOverPointRef2] = useMouseOverPoint();
+      const overPointRef = computed(() => {
+        let [
+          top,
+          left,
+          bottom,
+          right,
+          topLeft,
+          topRight,
+          bottomLeft,
+          bottomRight
+        ] = [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ];
+        const { row, col } = unref(mouseOverPointRef2);
+        if (row === -1 || col === -1) {
+          return { top, left, bottom, right, topLeft, topRight, bottomLeft, bottomRight };
+        }
+        const COL_COUNT = GRID_MAP[0].length;
+        const ROW_COUNT = GRID_MAP.length;
+        const isTop = row < Math.floor(ROW_COUNT / 2);
+        const isLeft = col < Math.floor(COL_COUNT / 2);
+        top = isTop;
+        left = isLeft;
+        bottom = !isTop;
+        right = !isLeft;
+        topLeft = isTop && isLeft;
+        topRight = isTop && !isLeft;
+        bottomLeft = !isTop && isLeft;
+        bottomRight = !isTop && !isLeft;
+        return { top, left, bottom, right, topLeft, topRight, bottomLeft, bottomRight };
+      });
+      const isNonOver = computed(() => {
+        const { top, bottom, left, right } = unref(overPointRef);
+        return [top, bottom, left, right].every((v) => v === false);
+      });
+      return () => h(
+        "div",
+        {
+          popover: "manual",
+          id: "toast-group",
+          class: cc([
+            "m-0 p-[5px] border-0 w-fit h-fit",
+            "fixed left-0 w-dvw bg-transparent",
+            {
+              "top-auto": unref(overPointRef).top,
+              "top-(--header-height)": unref(overPointRef).bottom || unref(isNonOver)
+            },
+            "flex gap-[5px] items-center",
+            {
+              "flex-col-reverse": unref(overPointRef).top,
+              "flex-col": unref(overPointRef).bottom || unref(isNonOver)
+            }
+          ])
+        },
+        unref(toastListRef2).map(
+          (toast) => h(
+            "div",
+            {
+              key: toast.id,
+              class: "toast-item text-white w-fit flex items-center"
+            },
+            toast.content
+          )
+        )
+      );
+    }
+  });
+
   // src/monkey/copymanga-enhance/scripts/detail/newPage/component/App/style.css
-  var style_default3 = ":root{--header-height: 30px;--body-height: calc(100dvh - var(--header-height))}#app{grid-template-rows:var(--header-height) auto}\n";
+  var style_default4 = ":root{--header-height: 30px;--body-height: calc(100dvh - var(--header-height))}#app{grid-template-rows:var(--header-height) auto}\n";
 
   // src/monkey/copymanga-enhance/scripts/detail/newPage/component/App/index.ts
   var App_default = defineComponent({
@@ -1017,17 +1212,18 @@
       useKeyWatcher();
       useMouseWatcher();
       onMounted(() => {
-        GM_addStyle(style_default3);
+        GM_addStyle(style_default4);
       });
       return () => h(Fragment, [
         h(AppHeader_default, { class: "app-header" }),
-        h(AppBody_default, { class: "app-body" }, "Comic Content")
+        h(AppBody_default, { class: "app-body" }, "Comic Content"),
+        h(ToastGroup_default)
       ]);
     }
   });
 
   // src/monkey/copymanga-enhance/scripts/detail/newPage/tailwind.css
-  var tailwind_default = ".cursor-pointer{cursor:pointer}.size-px{width:1px;height:1px}.w-dvw{width:100dvw}.min-w-dvw{min-width:100dvw}.max-w-dvw{max-width:100dvw}.h-dvh{height:100dvh}.min-w-dvw{min-height:100dvh}.max-h-dvh{max-height:100dvh}.h-\\(--body-height\\){height:var(--body-height)}.max-h-\\(--body-height\\){max-height:var(--body-height)}.grid{display:grid}.flex{display:flex}.flex-row{flex-direction:row}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.justify-start{justify-content:flex-start}.justify-end{justify-content:flex-end}.justify-center{justify-content:center}.items-center{align-items:center}.basic-\\[33\\%\\]{flex-basis:33%}.basic-\\[50\\%\\]{flex-basis:50%}.basic-\\[100\\%\\]{flex-basis:100%}.gap-x-\\[5px\\]{column-gap:5px}.hidden{display:none}.overflow-hidden{overflow:hidden}.overflow-auto{overflow:auto}.overflow-x-hidden{overflow-x:hidden}.overflow-y-auto{overflow-y:auto}.text-white{color:#fff}.text-gray{color:gray}.text-gray\\!{color:gray!important}.text-center{text-align:center}.snap-mandatory{--scroll-snap-strictness: mandatory}.ttb .ttb\\:block,.ltr .ltr\\:block,.rtl .rtl\\:block{display:block}.ttb .ttb\\:flex,.ltr .ltr\\:flex,.rtl .rtl\\:flex{display:flex}.ttb .ttb\\:hidden,.ltr .ltr\\:hidden,.rtl .rtl\\:hidden{display:none}.ltr .ltr\\:snap-y,.rtl .rtl\\:snap-y{scroll-snap-type:y var(--scroll-snap-strictness)}.ltr .ltr\\:snap-center,.rtl .rtl\\:snap-center{scroll-snap-align:center}.ltr .ltr\\:w-auto,.rtl .rtl\\:w-auto{width:auto}.ltr .ltr\\:h-\\(--body-height\\),.rtl .rtl\\:h-\\(--body-height\\){height:var(--body-height)}\n";
+  var tailwind_default = ".cursor-pointer{cursor:pointer}.size-px{width:1px;height:1px}.m-0{margin:0}.p-\\[5px\\]{padding:5px}.w-fit{width:fit-content}.w-dvw{width:100dvw}.min-w-dvw{min-width:100dvw}.max-w-dvw{max-width:100dvw}.h-fit{height:fit-content}.h-dvh{height:100dvh}.min-w-dvw{min-height:100dvh}.max-h-dvh{max-height:100dvh}.h-\\(--body-height\\){height:var(--body-height)}.max-h-\\(--body-height\\){max-height:var(--body-height)}.grid{display:grid}.flex{display:flex}.flex-row{flex-direction:row}.flex-col{flex-direction:column}.flex-col-reverse{flex-direction:column-reverse}.flex-wrap{flex-wrap:wrap}.justify-start{justify-content:flex-start}.justify-end{justify-content:flex-end}.justify-center{justify-content:center}.items-center{align-items:center}.basic-\\[33\\%\\]{flex-basis:33%}.basic-\\[50\\%\\]{flex-basis:50%}.basic-\\[100\\%\\]{flex-basis:100%}.gap-\\[5px\\]{gap:5px}.gap-x-\\[5px\\]{column-gap:5px}.gap-y-\\[5px\\]{row-gap:5px}.fixed{position:fixed}.top-\\(--header-height\\){top:var(--header-height)}.top-auto{top:auto}.left-0{left:0}.hidden{display:none}.border-0{border-width:0}.overflow-hidden{overflow:hidden}.overflow-auto{overflow:auto}.overflow-x-hidden{overflow-x:hidden}.overflow-y-auto{overflow-y:auto}.bg-transparent{background-color:transparent}.text-white{color:#fff}.text-gray{color:gray}.text-gray\\!{color:gray!important}.text-center{text-align:center}.snap-mandatory{--scroll-snap-strictness: mandatory}.ttb .ttb\\:block,.ltr .ltr\\:block,.rtl .rtl\\:block{display:block}.ttb .ttb\\:flex,.ltr .ltr\\:flex,.rtl .rtl\\:flex{display:flex}.ttb .ttb\\:hidden,.ltr .ltr\\:hidden,.rtl .rtl\\:hidden{display:none}.ltr .ltr\\:snap-y,.rtl .rtl\\:snap-y{scroll-snap-type:y var(--scroll-snap-strictness)}.ltr .ltr\\:snap-center,.rtl .rtl\\:snap-center{scroll-snap-align:center}.ltr .ltr\\:w-auto,.rtl .rtl\\:w-auto{width:auto}.ltr .ltr\\:h-\\(--body-height\\),.rtl .rtl\\:h-\\(--body-height\\){height:var(--body-height)}\n";
 
   // src/monkey/copymanga-enhance/scripts/detail/newPage/index.ts
   var render = () => {
@@ -1077,19 +1273,24 @@
     return info;
   };
 
+  // src/monkey/copymanga-enhance/scripts/detail/template.html
+  var template_default = '<div id="app" class="grid h-dvh max-h-dvh max-w-dvw min-h-dvh min-w-dvw overflow-hidden w-dvw"></div>';
+
   // src/monkey/copymanga-enhance/scripts/detail/index.ts
   var renderNewPage = async () => {
     console.info("PageInfo:", storage_default.pageInfo);
     windowScrollTo(0);
     document.body.innerHTML = template_default;
-    console.info("Start request vue library");
+    console.info("Request vue library ...");
     const textContent = await GM_getResourceText("vue");
     const script = document.createElement("script");
     script.textContent = textContent;
     document.head.appendChild(script);
+    console.info("Request vue library ... Done");
     setTimeout(() => {
-      console.info("Start render new page");
+      console.info("Inject custom image controller component ...");
       render();
+      console.info("Inject custom image controller component ... Done");
     }, 50);
   };
   var detail_default = () => {
@@ -1102,14 +1303,48 @@
       console.info("Non found cache");
       refreshImage(() => {
         const info = getPageInfo();
-        storage_default.pageInfo = Object.assign({
-          prevUrl: void 0,
-          nextUrl: void 0,
-          menuUrl: void 0
-        }, info);
+        storage_default.pageInfo = Object.assign(
+          {
+            prevUrl: void 0,
+            nextUrl: void 0,
+            menuUrl: void 0
+          },
+          info
+        );
         renderNewPage();
       });
     }, 25);
+  };
+
+  // src/monkey/copymanga-enhance/scripts/table/index.ts
+  var hasJapanese = (text) => /[\u0800-\u4e00]/.test(text);
+  var table_default = () => {
+    const directionModeKey = getDirectionModeKey();
+    const directionMode = directionModeStorage.get(directionModeKey);
+    if (directionMode) return;
+    const changeTiaoTag = $('a[href^="/comics?theme=changtiao"]');
+    if (changeTiaoTag.length) {
+      directionModeStorage.set(directionModeKey, "ttb" /* TTB */);
+      return;
+    }
+    const bookName = $("h6").text();
+    if (hasJapanese(bookName)) {
+      console.log("Found Japanese book name");
+      directionModeStorage.set(directionModeKey, "rtl" /* RTL */);
+      return;
+    }
+    const bookAliasName = $("li:has(h6) + li > p").text();
+    if (hasJapanese(bookAliasName)) {
+      console.log("Found Japanese book alias name");
+      directionModeStorage.set(directionModeKey, "rtl" /* RTL */);
+      return;
+    }
+    const authors = $('a[href^="/author"]').text();
+    if (hasJapanese(authors)) {
+      console.log("Found Japanese author");
+      directionModeStorage.set(directionModeKey, "rtl" /* RTL */);
+      return;
+    }
   };
 
   // src/monkey/copymanga-enhance/index.ts
