@@ -1,4 +1,4 @@
-import { directionModeStorage, getDirectionModeKey } from '../../storages/directionMode'
+import { directionModeStorage, getDirectionModeKey } from '../storages/directionMode'
 import { DirectionMode } from './newPage/constant'
 import { getImageWidthKey, imageWidthStorage } from './storages/imageWidth'
 import { getPageInfoKey, pageInfoStorage } from './storages/pageInfo'

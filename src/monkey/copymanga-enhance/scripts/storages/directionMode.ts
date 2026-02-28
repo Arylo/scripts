@@ -1,7 +1,7 @@
 import { genStorage } from '@scripts/gen-storage'
 import { GM_getValue, GM_setValue } from '@scripts/gm-polyfill'
-import { DirectionMode } from '../scripts/detail/newPage/constant'
-import parseConstant from '../scripts/utils/parseConstant'
+import { DirectionMode } from '../detail/newPage/constant'
+import parseConstant from '../utils/parseConstant'
 
 export const getDirectionModeKey = () => {
   const comic = parseConstant(location?.pathname).comic as string

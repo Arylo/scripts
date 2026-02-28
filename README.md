@@ -197,7 +197,7 @@ Enhance some features of the Self-managed Gitlab
 
 #### Install Addresses
 
-[Github][copymanga-enhance_github_download_url]
+[Github][copymanga-enhance_github_download_url] | [Greasyfork][copymanga-enhance_greasyfork_download_url]
 
 #### Description
 
@@ -216,6 +216,7 @@ Enhance UX for copy manga comic page
 |Edge(Chromium)|![][unknown]|![][unknown] |            |
 
 [copymanga-enhance_github_download_url]: https://raw.githubusercontent.com/Arylo/scripts/monkey/copymanga-enhance.user.js
+[copymanga-enhance_greasyfork_download_url]: https://update.greasyfork.org/scripts/567817/Enhance%20the%20copy%20manga%20site.user.js
 [copymanga-enhance_github-last-update]: https://img.shields.io/github/last-commit/arylo/scripts/monkey?path=copymanga-enhance.user.js&style=flat&label=Last%20Update
 
 [pass]: https://img.shields.io/badge/-pass-green.svg?&logoColor=000&style=for-the-badge&cacheSeconds=7200
