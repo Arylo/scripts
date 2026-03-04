@@ -21,7 +21,7 @@
 // @description:zh-TW 統一將`Fira Code`作為代碼字體, 提高開發者對頁面中代碼的感知度
 // @description:zh-SG 统一将`Fira Code`作为代码字体, 提高开发者对页面中的代码的感知度
 // @description:zh-MY 统一将`Fira Code`作为代码字体, 提高开发者对页面中的代码的感知度
-// @version 14
+// @version 15
 // @author Arylo
 // @include https://webpack.js.org/*
 // @include https://rollupjs.org/*

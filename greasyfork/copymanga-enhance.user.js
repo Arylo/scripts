@@ -22,7 +22,7 @@
 // @description:zh-TW 對開佈局、支持帶魚屏、自適應圖片高度、快捷翻頁、支持鍵盤操作
 // @description:zh-SG 对开布局、支持带鱼屏、自适应图片高度、快捷翻页、支持键盘操作
 // @description:zh-MY 对开布局、支持带鱼屏、自适应图片高度、快捷翻页、支持键盘操作
-// @version 52
+// @version 53
 // @author Arylo
 // @connect unpkg.com
 // @license MIT
@@ -64,7 +64,7 @@
 // ==/UserScript==
 "use strict";
 (() => {
-  // packages/monkey/gm-polyfill/GM_addStyle.ts
+  // ../../../packages/monkey/gm-polyfill/GM_addStyle.ts
   function GM_addStyle(...args) {
     if (typeof window.GM_addStyle === "function") {
       return window.GM_addStyle(...args);
@@ -81,7 +81,7 @@
     return null;
   }
 
-  // packages/monkey/gm-polyfill/GM_getResourceText.ts
+  // ../../../packages/monkey/gm-polyfill/GM_getResourceText.ts
   function GM_getResourceText(...args) {
     if (typeof window.GM_getResourceText !== "function") {
       throw new Error("GM_getResourceText is not available");
@@ -89,7 +89,7 @@
     return window.GM_getResourceText(...args);
   }
 
-  // packages/monkey/gm-polyfill/GM_getValue.ts
+  // ../../../packages/monkey/gm-polyfill/GM_getValue.ts
   function GM_getValue(...args) {
     if (typeof window.GM_getValue !== "function") {
       throw new Error("GM_getValue is not available");
@@ -97,7 +97,7 @@
     return window.GM_getValue(...args);
   }
 
-  // packages/monkey/gm-polyfill/GM_setValue.ts
+  // ../../../packages/monkey/gm-polyfill/GM_setValue.ts
   function GM_setValue(...args) {
     if (typeof window.GM_setValue !== "function") {
       throw new Error("GM_setValue is not available");
@@ -105,23 +105,23 @@
     return window.GM_setValue(...args);
   }
 
-  // packages/monkey/gm-vue/shared.ts
+  // ../../../packages/monkey/gm-vue/shared.ts
   function getVueValue(key) {
     return Vue[key];
   }
 
-  // packages/monkey/gm-vue/global.ts
+  // ../../../packages/monkey/gm-vue/global.ts
   var createApp = /* @__PURE__ */ getVueValue("createApp");
   var defineComponent = /* @__PURE__ */ getVueValue("defineComponent");
 
-  // packages/monkey/gm-vue/render.ts
+  // ../../../packages/monkey/gm-vue/render.ts
   var h = /* @__PURE__ */ getVueValue("h");
   var mergeProps = /* @__PURE__ */ getVueValue("mergeProps");
 
-  // packages/monkey/gm-vue/component.ts
+  // ../../../packages/monkey/gm-vue/component.ts
   var Fragment = /* @__PURE__ */ getVueValue("Fragment");
 
-  // packages/monkey/gm-vue/composition-api.ts
+  // ../../../packages/monkey/gm-vue/composition-api.ts
   var readonly = /* @__PURE__ */ getVueValue("readonly");
   var ref = /* @__PURE__ */ getVueValue("ref");
   var computed = /* @__PURE__ */ getVueValue("computed");
@@ -130,7 +130,7 @@
   var onMounted = /* @__PURE__ */ getVueValue("onMounted");
   var useId = /* @__PURE__ */ getVueValue("useId");
 
-  // packages/general/genStorage/shared.ts
+  // ../../../packages/general/genStorage/shared.ts
   function defaultSerializer(value) {
     return JSON.stringify(value);
   }
@@ -162,7 +162,7 @@
     return typeof value !== "undefined" && value !== null;
   }
 
-  // packages/general/genStorage/genStorage.ts
+  // ../../../packages/general/genStorage/genStorage.ts
   function genStorage(options) {
     const { serializer, deserializer, useCache, cacheMap } = resolveStorageOptions(options);
     function getter(key, defaultValue) {
@@ -183,7 +183,7 @@
     };
   }
 
-  // src/monkey/copymanga-enhance/scripts/utils/parseConstant.ts
+  // scripts/utils/parseConstant.ts
   var parseConstant = (pathname) => {
     const match = pathname.match(/\/comic\/(\w+)(?:\/chapter\/(\w+))?/);
     if (!match) {
@@ -196,7 +196,7 @@
   };
   var parseConstant_default = parseConstant;
 
-  // src/monkey/copymanga-enhance/storages/directionMode.ts
+  // scripts/storages/directionMode.ts
   var getDirectionModeKey = () => {
     const comic2 = parseConstant_default(location?.pathname).comic;
     return Object.freeze([comic2, "direction", "mode"].join("."));
@@ -206,7 +206,7 @@
     load: (key) => GM_getValue(key, null)
   });
 
-  // src/monkey/copymanga-enhance/scripts/detail/newPage/constant.ts
+  // scripts/detail/newPage/constant.ts
   var GRID_CELL_TYPE = {
     PREV: "PREV",
     NEXT: "NEXT",
@@ -228,7 +228,7 @@
     ];
   })();
 
-  // src/monkey/copymanga-enhance/scripts/detail/storages/imageWidth.ts
+  // scripts/detail/storages/imageWidth.ts
   var getImageWidthKey = () => {
     const comic2 = parseConstant_default(location?.pathname).comic;
     return Object.freeze([comic2, "image", "width"].join("."));
@@ -238,7 +238,7 @@
     load: (key) => GM_getValue(key, null)
   });
 
-  // src/monkey/copymanga-enhance/scripts/detail/storages/pageInfo.ts
+  // scripts/detail/storages/pageInfo.ts
   var getPageInfoKey = () => {
     const comic2 = parseConstant_default(location?.pathname).comic;
     const chapter2 = parseConstant_default(location?.pathname).chapter;
@@ -249,7 +249,7 @@
     load: (key) => sessionStorage.getItem(key)
   });
 
-  // src/monkey/copymanga-enhance/scripts/detail/storages/whitePage.ts
+  // scripts/detail/storages/whitePage.ts
   var getWhitePageKey = () => {
     const comic2 = parseConstant_default(location?.pathname).comic;
     const chapter2 = parseConstant_default(location?.pathname).chapter;
@@ -260,7 +260,7 @@
     load: (key) => localStorage.getItem(key)
   });
 
-  // src/monkey/copymanga-enhance/scripts/detail/storage.ts
+  // scripts/detail/storage.ts
   var storage_default = {
     get imageWidth() {
       const imageWidthKey = getImageWidthKey();
@@ -303,7 +303,7 @@
     }
   };
 
-  // src/monkey/copymanga-enhance/scripts/detail/newPage/hooks/usePageInfo.ts
+  // scripts/detail/newPage/hooks/usePageInfo.ts
   function usePageInfo() {
     const rawData = ref(storage_default.pageInfo);
     onMounted(() => {
@@ -312,7 +312,7 @@
     return readonly(rawData);
   }
 
-  // packages/browser/genScrollTo/index.ts
+  // ../../../packages/browser/genScrollTo/index.ts
   var genScrollTo = (el) => (top, isSmooth = false) => el.scrollTo({
     top,
     left: 0,
@@ -320,7 +320,7 @@
   });
   var genScrollTo_default = genScrollTo;
 
-  // src/monkey/copymanga-enhance/scripts/detail/newPage/hooks/useScrollBy.ts
+  // scripts/detail/newPage/hooks/useScrollBy.ts
   function useScrollBy() {
     let scrollTo = null;
     const getScrollElement = () => {
@@ -347,7 +347,7 @@
     return { scrollUp, scrollDown };
   }
 
-  // src/monkey/copymanga-enhance/scripts/detail/newPage/hooks/useWhitePage.ts
+  // scripts/detail/newPage/hooks/useWhitePage.ts
   var whitePageRef = ref(storage_default.whitePage);
   function useWhitePage() {
     const whitePage = readonly(whitePageRef);
@@ -361,7 +361,7 @@
     return [whitePage, setter];
   }
 
-  // src/monkey/copymanga-enhance/scripts/detail/newPage/hooks/useKeyWatcher.ts
+  // scripts/detail/newPage/hooks/useKeyWatcher.ts
   function useKeyWatcher() {
     const pageInfoRef = usePageInfo();
     const prevUrlRef = computed(() => unref(pageInfoRef).prevUrl);
@@ -402,7 +402,7 @@
     });
   }
 
-  // packages/general/throttle/index.ts
+  // ../../../packages/general/throttle/index.ts
   function throttle(fn, wait = 300, options = {}) {
     const { leading = true, trailing = true } = options;
     let timer = null;
@@ -468,7 +468,7 @@
     return throttled;
   }
 
-  // src/monkey/copymanga-enhance/scripts/detail/newPage/hooks/useMouseOverPoint.ts
+  // scripts/detail/newPage/hooks/useMouseOverPoint.ts
   var mouseOverPointRef = ref({ col: -1, row: -1 });
   function useMouseOverPoint() {
     const mouseOverPoint = readonly(mouseOverPointRef);
@@ -478,7 +478,7 @@
     return [mouseOverPoint, setter];
   }
 
-  // src/monkey/copymanga-enhance/scripts/detail/newPage/hooks/useMouseType.ts
+  // scripts/detail/newPage/hooks/useMouseType.ts
   function useMouseType(options) {
     const [mouseOverPointRef2] = useMouseOverPoint();
     const mouseTypeRef = computed(() => {
@@ -489,7 +489,7 @@
     return [mouseTypeRef];
   }
 
-  // src/monkey/copymanga-enhance/scripts/detail/newPage/hooks/useToastList.ts
+  // scripts/detail/newPage/hooks/useToastList.ts
   var toastListRef = ref([]);
   function useToastList() {
     const pushToast = (toast) => {
@@ -529,7 +529,7 @@
     ];
   }
 
-  // src/monkey/copymanga-enhance/scripts/detail/newPage/hooks/useToast.ts
+  // scripts/detail/newPage/hooks/useToast.ts
   function useToast() {
     const id = useId();
     const [_, { pushToast, removeToast, updateToastContent, getToast }] = useToastList();
@@ -557,7 +557,7 @@
     return { showToast, hideToast };
   }
 
-  // src/monkey/copymanga-enhance/scripts/detail/newPage/hooks/useMouseWatcher.ts
+  // scripts/detail/newPage/hooks/useMouseWatcher.ts
   function useMouseWatcher() {
     const { scrollUp, scrollDown } = useScrollBy();
     const [_, setMouseOverPoint] = useMouseOverPoint();
@@ -627,7 +627,7 @@
     return {};
   }
 
-  // node_modules/classcat/index.js
+  // ../../../node_modules/classcat/index.js
   function cc(names) {
     if (typeof names === "string" || typeof names === "number") return "" + names;
     let out = "";
@@ -645,7 +645,7 @@
     return out;
   }
 
-  // src/monkey/copymanga-enhance/scripts/detail/newPage/hooks/useDirectionMode.ts
+  // scripts/detail/newPage/hooks/useDirectionMode.ts
   var directionModeRef = ref(storage_default.directionMode);
   function useDirectionMode() {
     const directionMode = readonly(directionModeRef);
@@ -659,18 +659,18 @@
     return [directionMode, setter];
   }
 
-  // packages/general/flow/index.ts
+  // ../../../packages/general/flow/index.ts
   function flow(source, ...fns) {
     return fns.reduce((prev, fn) => fn(prev), source);
   }
 
-  // src/monkey/copymanga-enhance/scripts/detail/newPage/hooks/useImageInfoMap.ts
+  // scripts/detail/newPage/hooks/useImageInfoMap.ts
   var statusMap = ref([]);
   function useImageInfoMap() {
     return statusMap;
   }
 
-  // src/monkey/copymanga-enhance/scripts/detail/newPage/hooks/useImageWidth.ts
+  // scripts/detail/newPage/hooks/useImageWidth.ts
   var imageWidthRef = ref(100);
   function useImageWidth() {
     const imageWidth = readonly(imageWidthRef);
@@ -684,14 +684,14 @@
     return [imageWidth, setter];
   }
 
-  // src/monkey/copymanga-enhance/scripts/detail/newPage/hooks/useRawImageList.ts
+  // scripts/detail/newPage/hooks/useRawImageList.ts
   function useRawImageList() {
     const pageInfoRef = usePageInfo();
     const imagesRef = computed(() => unref(pageInfoRef).images ?? []);
     return imagesRef;
   }
 
-  // src/monkey/copymanga-enhance/scripts/detail/newPage/component/Image/index.ts
+  // scripts/detail/newPage/component/Image/index.ts
   var Image_default = defineComponent({
     props: {
       src: {
@@ -727,7 +727,7 @@
     }
   });
 
-  // src/monkey/copymanga-enhance/scripts/detail/newPage/component/WhitePage/index.ts
+  // scripts/detail/newPage/component/WhitePage/index.ts
   var WhitePage_default = defineComponent({
     props: {
       class: {
@@ -748,7 +748,7 @@
     }
   });
 
-  // src/monkey/copymanga-enhance/scripts/detail/newPage/hooks/useImageList.ts
+  // scripts/detail/newPage/hooks/useImageList.ts
   function useImageList() {
     const rawImageListRef = useRawImageList();
     const infoMapRef = useImageInfoMap();
@@ -889,10 +889,10 @@
     return [readonly(imagesRef), refresh];
   }
 
-  // src/monkey/copymanga-enhance/scripts/detail/newPage/component/AppBody/style.css
+  // scripts/detail/newPage/component/AppBody/style.css
   var style_default = ".direction-wrapper{max-height:var(--body-height);overflow-y:scroll}.wrapper{flex-basis:100%;justify-content:center}@media (max-aspect-ratio: 5 / 3){.wrapper:has(>.white-page){display:none}}@media (min-aspect-ratio: 5 / 3){:is(.ltr,.rtl) .wrapper:has(>.portrait){flex-basis:50%}.wrapper{order:attr(data-index number)}.wrapper[data-side=L]{justify-content:flex-end;padding-left:5px}.wrapper[data-side=R]{justify-content:flex-start;padding-right:5px}}@media (min-aspect-ratio: 5 / 3) and (max-aspect-ratio: 9 / 3){:is(.ltr,.rtl) .wrapper:has(>.white-page):nth-last-child(2),:is(.ltr,.rtl) .wrapper:has(>.white-page):nth-last-child(2)+.wrapper:has(>.white-page){display:none}}@media (min-aspect-ratio: 9 / 3){:is(.ltr,.rtl) .wrapper:has(>.portrait){flex-basis:25%}}\n";
 
-  // src/monkey/copymanga-enhance/scripts/detail/newPage/component/AppBody/index.ts
+  // scripts/detail/newPage/component/AppBody/index.ts
   var AppBody_default = defineComponent({
     setup() {
       onMounted(() => {
@@ -950,10 +950,10 @@
     }
   });
 
-  // src/monkey/copymanga-enhance/scripts/detail/newPage/component/AppHeader/style.css
+  // scripts/detail/newPage/component/AppHeader/style.css
   var style_default2 = ".app-header{grid-template-columns:1fr 60px auto 60px 1fr}\n";
 
-  // src/monkey/copymanga-enhance/scripts/detail/newPage/component/AppHeader/index.ts
+  // scripts/detail/newPage/component/AppHeader/index.ts
   var ImageWidths = [100, 90, 80, 70, 60, 50, 40, 30, 20].sort((a, b) => b - a);
   var AppHeader_default = defineComponent({
     setup() {
@@ -1103,10 +1103,10 @@
     }
   });
 
-  // src/monkey/copymanga-enhance/scripts/detail/newPage/component/ToastGroup/style.css
+  // scripts/detail/newPage/component/ToastGroup/style.css
   var style_default3 = "#toast-group .toast-item{animation:fade-in-up .3s ease-out;border-radius:7px;box-shadow:0 4px 12px #00000026;background:#333;padding:6px 14px}\n";
 
-  // src/monkey/copymanga-enhance/scripts/detail/newPage/component/ToastGroup/index.ts
+  // scripts/detail/newPage/component/ToastGroup/index.ts
   var ToastGroup_default = defineComponent({
     setup() {
       onMounted(() => {
@@ -1204,10 +1204,10 @@
     }
   });
 
-  // src/monkey/copymanga-enhance/scripts/detail/newPage/component/App/style.css
+  // scripts/detail/newPage/component/App/style.css
   var style_default4 = ":root{--header-height: 30px;--body-height: calc(100dvh - var(--header-height))}#app{grid-template-rows:var(--header-height) auto}\n";
 
-  // src/monkey/copymanga-enhance/scripts/detail/newPage/component/App/index.ts
+  // scripts/detail/newPage/component/App/index.ts
   var App_default = defineComponent({
     setup() {
       useKeyWatcher();
@@ -1223,10 +1223,10 @@
     }
   });
 
-  // src/monkey/copymanga-enhance/scripts/detail/newPage/tailwind.css
+  // scripts/detail/newPage/tailwind.css
   var tailwind_default = ".cursor-pointer{cursor:pointer}.size-px{width:1px;height:1px}.m-0{margin:0}.p-\\[5px\\]{padding:5px}.w-fit{width:fit-content}.w-dvw{width:100dvw}.min-w-dvw{min-width:100dvw}.max-w-dvw{max-width:100dvw}.h-fit{height:fit-content}.h-dvh{height:100dvh}.min-w-dvw{min-height:100dvh}.max-h-dvh{max-height:100dvh}.h-\\(--body-height\\){height:var(--body-height)}.max-h-\\(--body-height\\){max-height:var(--body-height)}.grid{display:grid}.flex{display:flex}.flex-row{flex-direction:row}.flex-col{flex-direction:column}.flex-col-reverse{flex-direction:column-reverse}.flex-wrap{flex-wrap:wrap}.justify-start{justify-content:flex-start}.justify-end{justify-content:flex-end}.justify-center{justify-content:center}.items-center{align-items:center}.basic-\\[33\\%\\]{flex-basis:33%}.basic-\\[50\\%\\]{flex-basis:50%}.basic-\\[100\\%\\]{flex-basis:100%}.gap-\\[5px\\]{gap:5px}.gap-x-\\[5px\\]{column-gap:5px}.gap-y-\\[5px\\]{row-gap:5px}.fixed{position:fixed}.top-\\(--header-height\\){top:var(--header-height)}.top-auto{top:auto}.left-0{left:0}.hidden{display:none}.border-0{border-width:0}.overflow-hidden{overflow:hidden}.overflow-auto{overflow:auto}.overflow-x-hidden{overflow-x:hidden}.overflow-y-auto{overflow-y:auto}.bg-transparent{background-color:transparent}.text-white{color:#fff}.text-gray{color:gray}.text-gray\\!{color:gray!important}.text-center{text-align:center}.snap-mandatory{--scroll-snap-strictness: mandatory}.ttb .ttb\\:block,.ltr .ltr\\:block,.rtl .rtl\\:block{display:block}.ttb .ttb\\:flex,.ltr .ltr\\:flex,.rtl .rtl\\:flex{display:flex}.ttb .ttb\\:hidden,.ltr .ltr\\:hidden,.rtl .rtl\\:hidden{display:none}.ltr .ltr\\:snap-y,.rtl .rtl\\:snap-y{scroll-snap-type:y var(--scroll-snap-strictness)}.ltr .ltr\\:snap-center,.rtl .rtl\\:snap-center{scroll-snap-align:center}.ltr .ltr\\:w-auto,.rtl .rtl\\:w-auto{width:auto}.ltr .ltr\\:h-\\(--body-height\\),.rtl .rtl\\:h-\\(--body-height\\){height:var(--body-height)}\n";
 
-  // src/monkey/copymanga-enhance/scripts/detail/newPage/index.ts
+  // scripts/detail/newPage/index.ts
   var render = () => {
     const app = createApp({
       setup() {
@@ -1237,7 +1237,7 @@
     app.mount("#app");
   };
 
-  // src/monkey/copymanga-enhance/scripts/detail/old.ts
+  // scripts/detail/old.ts
   var getCurrentCount = () => $(".comicContent-list > li > img").length;
   var getTotalCount = () => Number(document.getElementsByClassName("comicCount")[0].innerText);
   var windowScrollTo = genScrollTo_default(window);
@@ -1274,10 +1274,10 @@
     return info;
   };
 
-  // src/monkey/copymanga-enhance/scripts/detail/template.html
+  // scripts/detail/template.html
   var template_default = '<div id="app" class="grid h-dvh max-h-dvh max-w-dvw min-h-dvh min-w-dvw overflow-hidden w-dvw"></div>';
 
-  // src/monkey/copymanga-enhance/scripts/detail/index.ts
+  // scripts/detail/index.ts
   var renderNewPage = async () => {
     console.info("PageInfo:", storage_default.pageInfo);
     windowScrollTo(0);
@@ -1317,7 +1317,7 @@
     }, 25);
   };
 
-  // src/monkey/copymanga-enhance/scripts/table/index.ts
+  // scripts/table/index.ts
   var hasJapanese = (text) => /[\u0800-\u4e00]/.test(text);
   var table_default = () => {
     const directionModeKey = getDirectionModeKey();
@@ -1348,7 +1348,7 @@
     }
   };
 
-  // src/monkey/copymanga-enhance/index.ts
+  // index.ts
   var { comic, chapter } = parseConstant_default(location?.pathname);
   if (comic && chapter) {
     console.log("start detail mode");

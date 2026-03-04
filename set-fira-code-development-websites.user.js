@@ -21,7 +21,7 @@
 // @description:zh-TW 統一將`Fira Code`作為代碼字體, 提高開發者對頁面中代碼的感知度
 // @description:zh-SG 统一将`Fira Code`作为代码字体, 提高开发者对页面中的代码的感知度
 // @description:zh-MY 统一将`Fira Code`作为代码字体, 提高开发者对页面中的代码的感知度
-// @version 14
+// @version 15
 // @author Arylo
 // @include https://webpack.js.org/*
 // @include https://rollupjs.org/*
@@ -70,7 +70,7 @@
 // ==/UserScript==
 "use strict";
 (() => {
-  // packages/monkey/gm-polyfill/GM_addStyle.ts
+  // ../../../packages/monkey/gm-polyfill/GM_addStyle.ts
   function GM_addStyle(...args) {
     if (typeof window.GM_addStyle === "function") {
       return window.GM_addStyle(...args);
@@ -87,7 +87,7 @@
     return null;
   }
 
-  // packages/monkey/gm-polyfill/GM_getResourceText.ts
+  // ../../../packages/monkey/gm-polyfill/GM_getResourceText.ts
   function GM_getResourceText(...args) {
     if (typeof window.GM_getResourceText !== "function") {
       throw new Error("GM_getResourceText is not available");
@@ -95,10 +95,10 @@
     return window.GM_getResourceText(...args);
   }
 
-  // src/monkey/set-fira-code-development-websites/styles/template.css
+  // styles/template.css
   var template_default = '*{font-family:Fira Code,monospace!important;font-variant-ligatures:contextual;font-feature-settings:"calt"}\n';
 
-  // src/monkey/set-fira-code-development-websites/index.ts
+  // index.ts
   var DEFAULT_PARENT_SELECTORS = [
     ":not(li) > a",
     ":not(h1):not(h2):not(h3):not(h4):not(h5) >"
