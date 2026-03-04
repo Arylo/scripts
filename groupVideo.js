@@ -29,15 +29,17 @@
     mod
   ));
 
-  // src/qinglong/groupVideo.ts
+  // src/groupVideo.ts
   var import_fs = __toESM(__require("fs"));
   var import_path = __toESM(__require("path"));
   var import_js_sh = __require("@js-sh/js-sh");
 
-  // src/qinglong/utils/genBatchCheckFn.ts
+  // src/utils/genBatchCheckFn.ts
   var genBatchCheckFn = (checkFn) => {
     return (valueOrValues, { lostExit = true } = {}) => {
-      const values = (Array.isArray(valueOrValues) ? valueOrValues : [valueOrValues]).filter((key) => typeof key === "string" && key.length > 0);
+      const values = (Array.isArray(valueOrValues) ? valueOrValues : [valueOrValues]).filter(
+        (key) => typeof key === "string" && key.length > 0
+      );
       let allPass = true;
       for (const val of values) {
         const result = checkFn(val);
@@ -48,7 +50,7 @@
     };
   };
 
-  // src/qinglong/utils/logger.ts
+  // src/utils/logger.ts
   var pending = (...msg) => console.log("[ ]", ...msg);
   var success = (...msg) => console.log("[\u221A]", ...msg);
   var fail = (...msg) => console.log("[x]", ...msg);
@@ -61,7 +63,7 @@
   };
   var logger_default = logger;
 
-  // src/qinglong/utils/checkVariables.ts
+  // src/utils/checkVariables.ts
   var checkVariables = genBatchCheckFn((key) => {
     const val = process.env[key];
     if (!val) {
@@ -72,7 +74,7 @@
     return true;
   });
 
-  // src/qinglong/groupVideo.ts
+  // src/groupVideo.ts
   var ROOT_PATH_KEY = "GROUP_VIDEO_ROOT_PATH";
   var TARGET_PATH_KEY = "GROUP_VIDEO_TARGET_PATH";
   var FOLDER_PREFIX = "tag_";
@@ -119,10 +121,7 @@
     return true;
   })([rootPath, targetPath]);
   var fileListMap = FILE_EXT.reduce((acc, ext) => {
-    return [
-      ...acc,
-      ...(0, import_js_sh.ls)(import_path.default.resolve(rootPath, `./*${ext}`))
-    ];
+    return [...acc, ...(0, import_js_sh.ls)(import_path.default.resolve(rootPath, `./*${ext}`))];
   }, []).map((p) => {
     const stat = import_fs.default.statSync(p);
     const basename = import_path.default.basename(p);
@@ -156,7 +155,9 @@
       logger_default.info(`The folder (${targetFolderPath}) has been created`);
     }
     const pendingFiles = fileListMap.filter((file) => file.tags.includes(tag));
-    import_fs.default.readdirSync(targetFolderPath).filter((filename) => filename !== pendingFiles.find((file) => file.basename === filename)?.basename).forEach((filename) => {
+    import_fs.default.readdirSync(targetFolderPath).filter(
+      (filename) => filename !== pendingFiles.find((file) => file.basename === filename)?.basename
+    ).forEach((filename) => {
       const targetFilePath = import_path.default.resolve(targetFolderPath, filename);
       logger_default.pending(`Unlink the file (${targetFilePath}) ...`);
       import_fs.default.unlinkSync(targetFilePath);
