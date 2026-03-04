@@ -1,0 +1,23 @@
+{
+  "name": "@scripts/qinglong",
+  "version": "1.0.0",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "build": "qinglong-build",
+    "lint": "concurrently npm:lint:*",
+    "lint:type-check": "tsc -p tsconfig.json --noEmit",
+    "lint:formatter": "oxfmt --check",
+    "lint:oxlint": "oxlint",
+    "fix:formatter": "oxfmt"
+  },
+  "dependencies": {
+    "@js-sh/js-sh": "^0.1.1"
+  },
+  "devDependencies": {
+    "@scripts/qinglong-build": "1.0.0",
+    "concurrently": "^8.2.2",
+    "oxfmt": "^0.35.0",
+    "oxlint": "^1.24.0"
+  }
+}

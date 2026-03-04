@@ -1,5 +1,5 @@
-import { directionModeStorage, getDirectionModeKey } from '../storages/directionMode'
 import { DirectionMode } from '../detail/newPage/constant'
+import { directionModeStorage, getDirectionModeKey } from '../storages/directionMode'
 
 const hasJapanese = (text: string) => /[\u0800-\u4e00]/.test(text)
 

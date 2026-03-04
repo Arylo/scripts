@@ -1,0 +1,27 @@
+{
+  "name": "@scripts/build-utils",
+  "version": "1.0.0",
+  "private": true,
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "lint": "concurrently npm:lint:*",
+    "lint:type-check": "tsc -p tsconfig.json --noEmit",
+    "lint:formatter": "oxfmt --check",
+    "lint:oxlint": "oxlint",
+    "fix:formatter": "oxfmt"
+  },
+  "dependencies": {
+    "@iarna/toml": "^2.2.5",
+    "@scripts/build-fs": "1.0.0",
+    "lodash": "^4.17.23"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "oxfmt": "^0.35.0",
+    "oxlint": "^1.24.0",
+    "typescript": "^5.4.5"
+  }
+}

@@ -14,15 +14,17 @@ jobs:
       readmeChange: ${{ steps.readme-changed-files.outputs.any_changed }}
     steps:
       - uses: actions/checkout@v4
+
+      # #region Check changed files for qinglong files
       - id: qinglong-changed-files
         uses: tj-actions/changed-files@v45
         with:
           files: |
             src/qinglong/**
-            etc/**
-            !etc/build/readme*
             packages/general/**
             packages/node/**
+            packages/build-scripts/**
+            packages/esbuild-plugin/**
             package*.json
             tsconfig.json
       - name: List all changed files
@@ -33,16 +35,19 @@ jobs:
           for file in ${ALL_CHANGED_FILES}; do
             echo "$file was changed"
           done
+      # #endregion Check changed files for qinglong files
+
+      # #region Check changed files for monkey files
       - id: monkey-changed-files
         uses: tj-actions/changed-files@v45
         with:
           files: |
             src/monkey/**
-            etc/**
-            !etc/build/readme*
             packages/general/**
             packages/browser/**
             packages/monkey/**
+            packages/build-scripts/**
+            packages/esbuild-plugin/**
             package*.json
             tsconfig.json
       - name: List all changed files
@@ -53,6 +58,9 @@ jobs:
           for file in ${ALL_CHANGED_FILES}; do
             echo "$file was changed"
           done
+      # #endregion Check changed files for monkey files
+
+      # #region Check changed files for docker files
       - id: docker-changed-files
         uses: tj-actions/changed-files@v45
         with:
@@ -66,12 +74,15 @@ jobs:
           for file in ${ALL_CHANGED_FILES}; do
             echo "$file was changed"
           done
+      # #endregion Check changed files for docker files
+
+      # #region Check changed files for readme files
       - id: readme-changed-files
         uses: tj-actions/changed-files@v45
         with:
           files: |
-            etc/build/readme*
             src/**/README.md
+            packages/build-scripts/**
             !src/docker/**
       - name: List all changed files
         if: steps.readme-changed-files.outputs.any_changed == 'true'
@@ -81,6 +92,8 @@ jobs:
           for file in ${ALL_CHANGED_FILES}; do
             echo "$file was changed"
           done
+      # #endregion Check changed files for readme files
+
   code_check:
     runs-on: ubuntu-latest
     needs:
@@ -90,10 +103,8 @@ jobs:
       - uses: actions/checkout@v4
       - name: Install dependencies
         run: npm ci --workspaces --include-workspace-root
-      - name: TS Type Check
-        run: npm run lint:type-check
-      - name: Lint for monorepo
-        run: npm run prelint:monorepo
+      - name: Lint
+        run: npm run lint
       - name: unit test
         run: npm run test
   monkey_actions:
@@ -136,7 +147,7 @@ jobs:
       - name: Install dependencies
         run: npm ci --workspaces --include-workspace-root
       - name: Generate Readme files
-        run: npm run prebuild:monorepo && npm run build:readme
+        run: npm run build:readme
       - name: Deploy Readme files
         if: github.event_name == 'push' && github.ref_name == github.event.repository.default_branch
         uses: JamesIves/github-pages-deploy-action@v4

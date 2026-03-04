@@ -1,0 +1,38 @@
+{
+  "name": "@scripts/monkey-build",
+  "version": "1.0.0",
+  "private": true,
+  "license": "MIT",
+  "bin": {
+    "monkey-build": "./bin/monkey-build"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "lint": "concurrently npm:lint:*",
+    "lint:type-check": "tsc -p tsconfig.json --noEmit",
+    "lint:formatter": "oxfmt --check",
+    "lint:oxlint": "oxlint",
+    "fix:formatter": "oxfmt"
+  },
+  "dependencies": {
+    "@arylo/esbuild-plugin-css-minify-text": "1.0.0",
+    "@arylo/esbuild-plugin-html-minify-text": "1.0.0",
+    "@scripts/build-fs": "1.0.0",
+    "@scripts/build-utils": "1.0.0",
+    "@scripts/logger": "1.0.0",
+    "download": "^8.0.0",
+    "lodash": "^4.17.23",
+    "md5": "^2.3.0",
+    "md5-file": "^5.0.0",
+    "yn": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/download": "^8.0.5",
+    "@types/lodash": "^4.17.24",
+    "@types/md5": "^2.3.6",
+    "concurrently": "^8.2.2",
+    "oxfmt": "^0.35.0",
+    "oxlint": "^1.24.0",
+    "typescript": "^5.4.5"
+  }
+}

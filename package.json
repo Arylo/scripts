@@ -5,17 +5,19 @@
   "private": true,
   "main": "index.js",
   "scripts": {
-    "prebuild": "concurrently npm:prebuild:*",
-    "prebuild:packages": "turbo run build -F='./packages/*/*'",
     "build": "concurrently npm:build:*",
-    "build:qinglong": "ts-node ./etc/build/qinglong.ts",
-    "build:monkey": "ts-node ./etc/build/monkey.ts",
-    "build:readme": "ts-node ./etc/build/readme.ts",
-    "prelint": "concurrently npm:prelint:*",
-    "prelint:monorepo": "turbo run lint",
+    "build:monkey": "turbo run build -F='./src/monkey/*'",
+    "postbuild:monkey": "ts-node ./etc/move_monkey_scripts.ts",
+    "build:qinglong": "turbo run build -F='./src/qinglong'",
+    "postbuild:qinglong": "ts-node ./etc/move_qinglong_scripts.ts",
+    "build:readme": "turbo run build -F='./packages/build-scripts/readme-build' && readme-build",
     "lint": "concurrently npm:lint:*",
-    "lint:type-check": "tsc --noEmit",
-    "test": "turbo run test"
+    "lint:syncpack": "syncpack lint",
+    "lint:monorepo": "turbo run lint",
+    "test": "turbo run test",
+    "fix": "concurrently npm:fix:*",
+    "fix:syncpack": "syncpack fix",
+    "fix:formatter": "turbo run fix:formatter"
   },
   "keywords": [],
   "author": "Arylo Yeung <arylo.open@gmail.com>",
@@ -28,36 +30,18 @@
     "node": "24.12.0"
   },
   "packageManager": "npm@11.6.2",
-  "dependencies": {
-    "@js-sh/js-sh": "^0.1.1",
-    "@scripts/build-fs": "*",
-    "@scripts/logger": "*",
-    "@scripts/md-generator": "*"
-  },
   "devDependencies": {
-    "@iarna/toml": "^2.2.5",
-    "@types/download": "^8.0.5",
-    "@types/lodash": "^4.17.13",
-    "@types/md5": "^2.3.5",
+    "@scripts/readme-build": "1.0.0",
     "@vitest/coverage-v8": "^1.6.0",
     "concurrently": "^8.2.2",
-    "cross-env": "^7.0.3",
-    "download": "^8.0.0",
-    "esbuild": "^0.21.5",
-    "htmlnano": "^2.1.1",
-    "lodash": "^4.17.21",
-    "md5": "^2.3.0",
-    "md5-file": "^5.0.0",
-    "nanoid": "^3.3.8",
+    "syncpack": "^14.0.0",
     "ts-node": "^10.9.2",
     "turbo": "^2.4.4",
-    "typescript": "^5.4.5",
-    "vue": "^3.5.27",
-    "vue-demi": "^0.14.10",
-    "yn": "^4.0.0"
+    "typescript": "^5.4.5"
   },
   "workspaces": [
     "packages/*/*",
-    "src/monkey/*"
+    "src/monkey/*",
+    "src/qinglong"
   ]
 }

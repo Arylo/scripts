@@ -3,8 +3,8 @@ import { GM_addStyle } from './GM_addStyle'
 declare global {
   interface Window {
     GM?: {
-      addStyle: typeof GM_addStyle,
-    };
+      addStyle: typeof GM_addStyle
+    }
   }
 }
 

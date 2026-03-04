@@ -12,6 +12,10 @@
     "test": {
       "dependsOn": ["^build"],
       "outputs": []
+    },
+    "fix:formatter": {
+      "dependsOn": ["^fix:formatter"],
+      "outputs": []
     }
   }
 }

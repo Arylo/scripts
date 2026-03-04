@@ -74,6 +74,6 @@
   },
   "include": [
     "./src",
-    "./types"
+    "./etc"
   ]
 }

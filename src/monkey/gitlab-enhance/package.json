@@ -5,11 +5,13 @@
   "main": "index.ts",
   "types": "index.ts",
   "scripts": {
+    "build": "monkey-build",
     "lint": "tsc --noEmit"
   },
   "devDependencies": {
-    "@scripts/gm-polyfill": "*",
-    "@scripts/md-generator": "*"
+    "@scripts/gm-polyfill": "1.0.0",
+    "@scripts/md-generator": "1.0.0",
+    "@scripts/monkey-build": "1.0.0"
   },
   "license": "MIT"
 }

@@ -6,22 +6,25 @@
   "types": "index.ts",
   "license": "MIT",
   "scripts": {
+    "build": "monkey-build",
     "test": "vitest run",
     "lint": "concurrently npm:lint:*",
-    "lint:type-check": "tsc --noEmit",
-    "lint:oxlint": "oxfmt --check && oxlint",
-    "oxlint:fix": "oxfmt"
+    "lint:type-check": "tsc -p tsconfig.json --noEmit",
+    "lint:formatter": "oxfmt --check",
+    "lint:oxlint": "oxlint",
+    "fix:formatter": "oxfmt"
   },
   "dependencies": {
     "classcat": "^5.0.5"
   },
   "devDependencies": {
-    "@scripts/flow": "*",
-    "@scripts/gen-scroll-to": "*",
-    "@scripts/gen-storage": "*",
-    "@scripts/gm-polyfill": "*",
-    "@scripts/gm-vue": "*",
-    "@scripts/throttle": "*",
+    "@scripts/flow": "1.0.0",
+    "@scripts/gen-scroll-to": "1.0.0",
+    "@scripts/gen-storage": "1.0.0",
+    "@scripts/gm-polyfill": "1.0.0",
+    "@scripts/gm-vue": "1.0.0",
+    "@scripts/monkey-build": "1.0.0",
+    "@scripts/throttle": "1.0.0",
     "concurrently": "^8.2.2",
     "oxfmt": "^0.35.0",
     "oxlint": "^1.24.0"

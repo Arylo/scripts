@@ -3,7 +3,7 @@ export type ThrottleOptions = {
   trailing?: boolean
 }
 
-export default function throttle<T extends (...args: any[]) => any> (
+export default function throttle<T extends (...args: any[]) => any>(
   fn: T,
   wait = 300,
   options: ThrottleOptions = {},

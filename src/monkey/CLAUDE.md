@@ -21,6 +21,7 @@
 - <root_path>/packages/general/*
 - <root_path>/packages/browser/*
 - <root_path>/packages/monkey/*
+- <root_path>/packages/build-scripts/monkey-build
 
 ### 可用第三方NPM 包白名单
 

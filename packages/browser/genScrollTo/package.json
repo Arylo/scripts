@@ -4,8 +4,27 @@
   "private": true,
   "main": "index.ts",
   "types": "index.ts",
+  "exports": {
+    ".": {
+      "import": "./index.ts",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts",
+      "default": "./index.ts"
+    }
+  },
   "scripts": {
-    "lint": "tsc --noEmit"
+    "build": "tsc -p tsconfig.json",
+    "lint": "concurrently npm:lint:*",
+    "lint:type-check": "tsc -p tsconfig.json --noEmit",
+    "lint:formatter": "oxfmt --check",
+    "lint:oxlint": "oxlint",
+    "fix:formatter": "oxfmt"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "oxfmt": "^0.35.0",
+    "oxlint": "^1.24.0",
+    "typescript": "^5.4.5"
   },
   "license": "MIT"
 }
