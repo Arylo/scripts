@@ -1,9 +1,5 @@
 # CLAUDE.md
 
-## Document Index
-
-- monkey: <root_path>/src/monkey/CLAUDE.md
-
 ## Custom Commands
 
 - `/commit`：根据当前改动生成并执行规范化 Git 提交
