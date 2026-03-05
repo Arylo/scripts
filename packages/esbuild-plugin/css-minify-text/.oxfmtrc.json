@@ -4,9 +4,5 @@
   "sortImports": {
     "newlinesBetween": false
   },
-  "ignorePatterns": [
-    "*.md",
-    "*.json",
-    "dist/**"
-  ]
+  "ignorePatterns": ["*.md", "dist/**"]
 }

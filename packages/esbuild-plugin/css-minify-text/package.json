@@ -1,27 +1,51 @@
 {
   "name": "@arylo/esbuild-plugin-css-minify-text",
   "version": "1.0.0",
-  "private": true,
-  "main": "index.ts",
-  "types": "index.ts",
+  "description": "An esbuild plugin that minifies CSS files and returns them as text loader payload",
+  "keywords": [
+    "css",
+    "css-minify",
+    "esbuild",
+    "esbuild-plugin"
+  ],
+  "homepage": "https://github.com/Arylo/scripts/tree/master/packages/esbuild-plugin/css-minify-text",
+  "bugs": {
+    "url": "https://github.com/Arylo/scripts/issues"
+  },
+  "license": "MIT",
+  "author": "Arylo Yeung <arylo.open@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Arylo/scripts.git",
+    "directory": "packages/esbuild-plugin/css-minify-text"
+  },
+  "files": [
+    "dist",
+    "LICENSE",
+    "README-zh.md",
+    "CHANGELOG.md"
+  ],
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "import": "./index.ts",
-      "require": "./dist/index.js",
       "types": "./dist/index.d.ts",
-      "default": "./index.ts"
+      "import": "./dist/index.js",
+      "require": "./dist/index.js",
+      "default": "./dist/index.js"
     }
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",
+    "prepublishOnly": "npm run build",
     "lint": "concurrently npm:lint:*",
     "lint:type-check": "tsc -p tsconfig.json --noEmit",
     "lint:formatter": "oxfmt --check",
     "lint:oxlint": "oxlint",
     "fix:formatter": "oxfmt"
-  },
-  "peerDependencies": {
-    "esbuild": "^0.21.5"
   },
   "devDependencies": {
     "concurrently": "^8.2.2",
@@ -29,5 +53,7 @@
     "oxlint": "^1.24.0",
     "typescript": "^5.4.5"
   },
-  "license": "MIT"
+  "peerDependencies": {
+    "esbuild": "^0.21.5"
+  }
 }
