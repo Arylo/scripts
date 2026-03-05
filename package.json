@@ -5,6 +5,7 @@
   "private": true,
   "main": "index.js",
   "scripts": {
+    "clean": "turbo run clean",
     "build": "concurrently npm:build:*",
     "build:monkey": "turbo run build -F='./src/monkey/*'",
     "postbuild:monkey": "ts-node ./etc/move_monkey_scripts.ts",

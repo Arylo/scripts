@@ -7,6 +7,7 @@
   "license": "MIT",
   "scripts": {
     "build": "monkey-build",
+    "clean": "rimraf dist",
     "test": "vitest run",
     "lint": "concurrently npm:lint:*",
     "lint:type-check": "tsc -p tsconfig.json --noEmit",
@@ -27,6 +28,7 @@
     "@scripts/throttle": "1.0.0",
     "concurrently": "^8.2.2",
     "oxfmt": "^0.35.0",
-    "oxlint": "^1.24.0"
+    "oxlint": "^1.24.0",
+    "rimraf": "^6.0.1"
   }
 }

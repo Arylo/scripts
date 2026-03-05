@@ -40,6 +40,7 @@
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",
+    "clean": "rimraf dist",
     "prepublishOnly": "npm run build",
     "lint": "concurrently npm:lint:*",
     "lint:type-check": "tsc -p tsconfig.json --noEmit",
@@ -51,6 +52,7 @@
     "concurrently": "^8.2.2",
     "oxfmt": "^0.35.0",
     "oxlint": "^1.24.0",
+    "rimraf": "^6.0.1",
     "typescript": "^5.4.5"
   },
   "peerDependencies": {
