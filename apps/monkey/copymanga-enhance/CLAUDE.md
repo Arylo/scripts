@@ -2,7 +2,7 @@
 
 ## 子包说明
 
-- 子包路径：`src/monkey/copymanga-enhance`
+- 子包路径：`apps/monkey/copymanga-enhance`
 - 包名：`@scripts/monkey-copymanga-enhance`
 - 目标：增强拷贝漫画阅读页体验
 

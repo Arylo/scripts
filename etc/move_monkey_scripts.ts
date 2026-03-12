@@ -4,7 +4,7 @@ import buildFS, { LS_TYPE } from '@scripts/build-fs'
 import logger from '@scripts/logger'
 
 const projectRootPath = process.cwd()
-const monkeyRootPath = path.resolve(projectRootPath, 'src/monkey')
+const monkeyRootPath = path.resolve(projectRootPath, 'apps/monkey')
 const targetPath = path.resolve(projectRootPath, 'dist/monkey')
 
 function collectFilesRecursively(folderPath: string): string[] {

@@ -17,7 +17,7 @@ Options:
 
 Examples:
   $ monkey-build
-  $ monkey-build ./src/monkey/copymanga-enhance
+  $ monkey-build ./apps/monkey/copymanga-enhance
   $ monkey-build /path/to/project
 `)
   process.exit(0)

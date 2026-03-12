@@ -27,24 +27,24 @@ Follow the conventional commits format:
 
 ## Scope Rules
 
-If there are changes in directories under `src/`, add the folder name to the scope.
+If there are changes in directories under `apps/`, add the folder name to the scope.
 
 ### Scope Mapping
 
-- `src/docker/` → `docker`
-- `src/qinglong/` → `qinglong`
-- `src/monkey/` → `monkey`
-- `src/raspberry_pi/` → `pi`
+- `apps/docker/` → `docker`
+- `apps/qinglong/` → `qinglong`
+- `apps/monkey/` → `monkey`
+- `apps/raspberry_pi/` → `pi`
 
 ### Examples
 
-- Changes in `src/monkey/` → `feat(monkey): description`
-- Changes in `src/docker/` → `fix(docker): description`
-- Changes in `src/qinglong/` → `refactor(qinglong): description`
-- Changes in `src/raspberry_pi/` → `feat(pi): description`
+- Changes in `apps/monkey/` → `feat(monkey): description`
+- Changes in `apps/docker/` → `fix(docker): description`
+- Changes in `apps/qinglong/` → `refactor(qinglong): description`
+- Changes in `apps/raspberry_pi/` → `feat(pi): description`
 - Multiple folders → list the primary one or use comma separation
 
 ## Subject
 
 1. Generate the subject based on `git diff --cached`.
-2. Focus primarily on the `src/` directory.
+2. Focus primarily on the `apps/` directory.

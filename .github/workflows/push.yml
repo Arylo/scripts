@@ -20,7 +20,7 @@ jobs:
         uses: tj-actions/changed-files@v45
         with:
           files: |
-            src/qinglong/**
+            apps/qinglong/**
             packages/general/**
             packages/node/**
             packages/build-scripts/**
@@ -42,7 +42,7 @@ jobs:
         uses: tj-actions/changed-files@v45
         with:
           files: |
-            src/monkey/**
+            apps/monkey/**
             packages/general/**
             packages/browser/**
             packages/monkey/**
@@ -65,7 +65,7 @@ jobs:
         uses: tj-actions/changed-files@v45
         with:
           files: |
-            src/docker/**
+            apps/docker/**
       - name: List all changed files
         if: steps.docker-changed-files.outputs.any_changed == 'true'
         env:
@@ -81,9 +81,9 @@ jobs:
         uses: tj-actions/changed-files@v45
         with:
           files: |
-            src/**/README.md
+            apps/**/README.md
             packages/build-scripts/**
-            !src/docker/**
+            !apps/docker/**
       - name: List all changed files
         if: steps.readme-changed-files.outputs.any_changed == 'true'
         env:

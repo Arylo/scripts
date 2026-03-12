@@ -18,7 +18,7 @@ on:
         default: arylo
       DOCKER_ROOT_PATH:
         type: string
-        default: ./src/docker
+        default: ./apps/docker
       FORCE_BUILD:
         type: boolean
         default: false

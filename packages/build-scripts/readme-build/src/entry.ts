@@ -170,7 +170,7 @@ function parseMonkeyMd(folderPath: string) {
 }
 
 const parseMonkeys = () => {
-  const monkeyReadmePaths = globSync(path.resolve(ROOT_PATH, 'src/monkey/*/README.md'))
+  const monkeyReadmePaths = globSync(path.resolve(ROOT_PATH, 'apps/monkey/*/README.md'))
   const tableContent = genTemplate((utils) => {
     const tableFns = utils.table()
     tableFns.header([

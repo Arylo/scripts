@@ -4,7 +4,7 @@ import buildFS, { LS_TYPE } from '@scripts/build-fs'
 import logger from '@scripts/logger'
 
 const projectRootPath = process.cwd()
-const sourcePath = path.resolve(projectRootPath, 'src/qinglong/dist')
+const sourcePath = path.resolve(projectRootPath, 'apps/qinglong/dist')
 const targetPath = path.resolve(projectRootPath, 'dist/qinglong')
 
 export default async function moveQinglongScripts() {
