@@ -1,4 +1,4 @@
-# CLAUDE
+# CLAUDE.md
 
 ## 子包说明
 

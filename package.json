@@ -6,7 +6,8 @@
   "main": "index.js",
   "scripts": {
     "clean": "turbo run clean",
-    "build": "concurrently npm:build:*",
+    "build": "turbo run build && readme-build",
+    "build:caddyfile": "turbo run build -F='./apps/caddyfile-sdk'",
     "build:monkey": "turbo run build -F='./apps/monkey/*'",
     "postbuild:monkey": "ts-node ./etc/move_monkey_scripts.ts",
     "build:qinglong": "turbo run build -F='./apps/qinglong'",
@@ -46,6 +47,7 @@
   },
   "workspaces": [
     "packages/*/*",
+    "apps/caddyfile-sdk",
     "apps/monkey/*",
     "apps/qinglong"
   ]

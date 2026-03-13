@@ -1,0 +1,53 @@
+{
+  "name": "@arylo/caddyfile-sdk",
+  "version": "1.0.0",
+  "description": "SDK for Caddyfile",
+  "keywords": [
+    "caddy",
+    "caddyfile",
+    "sdk"
+  ],
+  "homepage": "https://github.com/Arylo/scripts/tree/master/apps/caddyfile-sdk",
+  "bugs": {
+    "url": "https://github.com/Arylo/scripts/issues"
+  },
+  "license": "MIT",
+  "author": "Arylo Yeung <arylo.open@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Arylo/scripts.git",
+    "directory": "apps/caddyfile-sdk"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "clean": "rimraf dist",
+    "prepublishOnly": "npm run build",
+    "lint": "concurrently npm:lint:*",
+    "lint:type-check": "tsc -p tsconfig.json --noEmit",
+    "lint:formatter": "oxfmt --check",
+    "lint:oxlint": "oxlint",
+    "test": "vitest run src",
+    "fix:formatter": "oxfmt"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "oxfmt": "^0.35.0",
+    "oxlint": "^1.24.0",
+    "rimraf": "^6.0.1",
+    "typescript": "^5.4.5",
+    "vitest": "^4.1.0"
+  }
+}

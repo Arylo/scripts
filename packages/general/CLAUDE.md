@@ -24,7 +24,7 @@
   "lint:formatter": "oxfmt --check",
   "lint:oxlint": "oxlint",
   "fix:formatter": "oxfmt",
-  "test": "vitest run"
+  "test": "vitest run src"
 }
 ```
 

@@ -1,0 +1,26 @@
+{
+  email you@yours.com
+  servers {
+    trusted_proxies static private_ranges
+  }
+}
+(snippet) {
+  # this is a reusable snippet
+  log {
+    output file /var/log/access.log
+  }
+}
+example.com {
+  @post {
+    method POST
+  }
+  reverse_proxy @post localhost:9001 localhost:9002 {
+    lb_policy first
+  }
+  file_server /static
+  import snippet
+}
+www.example.com {
+  redir https://example.com{uri}
+  import snippet
+}
