@@ -4,7 +4,7 @@
 			"command": "bash",
 			"args": [
         "-c",
-        "source $HOME/.nvm/nvm.sh && (nvm use 20 || nvm install 20) && nvm exec 20 npx -y @cyanheads/git-mcp-server"
+        "(nvm -h || source $HOME/.nvm/nvm.sh) && (nvm use 20 || nvm install 20) && nvm exec 20 npx -y @cyanheads/git-mcp-server"
 			]
 		}
 	}
