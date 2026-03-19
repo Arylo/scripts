@@ -19,7 +19,7 @@
 ```json
 "scripts": {
   "build": "tsc -p tsconfig.json",
-  "lint": "concurrently npm:lint:*",
+  "lint": "concurrently -m 1 --timings npm:lint:*",
   "lint:type-check": "tsc -p tsconfig.json --noEmit",
   "lint:formatter": "oxfmt --check",
   "lint:oxlint": "oxlint",
