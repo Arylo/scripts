@@ -7,6 +7,7 @@
   "scripts": {
     "clean": "turbo run clean",
     "build": "turbo run build && readme-build",
+    "postbuild": "is-ci && concurrently -m 1 --timings npm:postbuild:*",
     "build:caddyfile": "turbo run build -F='./apps/caddyfile-sdk'",
     "build:monkey": "turbo run build -F='./apps/monkey/*'",
     "postbuild:monkey": "ts-node ./etc/move_monkey_scripts.ts",
@@ -40,6 +41,7 @@
     "@scripts/readme-build": "1.0.0",
     "@vitest/coverage-v8": "^1.6.0",
     "concurrently": "^8.2.2",
+    "is-ci": "^4.1.0",
     "syncpack": "^14.0.0",
     "ts-node": "^10.9.2",
     "turbo": "^2.4.4",
