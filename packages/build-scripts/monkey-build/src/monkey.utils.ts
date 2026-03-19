@@ -6,9 +6,9 @@ import { ScriptInfo } from '@scripts/build-utils'
 import logger from '@scripts/logger'
 import download from 'download'
 import * as esbuild from 'esbuild'
+import isCI from 'is-ci'
 import md5 from 'md5'
 import md5file from 'md5-file'
-import yn from 'yn'
 import { bannerOrderMap } from './monkey.const'
 
 const parseMetaItem = (key: string, value: any) => {
@@ -35,7 +35,6 @@ export const parseBanner = (bannerFilePath: string) => {
 }
 
 export const stringifyBanner = (bannerFilepath: string, appendInfo = {}, rootPath?: string) => {
-  const isCI = yn(process.env.CI, { default: false })
   const jsonContent = parseBanner(bannerFilepath)
   const pkgRoot = rootPath || process.cwd()
   const pkgInfo = buildFS.readJSONFileSync(path.resolve(pkgRoot, 'package.json'))
@@ -84,7 +83,6 @@ export const stringifyBanner = (bannerFilepath: string, appendInfo = {}, rootPat
 }
 
 export const exportLatestDeployInfo = (() => {
-  const isCI = yn(process.env.CI, { default: false })
   const cacheMap: Record<string, { version: number; contentHash: string; bannerHash: string }> = {}
   return async (scriptInfo: ScriptInfo, githubRawPrefix?: string) => {
     if (cacheMap[scriptInfo.scriptName]) return cacheMap[scriptInfo.scriptName]
@@ -156,7 +154,6 @@ export const exportLatestDeployInfo = (() => {
 })()
 
 export const buildScript = (filepath: string, extraConfig: esbuild.BuildOptions = {}) => {
-  const isCI = yn(process.env.CI, { default: false })
   return esbuild.build({
     entryPoints: [filepath],
     bundle: true,

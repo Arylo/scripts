@@ -22,10 +22,10 @@
     "@scripts/build-utils": "1.0.0",
     "@scripts/logger": "1.0.0",
     "download": "^8.0.0",
+    "is-ci": "^4.1.0",
     "lodash": "^4.17.23",
     "md5": "^2.3.0",
-    "md5-file": "^5.0.0",
-    "yn": "^4.0.0"
+    "md5-file": "^5.0.0"
   },
   "devDependencies": {
     "@types/download": "^8.0.5",
