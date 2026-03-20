@@ -1,4 +1,4 @@
-# Enhance UX for the self-managed Gitlab
+# 强化自托管 Gitlab 能力
 
 [![GitHub license][license_icon]][license_href] ![GitHub last commit][github-last-update]
 
@@ -8,7 +8,7 @@
 
 [English](./README.md) | [简体中文](./README.zh_CN.md)
 
-## Install Urls
+## 安装地址
 
 [GitHub][install_github] | [GreasyFork][install_greasyfork] | [OpenUserJS][install_openuserjs]
 
@@ -16,11 +16,11 @@
 [install_greasyfork]: https://update.greasyfork.org/scripts/519026/Enhance%20some%20features%20of%20the%20Self-managed%20Gitlab.user.js
 [install_openuserjs]: https://openuserjs.org/install/arylo/Enhance_some_features_of_the_Self-managed_Gitlab.user.js
 
-## Description
+## 简介
 
-Enhance some features of the Self-managed Gitlab
+强化自托管 Gitlab 的一些功能，如 CI/CD 设置页面、合并请求创建/编辑页面等。
 
-## Compatibility
+## 兼容性
 
 |              |TamperMonkey|ViolentMonkey|Userscripts |
 |--            |--          |--           |--          |
@@ -33,6 +33,6 @@ Enhance some features of the Self-managed Gitlab
 [pass]: https://img.shields.io/badge/-pass-green.svg?&logoColor=000&style=for-the-badge&cacheSeconds=7200
 [unknown]: https://img.shields.io/badge/-unknown-silver.svg?&logoColor=000&style=for-the-badge&cacheSeconds=7200
 
-## License
+## 开源证书
 
 [The MIT License.](https://github.com/Arylo/scripts/?tab=MIT-1-ov-file)

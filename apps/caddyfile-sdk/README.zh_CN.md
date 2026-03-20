@@ -7,25 +7,25 @@
 
 [English](./README.md) | [简体中文](./README.zh_CN.md)
 
-SDK for parsing, manipulating, and generating Caddyfile content.
+用于解析、操作和生成 Caddyfile 内容的 SDK。
 
-## Features
+## 特性
 
-- Create Caddyfile structures with a typed API
-- Parse existing Caddyfile text into editable objects
-- Generate Caddyfile text with `toString()`
-- Support global, snippet, site, matcher, directive, and comment blocks
-- Enforce common uniqueness rules, such as a single root global block
+- 通过类型化 API 创建 Caddyfile 结构
+- 将已有的 Caddyfile 文本解析为可编辑对象
+- 通过 `toString()` 生成 Caddyfile 文本
+- 支持全局块、片段块、站点块、匹配器块、指令块和注释块
+- 约束常见唯一性规则，例如根级只能存在一个全局块
 
-## Install
+## 安装
 
 ```bash
 npm install @arylo/caddyfile-sdk
 ```
 
-## Usage
+## 用法
 
-### Create a Caddyfile
+### 创建一个 Caddyfile
 
 ```ts
 import { createCaddyfile } from '@arylo/caddyfile-sdk'
@@ -53,7 +53,7 @@ siteBlock.addDirectiveBlock('import', 'snippet')
 console.log(caddyfile.toString())
 ```
 
-Output:
+输出：
 
 ```caddyfile
 {
@@ -80,7 +80,7 @@ example.com {
 }
 ```
 
-### Parse a Caddyfile
+### 解析一个 Caddyfile
 
 ```ts
 import { parseCaddyfile } from '@arylo/caddyfile-sdk'
@@ -101,15 +101,15 @@ console.log(caddyfile.toString())
 
 ### `createCaddyfile()`
 
-Creates a new empty Caddyfile object.
+创建一个新的空 Caddyfile 对象。
 
 ### `parseCaddyfile(text)`
 
-Parses Caddyfile text and returns an editable Caddyfile object.
+解析 Caddyfile 文本并返回一个可编辑的 Caddyfile 对象。
 
-### Root block helpers
+### 根级块辅助方法
 
-The returned Caddyfile object supports:
+返回的 Caddyfile 对象支持：
 
 - `addGlobalBlock()`
 - `removeGlobalBlock()`
@@ -128,28 +128,28 @@ The returned Caddyfile object supports:
 - `getCommentBlockById(id)`
 - `toString()`
 
-Nested blocks expose helpers such as:
+嵌套块还提供如下辅助方法：
 
 - `addDirectiveBlock(name, ...args)`
 - `addMatcherBlock(name)`
 - `addCommentBlock(comment)`
 
-## Constraints
+## 约束
 
-- Only one global block is allowed at the root level
-- Root snippet names must be unique
-- Matcher names must be unique within the same parent block
-- Directive names must be unique within the same parent block
-- Site blocks must have at least one site name
+- 根级只允许存在一个全局块
+- 根级片段名称必须唯一
+- 同一父块中的匹配器名称必须唯一
+- 同一父块中的指令名称必须唯一
+- 站点块至少需要一个站点名称
 
-## Development
+## 开发
 
-From the package directory:
+在包目录下执行：
 
 - `npm run lint`
 - `npm run test`
 - `npm run build`
 
-## License
+## 开源证书
 
 [The MIT License.](https://github.com/Arylo/scripts/?tab=MIT-1-ov-file)

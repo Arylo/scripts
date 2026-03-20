@@ -1,4 +1,4 @@
-# Set Fira Code as font in development websites
+# Fira Code 作为网站的代码字体
 
 [![GitHub license][license_icon]][license_href] ![GitHub last commit][github-last-update]
 
@@ -8,18 +8,18 @@
 
 [English](./README.md) | [简体中文](./README.zh_CN.md)
 
-## Install Urls
+## 安装地址
 
 [GitHub][install_github] | [GreasyFork][install_greasyfork]
 
 [install_github]: https://raw.githubusercontent.com/Arylo/scripts/monkey/set-fira-code-development-websites.user.js
 [install_greasyfork]: https://update.greasyfork.org/scripts/519936/Set%20Fira%20Code%20as%20font%20in%20development%20websites.user.js
 
-## Description
+## 简介
 
-Unified use of `Fira Code` as the code font to enhance developers' awareness of the code on the page
+统一将 `Fira Code` 作为代码字体，提高开发者对页面中的代码的感知度。
 
-## Support websites
+## 支持网站
 
 - https://webpack.js.org
 - https://rollupjs.org
@@ -57,7 +57,7 @@ Unified use of `Fira Code` as the code font to enhance developers' awareness of 
 - https://docs.docker.com
 - https://developers.weixin.qq.com/miniprogram
 
-## Compatibility
+## 兼容性
 
 |              |TamperMonkey|ViolentMonkey|Userscripts |
 |--            |--          |--           |--          |
@@ -70,6 +70,6 @@ Unified use of `Fira Code` as the code font to enhance developers' awareness of 
 [pass]: https://img.shields.io/badge/-pass-green.svg?&logoColor=000&style=for-the-badge&cacheSeconds=7200
 [unknown]: https://img.shields.io/badge/-unknown-silver.svg?&logoColor=000&style=for-the-badge&cacheSeconds=7200
 
-## License
+## 开源证书
 
 [The MIT License.](https://github.com/Arylo/scripts/?tab=MIT-1-ov-file)
