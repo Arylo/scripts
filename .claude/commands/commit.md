@@ -6,9 +6,10 @@
 2. 先阅读 <root_path>/docs/git-commit-message-standard.md。
 3. 检查当前变更（只检查staged）。
 4. 若没有 staged 变更，先将当前工作区改动加入暂存区。
-5. 基于暂存区差异生成 commit message，格式必须是：`<type>(<scope>): <subject>`。
-6. 若用户传入了参数 `$ARGUMENTS`，将其作为 subject（仍需自动补全 type/scope）。
-7. 执行提交并返回：
+5. 如果 staged 或当前工作区改动中包含 `package.json` 或 `package-lock.json`，必须先执行一次 `/linux-native-binding-repair`，确认不存在 Linux native binding、optionalDependencies 或 lockfile 跨平台漂移问题，正常再继续后续步骤。
+6. 基于暂存区差异生成 commit message，格式必须是：`<type>(<scope>): <subject>`。
+7. 若用户传入了参数 `$ARGUMENTS`，将其作为 subject（仍需自动补全 type/scope）。
+8. 执行提交并返回：
 
 - 最终 commit message
 - 提交 hash
