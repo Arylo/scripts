@@ -23,14 +23,19 @@
    - 在 Apple Silicon 上，`act` 可能默认使用 `linux/arm64`，除非显式传入 `--container-architecture linux/amd64`。
 5. 检查根 `package-lock.json`，而不是只看子包 lockfile。
 6. 在根 lockfile 中搜索缺失 binding，并确认 `packages` 区域中存在真实节点，例如 `node_modules/@scope/binding-linux-x64-gnu`，而不只是 `optionalDependencies` 名字引用。
-7. 优先使用与 CI 架构一致的 Docker 环境复现。
-8. 如果要与 GitHub Actions 的 x64 Linux 对齐，优先使用：
+7. 运行前先检查本机是否安装 `docker` 和 `act`：
+   - 执行 `command -v docker`，确认可以使用 Docker 做 Linux 容器复现。
+   - 执行 `command -v act`，确认可以使用 act 做 GitHub Actions 本地复现。
+   - 如果缺少 `docker`，明确说明无法做容器级 Linux 复现，应优先安装 Docker，或退化为只做 lockfile 静态检查。
+   - 如果缺少 `act`，明确说明无法做工作流级本地复现，但这不影响继续使用 Docker 验证依赖与命令本身。
+8. 优先使用与 CI 架构一致的 Docker 环境复现。
+9. 如果要与 GitHub Actions 的 x64 Linux 对齐，优先使用：
 
 ```bash
 docker run --rm --platform linux/amd64 -v "$PWD":/src:ro node:24.12.0-bookworm bash -lc 'cp -a /src /work && cd /work && npm ci --workspaces --include-workspace-root && npm run lint && npm run test'
 ```
 
-9. 如果 binding 缺失，继续检查包元数据：
+10. 如果 binding 缺失，继续检查包元数据：
    - 查看失败包在 `package-lock.json` 中的 `optionalDependencies`。
    - 从 npm registry 查询缺失 binding 包的元数据：
 
@@ -38,7 +43,7 @@ docker run --rm --platform linux/amd64 -v "$PWD":/src:ro node:24.12.0-bookworm b
 npm view @scope/binding-linux-x64-gnu@<version> dist.tarball dist.integrity cpu os engines --json
 ```
 
-10. 修复根 `package-lock.json`：
+11. 修复根 `package-lock.json`：
     - 优先在目标平台上重新生成 lockfile。
     - 如果 npm 仍然没有生成所需的 `packages` 节点，则手动补齐缺失的 Linux binding 节点，至少包含：
       - `version`
@@ -50,12 +55,12 @@ npm view @scope/binding-linux-x64-gnu@<version> dist.tarball dist.integrity cpu 
       - `optional: true`
       - 如果父包是开发依赖，则补 `dev: true`
 
-11. 在目标平台上重新验证：
+   12. 在目标平台上重新验证：
     - 重新执行 `npm ci`
     - 重新执行之前失败的精确命令
     - 如果使用 `act`，需要时单独验证对应 job
 
-12. 区分依赖问题与 `act` 兼容性问题：
+   13. 区分依赖问题与 `act` 兼容性问题：
     - 如果 `act` 报 `runs.using key ... got node24`，这属于 `act` 的运行时兼容性限制，不是 binding 缺失。
     - 这种情况下，应改用 `act -j code_check --container-architecture linux/amd64` 验证主检查 job，或者直接使用 Docker 复现。
 
@@ -73,6 +78,8 @@ npm view @scope/binding-linux-x64-gnu@<version> dist.tarball dist.integrity cpu 
 - 已确认缺失的包名
 - 已确认 CI 架构
 - 已检查根 lockfile
+- 已确认本机存在 `docker`
+- 已确认本机是否存在 `act`
 - 已用 Docker 在目标平台复现
 - 已从 npm 获取缺失 binding 的元数据
 - 已修复或重建根 lockfile
