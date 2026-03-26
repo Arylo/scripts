@@ -18,7 +18,7 @@
     "fix:formatter": "oxfmt"
   },
   "devDependencies": {
-    "@cloudflare/vitest-pool-workers": "^0.12.4",
+    "@cloudflare/vitest-pool-workers": "^0.13.4",
     "@types/node": "^25.5.0",
     "concurrently": "^8.2.2",
     "oxfmt": "^0.35.0",
