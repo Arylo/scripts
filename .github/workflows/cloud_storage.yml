@@ -32,10 +32,10 @@ jobs:
         run: npm ci -ws --include-workspace-root
 
       - name: Lint
-        run: npm run lint -w cloud-storage
+        run: npm run lint -w @scripts/cloud-storage
 
       - name: Test
-        run: npm run test -w cloud-storage
+        run: npm run test -w @scripts/cloud-storage
 
       - name: Build
-        run: npm run build -w cloud-storage
+        run: npm run build -w @scripts/cloud-storage
