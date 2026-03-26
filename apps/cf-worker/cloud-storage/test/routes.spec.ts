@@ -370,7 +370,7 @@ describe('Hello World worker', () => {
   it('returns R2 object streams with metadata and range headers', async () => {
     const request = new Request('http://example.com/file.txt', {
       headers: {
-        'Cookie': 'cloud_storage_pwd=testpassword',
+        Cookie: 'cloud_storage_pwd=testpassword',
         'If-None-Match': 'other-etag',
         Range: 'bytes=2-5',
       },
@@ -427,7 +427,7 @@ describe('Hello World worker', () => {
   it('returns 412 when R2 conditional get does not include a body', async () => {
     const request = new Request('http://example.com/file.txt', {
       headers: {
-        'Cookie': 'cloud_storage_pwd=testpassword',
+        Cookie: 'cloud_storage_pwd=testpassword',
         'If-None-Match': '"etag-value"',
       },
     })
@@ -472,7 +472,7 @@ describe('Hello World worker', () => {
   it('ignores range requests when If-Range does not match', async () => {
     const request = new Request('http://example.com/file.txt', {
       headers: {
-        'Cookie': 'cloud_storage_pwd=testpassword',
+        Cookie: 'cloud_storage_pwd=testpassword',
         'If-Range': '"other-etag"',
         Range: 'bytes=2-5',
       },
@@ -519,7 +519,7 @@ describe('Hello World worker', () => {
   it('returns 416 for invalid ranges', async () => {
     const request = new Request('http://example.com/file.txt', {
       headers: {
-        'Cookie': 'cloud_storage_pwd=testpassword',
+        Cookie: 'cloud_storage_pwd=testpassword',
         Range: 'bytes=20-30',
       },
     })
