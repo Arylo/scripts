@@ -49,6 +49,7 @@
     "packages/*/*",
     "apps/caddyfile-sdk",
     "apps/monkey/*",
+    "apps/cf-worker/*",
     "apps/qinglong"
   ]
 }

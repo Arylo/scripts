@@ -1,0 +1,34 @@
+{
+	"name": "cloud-storage",
+	"version": "0.0.0",
+	"private": true,
+	"scripts": {
+		"deploy": "wrangler deploy",
+		"dev": "wrangler dev",
+		"start": "wrangler dev",
+		"test": "vitest run",
+		"cf-typegen": "wrangler types",
+		"clean": "rimraf dist",
+		"build": "tsc -p tsconfig.json",
+		"lint": "concurrently -m 1 --timings npm:lint:*",
+		"lint:type-check": "tsc -p tsconfig.json --noEmit",
+		"lint:formatter": "oxfmt --check",
+		"lint:oxlint": "oxlint",
+		"fix": "concurrently -m 1 --timings npm:fix:*",
+		"fix:formatter": "oxfmt"
+	},
+	"devDependencies": {
+		"@cloudflare/vitest-pool-workers": "^0.12.4",
+		"@types/node": "^25.5.0",
+		"typescript": "^5.5.2",
+		"vitest": "~3.2.0",
+		"wrangler": "^4.76.0",
+		"concurrently": "^8.2.2",
+		"oxfmt": "^0.35.0",
+		"oxlint": "^1.24.0",
+		"rimraf": "^6.0.1"
+	},
+	"dependencies": {
+		"mime": "^4.1.0"
+	}
+}

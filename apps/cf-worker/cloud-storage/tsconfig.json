@@ -1,0 +1,21 @@
+{
+  "extends": "../../../tsconfig.json",
+  "compilerOptions": {
+    "rootDir": ".",
+    "outDir": "./dist",
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "types": [
+      "./worker-configuration.d.ts",
+      "node"
+    ]
+  },
+  "exclude": [
+    "test"
+  ],
+  "include": [
+    "worker-configuration.d.ts",
+    "src/**/*.ts"
+  ]
+}
