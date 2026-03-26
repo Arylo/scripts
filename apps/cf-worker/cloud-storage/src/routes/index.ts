@@ -18,7 +18,7 @@ export default async function routes(
   app.use(poweredByMiddleware())
   app.use(accessLogMiddleware())
 
-  app.onError((error, ctx) => {
+  app.onError((error) => {
     if (error instanceof Error) {
       console.error(error)
     }
