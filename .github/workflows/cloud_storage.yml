@@ -42,6 +42,6 @@ jobs:
           TURBO_FILTER: ./apps/cf-worker/cloud-storage*
 
       - name: Build
-        run: npm run build
+        run: npm run build --ignore-scripts
         env:
           TURBO_FILTER: ./apps/cf-worker/cloud-storage*

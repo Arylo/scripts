@@ -20,7 +20,9 @@ user-invocable: true
 3. 阅读仓库规范文件 [docs/git-commit-message-standard.md](../../../docs/git-commit-message-standard.md)。
 4. 检查当前 staged 变更。
 5. 如果没有 staged 变更，先将当前工作区改动加入暂存区。
-6. 如果 staged 或当前工作区改动中包含 `package.json` 或 `package-lock.json`，必须先执行 `/linux-native-binding-repair`，确认不存在 Linux native binding、optionalDependencies 或 lockfile 跨平台漂移问题。
+6. 如果 staged 或当前工作区改动中包含 `package.json` 或 `package-lock.json`，需要检查变更内容：
+   - 如果 `package-lock.json` 有修改 **或者** `package.json` 的 `dependencies` 或 `devDependencies` 部分有修改，必须先执行 `/linux-native-binding-repair`，确认不存在 Linux native binding、optionalDependencies 或 lockfile 跨平台漂移问题。
+   - 如果只有 `package.json` 的其他部分（如 scripts、workspaces 等）修改，且 `package-lock.json` 没有修改，则不需要执行 `/linux-native-binding-repair`。
 7. 基于暂存区差异生成 commit message，格式必须是 `<type>(<scope>): <subject>`。
 8. 如果用户传入参数，将其作为 subject，仍需自动补全 type 和 scope。
 9. 执行 git 提交。
