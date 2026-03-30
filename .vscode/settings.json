@@ -1,5 +1,8 @@
 {
-    "cSpell.words": [
-        "arylo"
-    ]
+  "cSpell.words": [
+    "arylo"
+  ],
+  "files.associations": {
+		"wrangler.json": "jsonc"
+	}
 }

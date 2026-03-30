@@ -32,10 +32,16 @@ jobs:
         run: npm ci -ws --include-workspace-root
 
       - name: Lint
-        run: npm run lint -w @arylo/caddyfile-sdk
+        run: npm run lint
+        env:
+          TURBO_FILTER: ./apps/caddyfile-sdk
 
       - name: Test
-        run: npm run test -w @arylo/caddyfile-sdk
+        run: npm run test
+        env:
+          TURBO_FILTER: ./apps/caddyfile-sdk
 
       - name: Build
-        run: npm run build -w @arylo/caddyfile-sdk
+        run: npm run build --ignore-scripts
+        env:
+          TURBO_FILTER: ./apps/caddyfile-sdk
