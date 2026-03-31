@@ -22,7 +22,7 @@
 // @description:zh-TW 對開佈局、支持帶魚屏、自適應圖片高度、快捷翻頁、支持鍵盤操作
 // @description:zh-SG 对开布局、支持带鱼屏、自适应图片高度、快捷翻页、支持键盘操作
 // @description:zh-MY 对开布局、支持带鱼屏、自适应图片高度、快捷翻页、支持键盘操作
-// @version 53
+// @version 54
 // @author Arylo
 // @connect unpkg.com
 // @license MIT
@@ -748,6 +748,51 @@
     }
   });
 
+  // scripts/detail/newPage/hooks/utils/injectDataIndex.ts
+  function injectDataIndexInternal(list, directionMode) {
+    const newList = list.map((item, index) => {
+      return {
+        ...item,
+        props: {
+          ...item.props,
+          "data-index": index + 1,
+          "data-side": "U"
+        }
+      };
+    });
+    for (let i = 0; i < newList.length; i++) {
+      const [first, second] = [newList[i], newList[i + 1]];
+      if (first.props.pageType === "landscape" /* LANDSCAPE */) {
+        first.props["data-side"] = "A";
+        continue;
+      }
+      if (directionMode === "ttb" /* TTB */) {
+        first.props["data-side"] = "A";
+        continue;
+      }
+      if (!second) {
+        first.props["data-side"] = directionMode === "rtl" /* RTL */ ? "R" : "L";
+        break;
+      }
+      if (second.props.pageType === "landscape" /* LANDSCAPE */) {
+        first.props["data-side"] = directionMode === "rtl" /* RTL */ ? "R" : "L";
+        second.props["data-side"] = "A";
+      } else {
+        ;
+        [first.props["data-side"], second.props["data-side"]] = directionMode === "rtl" /* RTL */ ? ["R", "L"] : ["L", "R"];
+        if (directionMode === "rtl" /* RTL */) {
+          ;
+          [first.props["data-index"], second.props["data-index"]] = [
+            second.props["data-index"],
+            first.props["data-index"]
+          ];
+        }
+      }
+      i += 1;
+    }
+    return newList;
+  }
+
   // scripts/detail/newPage/hooks/useImageList.ts
   function useImageList() {
     const rawImageListRef = useRawImageList();
@@ -844,36 +889,7 @@
       return tempList.flat();
     };
     const injectDataIndex = (list) => {
-      let portraitCount = 0;
-      return list.map((item, index) => {
-        let targetIndex = index + 1;
-        let side = "A";
-        if (item.props.pageType === "landscape" /* LANDSCAPE */) {
-          portraitCount = 0;
-          side = "A";
-        } else {
-          portraitCount++;
-          if ("rtl" /* RTL */ === unref(directionModeRef2)) {
-            if (portraitCount % 2 === 0) {
-              targetIndex -= 1;
-            } else {
-              targetIndex += 1;
-            }
-            side = portraitCount % 2 === 1 ? "R" : "L";
-          }
-          if ("ltr" /* LTR */ === unref(directionModeRef2)) {
-            side = portraitCount % 2 === 1 ? "L" : "R";
-          }
-        }
-        return {
-          ...item,
-          props: {
-            ...item.props,
-            "data-index": targetIndex,
-            "data-side": side
-          }
-        };
-      });
+      return injectDataIndexInternal(list, unref(directionModeRef2));
     };
     const imagesRef = ref([]);
     function refresh() {
