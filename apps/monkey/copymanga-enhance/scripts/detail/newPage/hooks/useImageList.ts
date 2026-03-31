@@ -1,5 +1,5 @@
 import flow from '@scripts/flow'
-import { defineComponent, onMounted, readonly, ref, unref, watch } from '@scripts/gm-vue'
+import { onMounted, readonly, ref, unref, watch } from '@scripts/gm-vue'
 import Image from '../component/Image'
 import WhitePage from '../component/WhitePage'
 import { DirectionMode, PageType } from '../constant'
@@ -7,11 +7,8 @@ import useDirectionMode from './useDirectionMode'
 import useImageInfoMap from './useImageInfoMap'
 import useRawImageList from './useRawImageList'
 import useWhitePage from './useWhitePage'
-
-type ImageItem = {
-  component: ReturnType<typeof defineComponent> | string
-  props: { key: string; pageType: PageType } & Record<string, any>
-}
+import { injectDataIndexInternal } from './utils/injectDataIndex'
+import { ImageItem } from './utils/types'
 
 export default function useImageList() {
   const rawImageListRef = useRawImageList()
@@ -116,36 +113,7 @@ export default function useImageList() {
     return tempList.flat()
   }
   const injectDataIndex = (list: ImageItem[]): ImageItem[] => {
-    let portraitCount = 0
-    return list.map((item, index) => {
-      let targetIndex = index + 1
-      let side = 'A'
-      if (item.props.pageType === PageType.LANDSCAPE) {
-        portraitCount = 0
-        side = 'A'
-      } else {
-        portraitCount++
-        if (DirectionMode.RTL === unref(directionModeRef)) {
-          if (portraitCount % 2 === 0) {
-            targetIndex -= 1
-          } else {
-            targetIndex += 1
-          }
-          side = portraitCount % 2 === 1 ? 'R' : 'L'
-        }
-        if (DirectionMode.LTR === unref(directionModeRef)) {
-          side = portraitCount % 2 === 1 ? 'L' : 'R'
-        }
-      }
-      return {
-        ...item,
-        props: {
-          ...item.props,
-          'data-index': targetIndex,
-          'data-side': side,
-        },
-      }
-    })
+    return injectDataIndexInternal(list, unref(directionModeRef))
   }
   const imagesRef = ref<ImageItem[]>([])
   function refresh() {

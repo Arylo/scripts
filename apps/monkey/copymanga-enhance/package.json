@@ -13,6 +13,7 @@
     "lint:type-check": "tsc -p tsconfig.json --noEmit",
     "lint:formatter": "oxfmt --check",
     "lint:oxlint": "oxlint",
+    "fix": "concurrently -m 1 --timings npm:fix:*",
     "fix:formatter": "oxfmt"
   },
   "dependencies": {
