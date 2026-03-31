@@ -15,7 +15,7 @@ user-invocable: true
 
 ## 执行步骤
 
-1. 顺序执行 `npm run build`、`npm run lint`、`npm run test`。
+1. 顺序执行 `npm run build -- --force`、`npm run lint`、`npm run test`。
 2. 如果任意命令失败，停止提交，说明失败点，并给出修复建议。
 3. 阅读仓库规范文件 [docs/git-commit-message-standard.md](../../../docs/git-commit-message-standard.md)。
 4. 检查当前 staged 变更。

@@ -27,29 +27,31 @@ export default async function (buildFolderPath: string) {
     })
   }
 
-  for (const scriptInfo of lodash.orderBy(scriptInfos, ['source'], ['asc'])) {
-    await logger.inject([scriptInfo.source, scriptInfo.scriptName], async () => {
-      logger.log(
-        `Building ${path.relative(process.cwd(), scriptInfo.rootPath)} --outfile ${path.relative(process.cwd(), scriptInfo.outPath)} ...`,
-      )
-      const banner = stringifyBanner(scriptInfo.bannerFilePath, {
-        version: scriptInfo.deployInfo.version,
-        ...scriptInfo.extraInfo,
+  await Promise.all(
+    lodash.orderBy(scriptInfos, ['source'], ['asc']).map(async (scriptInfo) => {
+      return await logger.inject([scriptInfo.scriptName, scriptInfo.source], async () => {
+        logger.log(
+          `Building ${path.relative(process.cwd(), scriptInfo.rootPath)} --outfile ${path.relative(process.cwd(), scriptInfo.outPath)} ...`,
+        )
+        const banner = stringifyBanner(scriptInfo.bannerFilePath, {
+          version: scriptInfo.deployInfo.version,
+          ...scriptInfo.extraInfo,
+        })
+        await buildScript(scriptInfo.entryFilePath, {
+          banner: { js: banner },
+          outfile: path.resolve(scriptInfo.outPath, scriptInfo.output.user),
+        })
+        buildFS.writeFileSync(path.resolve(scriptInfo.outPath, scriptInfo.output.meta), banner)
+        buildFS.writeJSONFileSync(
+          path.resolve(scriptInfo.outPath, scriptInfo.output.deployJson),
+          scriptInfo.deployInfo,
+        )
+        logger.log(
+          `Building ${path.relative(process.cwd(), scriptInfo.rootPath)} --outfile ${path.relative(process.cwd(), scriptInfo.outPath)} ... Done`,
+        )
       })
-      await buildScript(scriptInfo.entryFilePath, {
-        banner: { js: banner },
-        outfile: path.resolve(scriptInfo.outPath, scriptInfo.output.user),
-      })
-      buildFS.writeFileSync(path.resolve(scriptInfo.outPath, scriptInfo.output.meta), banner)
-      buildFS.writeJSONFileSync(
-        path.resolve(scriptInfo.outPath, scriptInfo.output.deployJson),
-        scriptInfo.deployInfo,
-      )
-      logger.log(
-        `Building ${path.relative(process.cwd(), scriptInfo.rootPath)} --outfile ${path.relative(process.cwd(), scriptInfo.outPath)} ... Done`,
-      )
-    })
-  }
+    }),
+  )
   for (const scriptInfo of lodash.groupBy(scriptInfos, 'source')['github'] || []) {
     for (const filepath of buildFS.ls(scriptInfo.outPath, { raw: true })) {
       buildFS.copyFile(filepath, path.resolve(outPath, path.basename(filepath)), { force: true })

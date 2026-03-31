@@ -10,7 +10,7 @@ user-invocable: true
 ## 适用场景
 
 - GitHub Actions 在 Ubuntu 上失败，但本地 macOS 正常
-- `act` 失败，但本地 `npm run lint`、`npm run test` 或 `npm run build` 正常
+- `act` 失败，但本地 `npm run lint`、`npm run test` 或 `npm run build -- --force` 正常
 - 错误信息包含 `Cannot find native binding`
 - 错误信息包含 `npm has a bug related to optional dependencies`
 - 缺少 `@oxlint/binding-linux-x64-gnu`、`@oxfmt/binding-linux-x64-gnu`、`@rolldown/binding-linux-x64-gnu` 或同类平台包
