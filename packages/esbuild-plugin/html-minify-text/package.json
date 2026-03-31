@@ -57,7 +57,7 @@
     "oxfmt": "^0.35.0",
     "oxlint": "^1.24.0",
     "rimraf": "^6.0.1",
-    "typescript": "^5.4.5"
+    "typescript": "~5.9.3"
   },
   "peerDependencies": {
     "esbuild": "^0.21.5"

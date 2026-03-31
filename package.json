@@ -6,7 +6,7 @@
   "main": "index.js",
   "scripts": {
     "clean": "turbo run clean",
-    "build": "turbo run build",
+    "build": "turbo run build ${TURBO_FILTER:+-F=$TURBO_FILTER}",
     "postbuild": "is-ci && concurrently -m 1 --timings npm:postbuild:*",
     "build:caddyfile": "turbo run build -F='./apps/caddyfile-sdk'",
     "build:monkey": "turbo run build -F='./apps/monkey/*'",
@@ -15,8 +15,8 @@
     "postbuild:qinglong": "is-ci && ts-node ./etc/move_qinglong_scripts.ts",
     "lint": "concurrently -m 1 --timings npm:lint:*",
     "lint:syncpack": "syncpack lint",
-    "lint:monorepo": "turbo run lint",
-    "test": "turbo run test",
+    "lint:monorepo": "turbo run lint ${TURBO_FILTER:+-F=$TURBO_FILTER}",
+    "test": "turbo run test ${TURBO_FILTER:+-F=$TURBO_FILTER}",
     "fix": "concurrently -m 1 --timings npm:fix:*",
     "fix:syncpack": "syncpack fix",
     "fix:formatter": "turbo run fix:formatter",
@@ -43,12 +43,13 @@
     "syncpack": "^14.0.0",
     "ts-node": "^10.9.2",
     "turbo": "^2.4.4",
-    "typescript": "^5.4.5"
+    "typescript": "~5.9.3"
   },
   "workspaces": [
     "packages/*/*",
     "apps/caddyfile-sdk",
     "apps/monkey/*",
+    "apps/cf-worker/*",
     "apps/qinglong"
   ]
 }
