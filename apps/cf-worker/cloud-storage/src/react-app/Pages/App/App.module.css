@@ -1,0 +1,23 @@
+.app {
+  background-image: url(https://bing.img.run/m.php);
+  background-size: auto auto;
+  background-position: center;
+}
+
+@media (min-width: 1366px) and (max-width: 1919px) {
+  .app {
+    background-image: url(https://bing.img.run/1366x768.php);
+  }
+}
+
+@media (min-width: 1920px) and (max-width: 2559px) {
+  .app {
+    background-image: url(https://bing.img.run/1920x1080.php);
+  }
+}
+
+@media (min-width: 2560px) {
+  .app {
+    background-image: url(https://bing.img.run/uhd.php);
+  }
+}
