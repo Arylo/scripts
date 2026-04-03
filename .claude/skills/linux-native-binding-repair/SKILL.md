@@ -1,6 +1,6 @@
 ---
 name: linux-native-binding-repair
-description: '排查并修复 Linux 环境下缺失 native binding、optionalDependencies 或 package-lock 跨平台漂移问题。Use when CI fails on Ubuntu/Linux, act fails on Linux containers, or errors mention missing native bindings.'
+description: '排查并修复缺失环境 native binding、optionalDependencies 或 package-lock 跨平台漂移问题。Use when CI fails on Ubuntu/Linux, act fails on Linux containers, or errors mention missing native bindings.'
 argument-hint: '可选填写失败包名、平台、错误信息、失败步骤或 CI 上下文'
 user-invocable: true
 ---
@@ -14,7 +14,7 @@ user-invocable: true
 - 错误信息包含 `Cannot find native binding`
 - 错误信息包含 `npm has a bug related to optional dependencies`
 - 缺少 `@oxlint/binding-linux-x64-gnu`、`@oxfmt/binding-linux-x64-gnu`、`@rolldown/binding-linux-x64-gnu` 或同类平台包
-- `package-lock.json` 在 macOS 上生成，Linux CI 无法加载原生二进制
+- `package-lock.json` 在 A 平台上生成，B 平台(如Linux CI)无法加载原生二进制
 
 ## 执行步骤
 

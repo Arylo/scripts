@@ -5,8 +5,7 @@
   "type": "module",
   "scripts": {
     "cf-typegen": "wrangler types",
-    "check": "tsc && vite build && wrangler deploy --dry-run",
-    "deploy": "wrangler deploy",
+    "deploy": "npm run build && wrangler deploy",
     "dev": "vite --host",
     "preview": "npm run build && vite preview",
     "clean": "rimraf dist",
@@ -20,6 +19,7 @@
   },
   "dependencies": {
     "@tanstack/react-query": "^5.96.1",
+    "@videojs/react": "^10.0.0-beta.14",
     "classcat": "^5.0.5",
     "crypto-js": "^4.2.0",
     "hono": "4.11.1",
@@ -54,8 +54,6 @@
       "Workers"
     ],
     "categories": [],
-    "preview_icon_url": "https://imagedelivery.net/wSMYJvS3Xw-n339CbDyDIA/532a5378-9717-4964-385b-5fafd2160200/public",
-    "preview_image_url": "https://imagedelivery.net/wSMYJvS3Xw-n339CbDyDIA/ec7f4be5-d1d6-4e94-0851-126341745400/preview",
     "publish": true
   }
 }
