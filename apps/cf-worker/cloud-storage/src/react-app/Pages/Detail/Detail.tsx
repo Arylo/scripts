@@ -72,7 +72,7 @@ export default function Detail() {
   }
 
   return (
-    <div className="p-6 size-full flex flex-col gap-2">
+    <div className="p-6 h-screen w-screen flex flex-col gap-2">
       {isLoading ? (
         <>
           <Card className="h-full flex-1 flex items-center justify-center">
@@ -88,12 +88,15 @@ export default function Detail() {
         <></>
       )}
       <div
-        className={cc(['flex-1', mode !== MODE.LIST ? 'grid grid-cols-[320px_1fr] gap-4' : 'flex'])}
+        className={cc([
+          'flex-1 min-h-0',
+          mode !== MODE.LIST ? 'grid grid-cols-[320px_1fr] gap-4' : 'flex',
+        ])}
       >
         <Card
           className={cc([
             'overflow-hidden flex flex-col gap-2 grow-1',
-            mode !== MODE.LIST ? 'rounded-r-none' : 'flex-1',
+            mode !== MODE.LIST ? 'rounded-r-none' : 'flex-1 h-full',
           ])}
         >
           <div className="flex flex-row-reverse">
@@ -112,6 +115,7 @@ export default function Detail() {
                 'w-full flex flex-row items-center px-4 py-3',
                 'bg-gray-50 border-b border-gray-200',
                 'text-gray-600 font-medium text-sm',
+                'shrink-0',
               ])}
             >
               <div className="grow-1">文件名</div>
@@ -124,7 +128,7 @@ export default function Detail() {
             </div>
 
             {/* 文件列表项 */}
-            <div className="flex-1 overflow-y-auto">
+            <div className="flex-1 overflow-y-auto min-h-0">
               {(files || []).map((file) => (
                 <div
                   key={file.key}
