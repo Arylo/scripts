@@ -1,7 +1,8 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useState, useCallback } from 'react'
 import { useParams } from 'react-router'
-import { uploadFile } from '../../../utils/api'
+import { uploadFile } from '../../../requests/uploadFile'
+import { formatFileSize } from '../../../utils/formatFileSize'
 
 interface UploadFilesProps {
   onUploadSuccess?: () => void
@@ -140,12 +141,6 @@ export default function UploadFiles({ onUploadSuccess, onCancel }: UploadFilesPr
     setSelectedFiles([])
     setUploadError(null)
   }, [])
-
-  const formatFileSize = (size: number) => {
-    if (size < 1024) return `${size} B`
-    if (size < 1024 * 1024) return `${(size / 1024).toFixed(2)} KB`
-    return `${(size / (1024 * 1024)).toFixed(2)} MB`
-  }
 
   const getStatusColor = (status: FileWithStatus['status']) => {
     switch (status) {

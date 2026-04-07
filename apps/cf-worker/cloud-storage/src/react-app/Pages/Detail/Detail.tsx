@@ -1,10 +1,12 @@
 import { useQuery } from '@tanstack/react-query'
 import cc from 'classcat'
+import dayjs from 'dayjs'
 import React, { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router'
-import { FileInfo } from '../../../types/types.d'
+import { FileInfo } from '../../../shared/types/types'
 import Card from '../../Components/Card/Card'
-import { fetchFileList } from '../../utils/api'
+import { fetchFileList } from '../../requests/fetchFileList'
+import { formatFileSize } from '../../utils/formatFileSize'
 import UploadFiles from './Components/UploadFiles'
 import { MODE } from './constant'
 
@@ -108,7 +110,7 @@ export default function Detail() {
               <span>上传文件</span>
             </button>
           </div>
-          <div className="flex flex-col h-full">
+          <div className="grid grid-rows-[45px_1fr] grow min-h-0">
             {/* 表头 */}
             <div
               className={cc([
@@ -128,7 +130,7 @@ export default function Detail() {
             </div>
 
             {/* 文件列表项 */}
-            <div className="flex-1 overflow-y-auto min-h-0">
+            <div className="overflow-y-auto min-h-0">
               {(files || []).map((file) => (
                 <div
                   key={file.key}
@@ -152,10 +154,10 @@ export default function Detail() {
                   {mode === MODE.LIST ? (
                     <>
                       <div className="basis-[120px] text-center text-gray-600 text-sm">
-                        {file.size}
+                        {formatFileSize(file.size)}
                       </div>
                       <div className="basis-[140px] text-center text-gray-500 text-sm">
-                        {file.updatedAt + ''}
+                        {dayjs(file.updatedAt).format('YYYY/MM/DD')}
                       </div>
                     </>
                   ) : (

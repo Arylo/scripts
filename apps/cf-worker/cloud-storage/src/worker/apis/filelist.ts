@@ -1,6 +1,6 @@
 import { Context, Hono } from 'hono'
 import { getContext } from 'hono/context-storage'
-import { FileInfo } from '../../types/types.d'
+import { FileInfo } from '../../shared/types/types'
 import { loginMiddleware } from '../middlewares/auth'
 import { HonoEnv } from '../types/hono'
 
@@ -11,22 +11,36 @@ async function listFilesFromR2(prefix: string): Promise<FileInfo[]> {
   const hashedKey = getContext<HonoEnv>().get('hashedKey')
 
   try {
-    const listResult = await env.STORAGE_BUCKET.list({
-      prefix,
-      include: ['httpMetadata', 'customMetadata'],
-    })
+    let cursor: string | undefined = undefined
+    let hasMore = true
 
-    for (const object of listResult.objects) {
-      allFiles.push({
-        size: object.size,
-        key: object.key,
-        name: object.customMetadata?.originalName!,
-        mime: object.httpMetadata?.contentType!,
-        createdAt: Number(object.customMetadata?.createdAt!),
-        updatedAt: Number(object.customMetadata?.updatedAt!),
-        displayName: authConfig.actives.find((item) => `${hashedKey}/${item.name}` === object.key)
-          ?.displayName,
+    // 循环获取所有文件，直到没有更多数据
+    while (hasMore) {
+      const listResult = await env.STORAGE_BUCKET.list({
+        prefix,
+        cursor,
+        include: ['httpMetadata', 'customMetadata'],
       })
+
+      for (const object of listResult.objects) {
+        allFiles.push({
+          size: object.size,
+          key: object.key,
+          name: object.customMetadata?.originalName!,
+          mime: object.httpMetadata?.contentType!,
+          createdAt: Number(object.customMetadata?.createdAt!),
+          updatedAt: Number(object.customMetadata?.updatedAt!),
+          displayName: authConfig.actives.find((item) => `${hashedKey}/${item.name}` === object.key)
+            ?.displayName,
+        })
+      }
+
+      // 检查是否还有更多数据
+      if (listResult.truncated) {
+        cursor = listResult.cursor
+      } else {
+        hasMore = false
+      }
     }
   } catch (error) {
     console.error(`Error listing files with prefix ${prefix}:`, error)

@@ -1,6 +1,6 @@
 import React from 'react'
 import { match, P } from 'ts-pattern'
-import { FileInfo } from '../../../types/types'
+import { FileInfo } from '../../../shared/types/types'
 
 const VideoContent = React.lazy(() => import('./Components/VideoContent'))
 const ImageContent = React.lazy(() => import('./Components/ImageContent'))

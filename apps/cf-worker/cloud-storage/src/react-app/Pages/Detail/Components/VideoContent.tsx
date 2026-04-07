@@ -2,7 +2,7 @@ import '@videojs/react/video/skin.css'
 import { createPlayer, videoFeatures } from '@videojs/react'
 import { VideoSkin, Video } from '@videojs/react/video'
 import { useMemo } from 'react'
-import { FileInfo } from '../../../../types/types'
+import { FileInfo } from '../../../../shared/types/types'
 
 const Player = createPlayer({ features: videoFeatures })
 

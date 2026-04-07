@@ -12,8 +12,8 @@ export interface FileInfo {
   key: string
   mime: string
   displayName?: string
-  createdAt: Number
-  updatedAt: Number
+  createdAt: number
+  updatedAt: number
 }
 
 export interface ApiResponse<T> {

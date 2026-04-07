@@ -1,4 +1,4 @@
-import { FileInfo } from '../../../../types/types'
+import { FileInfo } from '../../../../shared/types/types'
 
 export default function ImageContent(props: { fileInfo: FileInfo }) {
   const { fileInfo } = props

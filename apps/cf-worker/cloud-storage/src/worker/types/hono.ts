@@ -1,4 +1,4 @@
-import { AuthConfig } from '../../types/types.d'
+import { AuthConfig } from '../../shared/types/types'
 
 export type HonoEnv = {
   Bindings: Env

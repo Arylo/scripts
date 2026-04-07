@@ -1,5 +1,5 @@
 import { createMiddleware } from 'hono/factory'
-import type { AuthConfig } from '../../types/types.d'
+import type { AuthConfig } from '../../shared/types/types'
 import { HonoEnv } from '../types/hono'
 import genLogger from '../utils/genLogger'
 
