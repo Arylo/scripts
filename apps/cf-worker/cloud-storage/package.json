@@ -9,7 +9,7 @@
     "dev": "vite --host",
     "preview": "npm run build && vite preview",
     "clean": "rimraf dist",
-    "build": "tsc -p tsconfig.json",
+    "build": "vite build",
     "lint": "concurrently -m 1 --timings npm:lint:*",
     "lint:type-check": "tsc -p tsconfig.json --noEmit",
     "lint:formatter": "oxfmt --check",
