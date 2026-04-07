@@ -46,10 +46,10 @@ export default function Detail() {
       }
       return fetchFileList(keyId)
     },
-    select: (list) => {
+    select: (list = []) => {
       const sortByName = (a: FileInfo, b: FileInfo) => {
-        const nameA = (a.displayName ?? a.name).toLowerCase()
-        const nameB = (b.displayName ?? b.name).toLowerCase()
+        const nameA = a.displayName ?? a.name
+        const nameB = b.displayName ?? b.name
         return nameA.localeCompare(nameB, undefined, { sensitivity: 'base' })
       }
       const withDisplayName = list.filter((file) => file.displayName).sort(sortByName)
@@ -110,7 +110,7 @@ export default function Detail() {
               <span>上传文件</span>
             </button>
           </div>
-          <div className="grid grid-rows-[45px_1fr] grow min-h-0">
+          <div className="grid grid-rows-[45px_1fr_40px] grow min-h-0">
             {/* 表头 */}
             <div
               className={cc([
@@ -168,6 +168,8 @@ export default function Detail() {
                 </div>
               ))}
             </div>
+
+            <div className="leading-[40px] text-sm">共{files?.length}个文件</div>
           </div>
         </Card>
 

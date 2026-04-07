@@ -178,11 +178,6 @@ export default function UploadFiles({ onUploadSuccess, onCancel }: UploadFilesPr
                 <span className="font-medium text-gray-700">
                   已选择 {selectedFiles.length} 个文件
                 </span>
-                {isUploading && (
-                  <span className="ml-2 text-sm text-blue-600">
-                    (上传中: {currentUploadIndex + 1}/{selectedFiles.length})
-                  </span>
-                )}
               </div>
               <div className="flex gap-2">
                 <button
