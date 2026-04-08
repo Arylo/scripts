@@ -1,0 +1,66 @@
+DROP TABLE IF EXISTS pan;
+CREATE TABLE IF NOT EXISTS pan (
+  `id` VARCHAR(128) PRIMARY KEY,
+  `active` INTEGER DEFAULT 1,
+  `createdAt` DATETIME,
+  `updatedAt` DATETIME
+);
+
+DROP TABLE IF EXISTS code;
+CREATE TABLE IF NOT EXISTS code (
+  `id` VARCHAR(128) PRIMARY KEY,
+  `value` TEXT,
+  `active` INTEGER DEFAULT 1,
+  `createdAt` DATETIME,
+  `updatedAt` DATETIME
+);
+
+DROP TABLE IF EXISTS pan_code;
+CREATE TABLE IF NOT EXISTS pan_code (
+  `id` VARCHAR(128) PRIMARY KEY,
+  `panId` VARCHAR(128),
+  `codeId` VARCHAR(128)
+);
+
+DROP TABLE IF EXISTS doc;
+CREATE TABLE IF NOT EXISTS doc (
+  `id` VARCHAR(128) PRIMARY KEY,
+  `hash` TEXT NOT NULL,
+  `mimetype` TEXT NOT NULL,
+  `size` INTEGER NOT NULL,
+  `createdAt` DATETIME,
+  `updatedAt` DATETIME
+);
+
+DROP TABLE IF EXISTS pan_doc;
+CREATE TABLE IF NOT EXISTS pan_doc (
+  `id` VARCHAR(128) PRIMARY KEY,
+  `panId` VARCHAR(128),
+  `docId` VARCHAR(128),
+  `originalName` VARCHAR(256) NOT NULL,
+  `highlight` INTEGER DEFAULT 0
+);
+
+
+DROP TABLE IF EXISTS perm;
+CREATE TABLE IF NOT EXISTS perm (
+  `id` VARCHAR(128) PRIMARY KEY,
+  `type` TEXT NOT NULL,
+  `value` TEXT NOT NULL,
+  `createdAt` DATETIME,
+  `updatedAt` DATETIME
+);
+
+DROP TABLE IF EXISTS pan_perm;
+CREATE TABLE IF NOT EXISTS pan_perm (
+  `id` VARCHAR(128) PRIMARY KEY,
+  `panId` VARCHAR(128),
+  `permId` VARCHAR(128)
+);
+
+DROP TABLE IF EXISTS code_perm;
+CREATE TABLE IF NOT EXISTS code_perm (
+  `id` VARCHAR(128) PRIMARY KEY,
+  `codeId` VARCHAR(128),
+  `permId` VARCHAR(128)
+);

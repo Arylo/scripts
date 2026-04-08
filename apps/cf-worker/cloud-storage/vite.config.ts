@@ -22,4 +22,9 @@ export default defineConfig({
       configPath,
     }) as any,
   ],
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, 'src/react-app'),
+    },
+  },
 })

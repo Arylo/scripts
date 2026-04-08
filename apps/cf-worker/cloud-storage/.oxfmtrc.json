@@ -4,5 +4,5 @@
   "sortImports": {
     "newlinesBetween": false
   },
-  "ignorePatterns": ["*.md", "dist/**"]
+  "ignorePatterns": ["*.md", "dist/**", ".wrangler/**", "src/react-app/Components/**"]
 }

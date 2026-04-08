@@ -1,18 +1,25 @@
 {
-	"servers": {
-		"git": {
-			"command": "npx",
-			"args": [
+  "servers": {
+    "git": {
+      "command": "npx",
+      "args": [
         "-y",
         "@cyanheads/git-mcp-server"
-			]
-		},
+      ]
+    },
     "chrome-devtools": {
       "command": "npx",
       "args": [
         "-y",
         "chrome-devtools-mcp"
       ]
+    },
+    "shadcn": {
+      "command": "npx",
+      "args": [
+        "shadcn@latest",
+        "mcp"
+      ]
     }
-	}
+  }
 }

@@ -1,12 +1,12 @@
-import { AuthConfig } from '../../shared/types/types'
-
 export type HonoEnv = {
   Bindings: Env
   Variables: {
     startTime: number
     sessionValue: string
     requestValue: string
-    authConfig: AuthConfig
-    hashedKey: string
+    userToken: string
+    sharedToken: string
+    panId: string
+    codeId: string
   }
 }

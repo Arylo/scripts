@@ -1,17 +1,10 @@
-export interface AuthConfig {
-  prefixes: string[]
-  actives: Array<{
-    name: string
-    displayName: string
-  }>
-}
-
 export interface FileInfo {
+  id: string
+  hash: string
+  mimetype: string
+  originalName: string
+  highlight: boolean
   size: number
-  name: string
-  key: string
-  mime: string
-  displayName?: string
   createdAt: number
   updatedAt: number
 }
@@ -28,4 +21,7 @@ export interface ListFilesRequestBody {
   pwd: string
 }
 
-export type ListFilesResponseBody = ApiResponse<FileInfo[]> & { size: number }
+export type PanInfoResponseBody = ApiResponse<FileInfo[]> & {
+  perms: { canDownload: boolean; canUpload: boolean }
+  total: number
+}

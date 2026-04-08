@@ -1,17 +1,17 @@
 import React from 'react'
 import { match, P } from 'ts-pattern'
-import { FileInfo } from '../../../shared/types/types'
+import { FileInfo } from '../../../../shared/types/types'
 
-const VideoContent = React.lazy(() => import('./Components/VideoContent'))
-const ImageContent = React.lazy(() => import('./Components/ImageContent'))
-const NotSupportContent = React.lazy(() => import('./Components/NotSupportContent'))
+const VideoContent = React.lazy(() => import('./VideoContent'))
+const ImageContent = React.lazy(() => import('./ImageContent'))
+const NotSupportContent = React.lazy(() => import('./NotSupportContent'))
 
 export default function Content(props: { fileInfo: FileInfo }) {
   const { fileInfo } = props
   return (
     <>
       <React.Suspense fallback={'正在加载组件中...'}>
-        {match(fileInfo.mime)
+        {match(fileInfo?.mimetype)
           .with(
             // .ts
             'video/mp2t',

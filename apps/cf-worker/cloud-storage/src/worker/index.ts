@@ -1,8 +1,7 @@
 import { Hono } from 'hono'
 import { contextStorage } from 'hono/context-storage'
-import * as filelist from './apis/filelist'
-import * as filepath from './apis/filepath'
-import * as filepost from './apis/filepost'
+import * as admin from './apis/admin'
+import * as guest from './apis/guest'
 import { accessMiddleware } from './middlewares/access'
 import { sessionMiddleware } from './middlewares/session'
 import { startTimeMiddleware } from './middlewares/startTime'
@@ -15,8 +14,7 @@ app.use(sessionMiddleware())
 app.use(startTimeMiddleware())
 app.use(accessMiddleware())
 
-filepath.get(app)
-filelist.post(app)
-filepost.post(app)
+admin.route(app)
+guest.route(app)
 
 export default app

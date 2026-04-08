@@ -1,6 +1,6 @@
 .app {
   background-image: url(https://bing.img.run/m.php);
-  background-size: auto auto;
+  background-size: cover;
   background-position: center;
 }
 

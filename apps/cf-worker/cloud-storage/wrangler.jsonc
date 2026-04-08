@@ -28,6 +28,17 @@
       "id": "auth-kv-id",
     },
   ],
+  "d1_databases": [
+    {
+      "binding": "db",
+      "database_name": "cloud-storage",
+      "database_id": "614181a5-1ebd-4db3-ae48-4fa794d1492c",
+    },
+  ],
+  "vars": {
+    "USERNAME": "admin",
+    "PASSWORD": "admin",
+  },
   /**
    * Smart Placement
    * https://developers.cloudflare.com/workers/configuration/smart-placement/#smart-placement
