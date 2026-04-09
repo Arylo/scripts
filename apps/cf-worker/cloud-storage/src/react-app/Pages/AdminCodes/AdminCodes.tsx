@@ -1,11 +1,9 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import dayjs from 'dayjs'
 import { useNavigate } from 'react-router'
 import CodeAddressButton from '@/Components/Button/CodeAddressButton'
-import EditCodeButton from '@/Components/Button/EditCodeButton'
-import RemoveCodeButton from '@/Components/Button/RemoveCodeButton'
+import DeleteCodeButton from '@/Components/Button/DeleteCodeButton'
+import EditButton from '@/Components/Button/EditButton'
 import { CardContent, CardHeader, CardTitle } from '@/Components/ui/card'
-import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/Components/ui/hover-card'
 import {
   Table,
   TableBody,
@@ -16,7 +14,7 @@ import {
   TableRow,
 } from '@/Components/ui/table'
 import { fetchAdminCodes } from '@/requests/fetchAdminCodes'
-import diffDate from '@/utils/diffDate'
+import DateHover from './DateHover'
 
 export default function AdminCodes() {
   const nav = useNavigate()
@@ -42,14 +40,14 @@ export default function AdminCodes() {
       <CardHeader>
         <CardTitle>全部提取码</CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="mt-4 flex flex-1 flex-col min-h-0 overflow-y-auto">
         <Table>
           <TableHeader>
             <TableRow>
               <TableHead>提取码</TableHead>
               <TableHead>所属分享盘</TableHead>
               <TableHead className="w-14">状态</TableHead>
-              <TableHead className="w-22">更新时间</TableHead>
+              <TableHead className="w-22">最后修改时间</TableHead>
               <TableHead className="w-22">创建时间</TableHead>
               <TableHead className="w-14">操作</TableHead>
             </TableRow>
@@ -61,30 +59,18 @@ export default function AdminCodes() {
                 <TableCell>{code.panId ?? '-'}</TableCell>
                 <TableCell>{code.active ? '正常' : '停用'}</TableCell>
                 <TableCell>
-                  <HoverCard>
-                    <HoverCardTrigger>{diffDate(code.updatedAt)}</HoverCardTrigger>
-                    <HoverCardContent className="text-center">
-                      {dayjs(code.updatedAt).format('YYYY/MM/DD HH:mm:ss')}
-                    </HoverCardContent>
-                  </HoverCard>
+                  <DateHover value={code.updatedAt} />
                 </TableCell>
                 <TableCell>
-                  <HoverCard>
-                    <HoverCardTrigger>{diffDate(code.createdAt)}</HoverCardTrigger>
-                    <HoverCardContent className="text-center">
-                      {dayjs(code.createdAt).format('YYYY/MM/DD HH:mm:ss')}
-                    </HoverCardContent>
-                  </HoverCard>
+                  <DateHover value={code.createdAt} />
                 </TableCell>
                 <TableCell className="flex gap-1" onClick={(e) => e.stopPropagation()}>
                   {code.value && <CodeAddressButton codeValue={code.value} />}
                   {code.panId && (
-                    <EditCodeButton
-                      onClick={() => nav(`/admin/pans/${code.panId}/codes/${code.id}`)}
-                    />
+                    <EditButton onClick={() => nav(`/admin/pans/${code.panId}/codes/${code.id}`)} />
                   )}
                   {code.panId && (
-                    <RemoveCodeButton
+                    <DeleteCodeButton
                       panId={code.panId}
                       codeId={code.id}
                       onSuccess={() =>

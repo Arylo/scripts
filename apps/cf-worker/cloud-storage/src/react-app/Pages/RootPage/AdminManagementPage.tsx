@@ -35,7 +35,7 @@ export default function AdminManagementPage() {
 
   return (
     <>
-      <div className={cc(['max-w-dvw max-h-dvh w-dvw h-dvh m-0 p-0', 'flex flex-row gap-4'])}>
+      <div className="max-w-dvw max-h-dvh w-dvw h-dvh m-0 p-0 min-h-0 flex flex-row gap-4">
         <div className="min-w-[200px] bg-white/95 flex flex-col">
           <div className="border-b p-4">
             <h1 className="text-2xl font-bold">管理员后台</h1>
@@ -67,8 +67,8 @@ export default function AdminManagementPage() {
             </Button>
           </div>
         </div>
-        <div className="py-2 flex flex-row gap-2 grow">
-          <Card className="w-full rounded-r-none">
+        <div className="py-2 flex flex-row gap-2 grow min-h-0">
+          <Card className="w-full min-h-0 rounded-r-none overflow-hidden flex flex-col">
             <Suspense fallback={<div className="p-6">正在加载...</div>}>
               <Outlet />
             </Suspense>

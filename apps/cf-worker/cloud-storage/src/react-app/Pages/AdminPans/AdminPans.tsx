@@ -1,11 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import dayjs from 'dayjs'
 import { useNavigate } from 'react-router'
-import EditCodeButton from '@/Components/Button/EditCodeButton'
-import RemovePanButton from '@/Components/Button/RemovePanButton'
+import DeletePanButton from '@/Components/Button/DeletePanButton'
+import EditButton from '@/Components/Button/EditButton'
 import { Button } from '@/Components/ui/button'
 import { CardAction, CardContent, CardHeader, CardTitle } from '@/Components/ui/card'
-import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/Components/ui/hover-card'
 import { Spinner } from '@/Components/ui/spinner'
 import {
   Table,
@@ -16,8 +14,8 @@ import {
   TableHeader,
   TableRow,
 } from '@/Components/ui/table'
+import DateHover from '@/Pages/AdminCodes/DateHover'
 import { createAdminPan, fetchAdminPans } from '@/requests/fetchAdminPans'
-import diffDate from '@/utils/diffDate'
 
 export default function AdminPans() {
   const nav = useNavigate()
@@ -62,13 +60,13 @@ export default function AdminPans() {
           </Button>
         </CardAction>
       </CardHeader>
-      <CardContent>
+      <CardContent className="mt-4 flex flex-1 flex-col min-h-0 overflow-y-auto">
         <Table>
           <TableHeader>
             <TableRow>
               <TableHead>分享盘ID</TableHead>
               <TableHead className="w-14">状态</TableHead>
-              <TableHead className="w-22">更新时间</TableHead>
+              <TableHead className="w-22">最后修改时间</TableHead>
               <TableHead className="w-22">创建时间</TableHead>
               <TableHead className="w-22">操作</TableHead>
             </TableRow>
@@ -79,24 +77,14 @@ export default function AdminPans() {
                 <TableCell>{pan.id}</TableCell>
                 <TableCell>{pan.active ? '正常' : '停用'}</TableCell>
                 <TableCell>
-                  <HoverCard>
-                    <HoverCardTrigger>{diffDate(pan.updatedAt)}</HoverCardTrigger>
-                    <HoverCardContent className="text-center">
-                      {dayjs(pan.updatedAt).format('YYYY/MM/DD HH:mm:ss')}
-                    </HoverCardContent>
-                  </HoverCard>
+                  <DateHover value={pan.updatedAt} />
                 </TableCell>
                 <TableCell>
-                  <HoverCard>
-                    <HoverCardTrigger>{diffDate(pan.createdAt)}</HoverCardTrigger>
-                    <HoverCardContent className="text-center">
-                      {dayjs(pan.createdAt).format('YYYY/MM/DD HH:mm:ss')}
-                    </HoverCardContent>
-                  </HoverCard>
+                  <DateHover value={pan.createdAt} />
                 </TableCell>
                 <TableCell className="flex gap-1" onClick={(e) => e.stopPropagation()}>
-                  <EditCodeButton onClick={() => nav(`/admin/pans/${pan.id}`)} />
-                  <RemovePanButton
+                  <EditButton onClick={() => nav(`/admin/pans/${pan.id}`)} />
+                  <DeletePanButton
                     panId={pan.id}
                     onSuccess={() => queryClient.invalidateQueries({ queryKey: ['admin', 'pans'] })}
                   />

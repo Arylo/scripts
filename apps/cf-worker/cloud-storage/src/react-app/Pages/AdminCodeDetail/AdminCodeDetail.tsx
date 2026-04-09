@@ -1,8 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import { useNavigate, useParams } from 'react-router'
+import BackButton from '@/Components/Button/BackButton'
 import CodeAddressButton from '@/Components/Button/CodeAddressButton'
-import { Button } from '@/Components/ui/button'
 import { CardAction, CardContent, CardHeader, CardTitle } from '@/Components/ui/card'
 import { Checkbox } from '@/Components/ui/checkbox'
 import {
@@ -175,16 +175,10 @@ export default function AdminCodeDetail() {
           {data?.data?.value && (
             <CodeAddressButton codeValue={data.data.value} buttonProps={{ size: 'default' }} />
           )}
-          <Button
-            variant="outline"
-            className="cursor-pointer"
-            onClick={() => nav(`/admin/pans/${pan_id}`)}
-          >
-            返回分享盘
-          </Button>
+          <BackButton onClick={() => nav(`/admin/pans/${pan_id}`)}>返回分享盘</BackButton>
         </CardAction>
       </CardHeader>
-      <CardContent className="mt-4 flex flex-col gap-4">
+      <CardContent className="mt-4 flex flex-1 flex-col min-h-0 overflow-y-auto gap-4">
         <section>
           <h2 className="text-lg font-medium mb-2">提取码基础属性</h2>
           <FieldGroup>

@@ -1,9 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import dayjs from 'dayjs'
 import { useNavigate, useParams } from 'react-router'
+import BackButton from '@/Components/Button/BackButton'
 import CodeAddressButton from '@/Components/Button/CodeAddressButton'
-import EditCodeButton from '@/Components/Button/EditCodeButton'
-import RemoveCodeButton from '@/Components/Button/RemoveCodeButton'
+import DeleteCodeButton from '@/Components/Button/DeleteCodeButton'
+import EditButton from '@/Components/Button/EditButton'
 import { Button } from '@/Components/ui/button'
 import { CardAction, CardContent, CardHeader, CardTitle } from '@/Components/ui/card'
 import { Checkbox } from '@/Components/ui/checkbox'
@@ -34,6 +35,7 @@ import { fetchAdminPanDetail } from '@/requests/fetchAdminPanDetail'
 import { adminAxios } from '@/utils/adminFetch'
 import diffDate from '@/utils/diffDate'
 import { PAN_PERM_TYPE } from '../../../shared/constant'
+import AdminFileManagement from './AdminFileManagement'
 
 export default function AdminPanDetail() {
   const { pan_id } = useParams<{ pan_id: string }>()
@@ -120,6 +122,7 @@ export default function AdminPanDetail() {
   })
 
   const codes = data?.data?.codes || []
+  const docs = data?.data?.docs || []
   const active = data?.data?.active ?? false
 
   const { mutate: createCode, isPending: isCreatingCode } = useMutation({
@@ -160,19 +163,17 @@ export default function AdminPanDetail() {
           <h1 className="text-xl font-semibold">分享盘详情</h1>
         </CardTitle>
         <CardAction>
-          <Button variant="outline" className="cursor-pointer" onClick={() => nav('/admin/pans')}>
-            返回列表
-          </Button>
+          <BackButton onClick={() => nav('/admin/pans')}>返回列表</BackButton>
         </CardAction>
       </CardHeader>
-      <CardContent className="mt-4 flex flex-col gap-4">
+      <CardContent className="mt-4 flex flex-1 min-h-0 flex-col gap-4 overflow-y-auto">
         <section>
           <h2 className="text-lg font-medium mb-2">分享盘基础属性</h2>
           <FieldGroup>
             <FieldSet>
               <FieldLegend>状态</FieldLegend>
               <FieldDescription>
-                当状态为为开启时, 则无法访问该分享盘中的任何资源, 包括文件和提取页面
+                当状态为为关闭时, 则无法访问该分享盘中的任何资源, 包括文件和提取页面
               </FieldDescription>
               <FieldGroup>
                 <Field orientation="horizontal" className="min-h-10">
@@ -283,6 +284,9 @@ export default function AdminPanDetail() {
           </FieldGroup>
         </section>
         <section>
+          <AdminFileManagement panId={pan_id!} docs={docs} isLoading={isLoading} />
+        </section>
+        <section>
           <div className="flex items-center justify-between mb-2">
             <h2 className="text-lg font-medium">提取码列表</h2>
             <Button
@@ -320,8 +324,8 @@ export default function AdminPanDetail() {
                   </TableCell>
                   <TableCell className="flex gap-1" onClick={(e) => e.stopPropagation()}>
                     {code.value && <CodeAddressButton codeValue={code.value} />}
-                    <EditCodeButton onClick={() => nav(`/admin/pans/${pan_id}/codes/${code.id}`)} />
-                    <RemoveCodeButton
+                    <EditButton onClick={() => nav(`/admin/pans/${pan_id}/codes/${code.id}`)} />
+                    <DeleteCodeButton
                       panId={pan_id!}
                       codeId={code.id}
                       onSuccess={() =>

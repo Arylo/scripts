@@ -17,6 +17,17 @@ export interface AdminCodeItem {
   updatedAt: string | number
 }
 
+export interface AdminDocItem {
+  id: string
+  hash: string
+  mimetype: string
+  size: number
+  createdAt: string | number
+  updatedAt: string | number
+  originalName: string
+  highlight: boolean
+}
+
 interface AdminPanDetailData {
   id: string
   active: boolean
@@ -24,6 +35,7 @@ interface AdminPanDetailData {
   updatedAt: string | number
   perms: AdminPermItem[]
   codes: AdminCodeItem[]
+  docs: AdminDocItem[]
 }
 
 export async function fetchAdminPanDetail(panId: string): Promise<ApiResponse<AdminPanDetailData>> {
@@ -34,4 +46,14 @@ export async function fetchAdminPanDetail(panId: string): Promise<ApiResponse<Ad
   }
 
   return data
+}
+
+export async function deleteAdminPanFile(panId: string, fileHash: string): Promise<void> {
+  const { data } = await adminAxios.delete<ApiResponse<void>>(
+    `/api/admin/pans/${panId}/files/${fileHash}`,
+  )
+
+  if (data.code !== 200) {
+    throw new Error(data.error || '删除文件失败')
+  }
 }

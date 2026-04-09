@@ -19,3 +19,13 @@ export async function fetchAdminCodes(): Promise<ApiResponse<AdminCodeItem[]>> {
 
   return data
 }
+
+export async function deleteAdminCode(panId: string, codeId: string): Promise<void> {
+  const { data } = await adminAxios.delete<ApiResponse<void>>(
+    `/api/admin/pans/${panId}/codes/${codeId}`,
+  )
+
+  if (data.code !== 200) {
+    throw new Error(data.error || '删除提取码失败')
+  }
+}

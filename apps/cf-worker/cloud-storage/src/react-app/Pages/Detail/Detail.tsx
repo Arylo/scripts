@@ -95,7 +95,7 @@ export default function Detail() {
                 <TableHead
                   className={cc(['w-[120px] text-center', { hidden: mode !== MODE.LIST }])}
                 >
-                  更新时间
+                  最后修改时间
                 </TableHead>
               </TableRow>
             </TableHeader>
