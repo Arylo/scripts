@@ -20,7 +20,7 @@ import { Spinner } from '@/Components/ui/spinner'
 import usePanPermsByPanId from '@/hooks/usePanPermsByPanId'
 import { fetchAdminCodeDetail } from '@/requests/fetchAdminCodeDetail'
 import diffDate from '@/utils/diffDate'
-import { CODE_PERM_TYPE } from '../../../shared/constant'
+import { CODE_PERM_TYPE } from '../../../shared/constant/perm'
 
 export default function AdminCodeDetail() {
   const { pan_id, code_id } = useParams<{ pan_id: string; code_id: string }>()

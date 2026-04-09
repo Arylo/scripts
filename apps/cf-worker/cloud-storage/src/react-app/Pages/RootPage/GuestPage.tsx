@@ -1,7 +1,19 @@
 import { Helmet } from 'react-helmet'
-import { Outlet } from 'react-router'
+import { useNavigate, Outlet } from 'react-router'
+import { useEvent } from 'react-use'
+import { GUEST_REDIRECT_HOME_EVENT } from '@/utils/guestFetch'
 
 export default function GuestPage() {
+  const navigate = useNavigate()
+
+  useEvent(
+    GUEST_REDIRECT_HOME_EVENT,
+    () => {
+      navigate('/')
+    },
+    window,
+  )
+
   return (
     <>
       <Helmet>

@@ -91,7 +91,7 @@ export const adminLoginMiddleware = () =>
         },
       })
     } catch (error) {
-      console.error('Error in login:', error)
+      logger.error('Error in login:', error)
       return c.json({ code: 500, error: 'Failed to process login request' }, 500)
     }
   })

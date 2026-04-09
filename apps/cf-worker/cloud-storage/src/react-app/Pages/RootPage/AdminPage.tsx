@@ -1,8 +1,5 @@
-import { lazy, Suspense } from 'react'
 import { Helmet } from 'react-helmet'
 import { Outlet } from 'react-router'
-
-const Toaster = lazy(() => import('@/Components/ui/sonner').then((m) => ({ default: m.Toaster })))
 
 export default function AdminPage() {
   return (
@@ -14,9 +11,6 @@ export default function AdminPage() {
         <link rel="apple-touch-icon" sizes="180x180" href="/admin/apple-touch-icon.png" />
         <link rel="manifest" href="/admin/site.webmanifest" />
       </Helmet>
-      <Suspense>
-        <Toaster />
-      </Suspense>
       <Outlet />
     </>
   )

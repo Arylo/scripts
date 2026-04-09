@@ -1,5 +1,9 @@
 import { eq, getTableColumns } from 'drizzle-orm'
-import { CODE_PERM_TYPE, PAN_PERM_DEFAULT_VALUE, PAN_PERM_TYPE } from '../../../shared/constant'
+import {
+  CODE_PERM_TYPE,
+  PAN_PERM_DEFAULT_VALUE,
+  PAN_PERM_TYPE,
+} from '../../../shared/constant/perm'
 import getDb from '../../db'
 import { CodePerm } from '../../models/CodePerm'
 import { PanPerm } from '../../models/PanPerm'

@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import { fetchAdminPanDetail } from '@/requests/fetchAdminPanDetail'
-import { PAN_PERM_DEFAULT_VALUE, PAN_PERM_TYPE } from '../../shared/constant'
+import { PAN_PERM_DEFAULT_VALUE, PAN_PERM_TYPE } from '../../shared/constant/perm'
 
 export default function usePanPermsByPanId(panId: string) {
   const { data, isSuccess } = useQuery({

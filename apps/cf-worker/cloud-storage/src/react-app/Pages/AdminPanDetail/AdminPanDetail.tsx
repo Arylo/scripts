@@ -34,7 +34,7 @@ import usePanPermsByPanId from '@/hooks/usePanPermsByPanId'
 import { fetchAdminPanDetail } from '@/requests/fetchAdminPanDetail'
 import { adminAxios } from '@/utils/adminFetch'
 import diffDate from '@/utils/diffDate'
-import { PAN_PERM_TYPE } from '../../../shared/constant'
+import { PAN_PERM_TYPE } from '../../../shared/constant/perm'
 import AdminFileManagement from './AdminFileManagement'
 
 export default function AdminPanDetail() {

@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useState, useCallback } from 'react'
 import { useParams } from 'react-router'
-import { uploadFile } from '../../../requests/uploadFile'
+import { uploadFileGuest } from '../../../requests/uploadFileGuest'
 import { formatFileSize } from '../../../utils/formatFileSize'
 
 interface UploadFilesProps {
@@ -26,7 +26,7 @@ export default function UploadFiles({ onUploadSuccess, onCancel }: UploadFilesPr
   const queryClient = useQueryClient()
 
   const uploadSingleFileMutation = useMutation({
-    mutationFn: uploadFile,
+    mutationFn: uploadFileGuest,
   })
 
   // 处理拖放事件

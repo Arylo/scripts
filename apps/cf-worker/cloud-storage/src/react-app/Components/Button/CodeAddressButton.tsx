@@ -41,7 +41,7 @@ export default function CodeAddressButton({ codeValue, buttonProps = {} }: Props
                   className="size-4! cursor-pointer"
                   onClick={() => {
                     copyToClipboard(url)
-                    toast.success(`提取码\`${codeValue}\`提取地址已复制到剪贴板`)
+                    toast.success(`提取码\`${codeValue}\`提取地址已复制到剪贴板`, { position: 'top-right' })
                   }}
                 />
               </InputGroupAddon>

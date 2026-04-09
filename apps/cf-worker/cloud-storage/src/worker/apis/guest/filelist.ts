@@ -12,13 +12,14 @@ export default {
     app.get('/list', async (c) => {
       const code = c.req.query('code')
       if (code) {
-        await panPickMiddleware()(c, () => Promise.resolve())
+        const result = await panPickMiddleware()(c, () => Promise.resolve())
+        if (result) return result
       } else {
-        await panAuthMiddleware()(c, () => Promise.resolve())
+        const result = await panAuthMiddleware()(c, () => Promise.resolve())
+        if (result) return result
       }
       const panId = c.get('panId')
       const codeId = c.get('codeId')
-      if (!panId || !codeId) return
 
       const db = getDb()
 

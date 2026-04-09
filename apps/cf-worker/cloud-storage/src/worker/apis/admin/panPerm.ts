@@ -1,6 +1,6 @@
 import { and, eq } from 'drizzle-orm'
 import { Hono } from 'hono'
-import { PAN_PERM_TYPE } from '../../../shared/constant'
+import { PAN_PERM_TYPE } from '../../../shared/constant/perm'
 import getDb from '../../db'
 import { PanPerm } from '../../models/PanPerm'
 import { Perm } from '../../models/Perm'

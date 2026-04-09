@@ -1,6 +1,6 @@
 import { and, eq } from 'drizzle-orm'
 import { Hono } from 'hono'
-import { CODE_PERM_TYPE } from '../../../shared/constant'
+import { CODE_PERM_TYPE } from '../../../shared/constant/perm'
 import getDb from '../../db'
 import { CodePerm } from '../../models/CodePerm'
 import { Perm } from '../../models/Perm'

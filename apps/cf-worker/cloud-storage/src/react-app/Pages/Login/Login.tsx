@@ -1,15 +1,21 @@
 import { useMutation } from '@tanstack/react-query'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router'
 import { Button } from '@/Components/ui/button'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/Components/ui/card'
 import { Input } from '@/Components/ui/input'
+import { Spinner } from '@/Components/ui/spinner'
 import { login } from '@/requests/login'
 
 function Login() {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const nav = useNavigate()
+
+  const usernameInputRef = useRef<HTMLInputElement>(null)
+  useEffect(() => {
+    usernameInputRef.current?.focus()
+  }, [])
 
   const { mutate, isPending, error } = useMutation({
     mutationFn: () => login(username, password),
@@ -27,6 +33,13 @@ function Login() {
     mutate()
   }
 
+  const handlePasswordKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && password) {
+      e.preventDefault()
+      mutate()
+    }
+  }
+
   return (
     <div className="grid grid-rows-[1fr_auto_1fr] grid-cols-[1fr_auto_1fr] size-full">
       <Card className="col-start-2 col-end-2 row-start-2 row-end-2 min-w-[320px]">
@@ -38,6 +51,7 @@ function Login() {
         <form onSubmit={onSubmit}>
           <CardContent className="flex flex-col gap-3">
             <Input
+              ref={usernameInputRef}
               type="text"
               placeholder="用户名"
               value={username}
@@ -50,6 +64,7 @@ function Login() {
               placeholder="密码"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              onKeyDown={handlePasswordKeyDown}
               required
               autoComplete="current-password"
             />
@@ -62,7 +77,8 @@ function Login() {
               className="w-full cursor-pointer"
               disabled={!username || !password || isPending}
             >
-              {isPending ? '登录中...' : '登录'}
+              {isPending && <Spinner data-icon="inline-start" />}
+              登录
             </Button>
           </CardFooter>
         </form>

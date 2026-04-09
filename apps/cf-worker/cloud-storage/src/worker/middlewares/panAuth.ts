@@ -1,7 +1,8 @@
-import { eq, getTableColumns } from 'drizzle-orm'
-import { getCookie, setCookie } from 'hono/cookie'
+import { and, eq, getTableColumns } from 'drizzle-orm'
+import { deleteCookie, getCookie, setCookie } from 'hono/cookie'
 import { createMiddleware } from 'hono/factory'
 import { ulid } from 'ulid'
+import { STATUS_CODE, STATUS_MAP } from '../../shared/constant/guest'
 import getDb from '../db'
 import { Code } from '../models/Code'
 import { Pan } from '../models/Pan'
@@ -48,7 +49,7 @@ export const panPickMiddleware = () =>
     const code = c.req.query('code')
 
     if (!code) {
-      return c.json({ code: 400, error: 'Missing key code' }, 400)
+      return c.json({ code: STATUS_CODE.MISS_CODE, error: STATUS_MAP[STATUS_CODE.MISS_CODE] }, 400)
     } else {
       logger.info('Received key code', code)
     }
@@ -67,6 +68,25 @@ export const panPickMiddleware = () =>
         if (sessionCode === code) {
           panId = sessionPanId
           codeId = sessionCodeId
+
+          const [isActive] = await getDb()
+            .select({
+              codeActive: Code.active,
+              panActive: Pan.active,
+            })
+            .from(PanCode)
+            .innerJoin(Code, and(eq(PanCode.codeId, Code.id), eq(Code.active, true)))
+            .innerJoin(Pan, and(eq(PanCode.panId, Pan.id), eq(Pan.active, true)))
+            .where(and(eq(PanCode.codeId, codeId!), eq(PanCode.panId, panId!)))
+            .limit(1)
+
+          if (!isActive) {
+            deleteCookie(c, COOKIE_NAME)
+            return c.json(
+              { code: STATUS_CODE.INVALID_CODE, error: STATUS_MAP[STATUS_CODE.INVALID_CODE] },
+              403,
+            )
+          }
         }
       }
     }
@@ -85,10 +105,18 @@ export const panPickMiddleware = () =>
         .limit(1)
 
       if (!codeRecord) {
-        return c.json({ code: 404, error: 'Invalid code' }, 404)
+        logger.warn(`Invalid code ${code}`)
+        return c.json(
+          { code: STATUS_CODE.INVALID_CODE, error: STATUS_MAP[STATUS_CODE.INVALID_CODE] },
+          404,
+        )
       }
       if (!codeRecord.active || !codeRecord.pan.active) {
-        return c.json({ code: 403, error: 'Code is inactive' }, 403)
+        logger.warn(`pan active ${codeRecord.pan.active}, code active ${codeRecord.active}`)
+        return c.json(
+          { code: STATUS_CODE.INVALID_CODE, error: STATUS_MAP[STATUS_CODE.INVALID_CODE] },
+          403,
+        )
       }
 
       const timestamp = Date.now()
@@ -104,11 +132,10 @@ export const panPickMiddleware = () =>
         expiresAt: timestamp + SESSION_VALID_DURATION,
       }
 
-      c.event.waitUntil(
-        c.env.AUTH_KV.put(`session_${sessionToken}`, JSON.stringify(sessionData), {
-          expirationTtl: SESSION_VALID_DURATION / 1000,
-        }),
-      )
+      await c.env.AUTH_KV.put(`session_${sessionToken}`, JSON.stringify(sessionData), {
+        expirationTtl: SESSION_VALID_DURATION / 1000,
+      })
+
       setCookie(c, COOKIE_NAME, sessionToken, {
         path: '/',
         httpOnly: true,
