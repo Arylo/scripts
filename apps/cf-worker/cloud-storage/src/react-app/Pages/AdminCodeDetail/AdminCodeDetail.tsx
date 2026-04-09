@@ -15,6 +15,7 @@ import {
 } from '@/Components/ui/field'
 import { Label } from '@/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '@/Components/ui/radio-group'
+import { Spinner } from '@/Components/ui/spinner'
 import usePanPermsByPanId from '@/hooks/usePanPermsByPanId'
 import { fetchAdminCodeDetail } from '@/requests/fetchAdminCodeDetail'
 import diffDate from '@/utils/diffDate'
@@ -194,11 +195,19 @@ export default function AdminCodeDetail() {
                     onValueChange={(v) => toggleActive(v === 'enabled')}
                   >
                     <div className="flex items-center gap-2">
-                      <RadioGroupItem value="enabled" />
+                      {isLoading || isTogglingActive ? (
+                        <Spinner data-icon="inline-start" />
+                      ) : (
+                        <RadioGroupItem value="enabled" className="cursor-pointer" />
+                      )}
                       <Label>开启</Label>
                     </div>
                     <div className="flex items-center gap-2">
-                      <RadioGroupItem value="disabled" />
+                      {isLoading || isTogglingActive ? (
+                        <Spinner data-icon="inline-start" />
+                      ) : (
+                        <RadioGroupItem value="disabled" className="cursor-pointer" />
+                      )}
                       <Label>关闭</Label>
                     </div>
                   </RadioGroup>
@@ -211,13 +220,17 @@ export default function AdminCodeDetail() {
           <h2 className="text-lg font-medium mb-2">提取码权限</h2>
           <FieldGroup className="flex flex-row">
             <Field orientation="horizontal" className="min-h-10">
-              <Checkbox
-                className="cursor-pointer"
-                checked={canDownload}
-                id="code-can-download"
-                disabled={isLoading || isTogglingCanDownload}
-                onCheckedChange={() => toggleCanDownload()}
-              />
+              {isLoading || isTogglingCanDownload ? (
+                <Spinner data-icon="inline-start" />
+              ) : (
+                <Checkbox
+                  className="cursor-pointer"
+                  checked={canDownload}
+                  id="code-can-download"
+                  disabled={isLoading || isTogglingCanDownload}
+                  onCheckedChange={() => toggleCanDownload()}
+                />
+              )}
               <FieldContent>
                 <FieldLabel className="cursor-pointer" htmlFor="code-can-download">
                   允许下载文件
@@ -231,13 +244,17 @@ export default function AdminCodeDetail() {
               </FieldContent>
             </Field>
             <Field orientation="horizontal" className="min-h-10">
-              <Checkbox
-                className="cursor-pointer"
-                checked={canUpload}
-                id="code-can-upload"
-                disabled={isLoading || isTogglingCanUpload}
-                onCheckedChange={() => toggleCanUpload()}
-              />
+              {isLoading || isTogglingCanUpload ? (
+                <Spinner data-icon="inline-start" />
+              ) : (
+                <Checkbox
+                  className="cursor-pointer"
+                  checked={canUpload}
+                  id="code-can-upload"
+                  disabled={isLoading || isTogglingCanUpload}
+                  onCheckedChange={() => toggleCanUpload()}
+                />
+              )}
               <FieldContent>
                 <FieldLabel className="cursor-pointer" htmlFor="code-can-upload">
                   允许上传文件
@@ -251,13 +268,17 @@ export default function AdminCodeDetail() {
               </FieldContent>
             </Field>
             <Field orientation="horizontal" className="min-h-10">
-              <Checkbox
-                className="cursor-pointer"
-                checked={canDelete}
-                id="code-can-delete"
-                disabled={isLoading || isTogglingCanDelete}
-                onCheckedChange={() => toggleCanDelete()}
-              />
+              {isLoading || isTogglingCanDelete ? (
+                <Spinner data-icon="inline-start" />
+              ) : (
+                <Checkbox
+                  className="cursor-pointer"
+                  checked={canDelete}
+                  id="code-can-delete"
+                  disabled={isLoading || isTogglingCanDelete}
+                  onCheckedChange={() => toggleCanDelete()}
+                />
+              )}
               <FieldContent>
                 <FieldLabel className="cursor-pointer" htmlFor="code-can-delete">
                   允许删除文件

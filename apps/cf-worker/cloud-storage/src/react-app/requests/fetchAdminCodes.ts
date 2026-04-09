@@ -1,4 +1,5 @@
 import { ApiResponse } from '../../shared/types/types'
+import { adminAxios } from '../utils/adminFetch'
 
 export interface AdminCodeItem {
   id: string
@@ -10,13 +11,9 @@ export interface AdminCodeItem {
 }
 
 export async function fetchAdminCodes(): Promise<ApiResponse<AdminCodeItem[]>> {
-  const response = await fetch('/api/admin/codes', {
-    credentials: 'include',
-  })
+  const { data } = await adminAxios.get<ApiResponse<AdminCodeItem[]>>('/api/admin/codes')
 
-  const data: ApiResponse<AdminCodeItem[]> = await response.json()
-
-  if (!response.ok || data.code !== 200) {
+  if (data.code !== 200) {
     throw new Error(data.error || '获取 Code 列表失败')
   }
 

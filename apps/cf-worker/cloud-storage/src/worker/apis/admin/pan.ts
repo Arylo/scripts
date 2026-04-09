@@ -28,12 +28,23 @@ export async function removeCodeFromPan(panId: string, codeIds: string[] | strin
           .where(inArray(CodePerm.codeId, currentCodeIds)),
       ),
     )
-  await db.delete(CodePerm).where(inArray(CodePerm.codeId, currentCodeIds))
+  const codes = await db.delete(Code).where(inArray(Code.id, currentCodeIds)).returning()
 
-  await db
-    .delete(PanCode)
-    .where(and(eq(PanCode.panId, panId), inArray(PanCode.codeId, currentCodeIds)))
-  await db.delete(Code).where(inArray(Code.id, currentCodeIds))
+  await db.delete(CodePerm).where(
+    inArray(
+      CodePerm.codeId,
+      codes.map((code) => code.id),
+    ),
+  )
+  await db.delete(PanCode).where(
+    and(
+      eq(PanCode.panId, panId),
+      inArray(
+        PanCode.codeId,
+        codes.map((code) => code.id),
+      ),
+    ),
+  )
 }
 
 export async function removeDocFromPan(panId: string, docIds: string[] | string | SQLWrapper) {

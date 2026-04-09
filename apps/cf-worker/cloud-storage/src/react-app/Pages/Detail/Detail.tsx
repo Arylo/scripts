@@ -1,5 +1,4 @@
 import cc from 'classcat'
-import dayjs from 'dayjs'
 import React, { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router'
 import Card from '@/Components/Card/Card'
@@ -13,6 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/Components/ui/table'
+import diffDate from '@/utils/diffDate'
 import useFileList from '../../hooks/useFileList'
 import usePanPerms from '../../hooks/usePanPerms'
 import { formatFileSize } from '../../utils/formatFileSize'
@@ -107,7 +107,7 @@ export default function Detail() {
                     {formatFileSize(file.size)}
                   </TableCell>
                   <TableCell className={cc([{ hidden: mode !== MODE.LIST }])}>
-                    {dayjs(file.updatedAt).format('YYYY/MM/DD')}
+                    {diffDate(file.updatedAt)}
                   </TableCell>
                 </TableRow>
               ))}

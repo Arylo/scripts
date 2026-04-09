@@ -1,5 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import dayjs from 'dayjs'
 import { useNavigate, useParams } from 'react-router'
+import RemoveCodeButton from '@/Components/Button/RemoveCodeButton'
 import { Button } from '@/Components/ui/button'
 import { CardAction, CardContent, CardHeader, CardTitle } from '@/Components/ui/card'
 import { Checkbox } from '@/Components/ui/checkbox'
@@ -12,8 +14,10 @@ import {
   FieldLegend,
   FieldSet,
 } from '@/Components/ui/field'
+import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/Components/ui/hover-card'
 import { Label } from '@/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '@/Components/ui/radio-group'
+import { Spinner } from '@/Components/ui/spinner'
 import {
   Table,
   TableBody,
@@ -25,6 +29,7 @@ import {
 } from '@/Components/ui/table'
 import usePanPermsByPanId from '@/hooks/usePanPermsByPanId'
 import { fetchAdminPanDetail } from '@/requests/fetchAdminPanDetail'
+import { adminAxios } from '@/utils/adminFetch'
 import diffDate from '@/utils/diffDate'
 import { PAN_PERM_TYPE } from '../../../shared/constant'
 
@@ -115,6 +120,16 @@ export default function AdminPanDetail() {
   const codes = data?.data?.codes || []
   const active = data?.data?.active ?? false
 
+  const { mutate: createCode, isPending: isCreatingCode } = useMutation({
+    mutationFn: () =>
+      adminAxios.post<{ code: number; data: { code: { id: string } } }>(
+        `/api/admin/pans/${pan_id}/codes`,
+      ),
+    onSuccess: (res) => {
+      nav(`/admin/pans/${pan_id}/codes/${res.data.data.code.id}`)
+    },
+  })
+
   const { mutate: toggleActive, isPending: isTogglingActive } = useMutation({
     mutationFn: (newActive: boolean) =>
       fetch(`/api/admin/pans/${pan_id}`, {
@@ -129,7 +144,7 @@ export default function AdminPanDetail() {
   })
 
   if (isLoading) {
-    return <div className="p-6">正在加载 Pan 详情...</div>
+    return <div className="p-6">正在加载分享盘详情...</div>
   }
 
   if (error) {
@@ -165,11 +180,19 @@ export default function AdminPanDetail() {
                     onValueChange={(v) => toggleActive(v === 'enabled')}
                   >
                     <div className="flex items-center gap-2">
-                      <RadioGroupItem value="enabled"></RadioGroupItem>
+                      {isLoading || isTogglingActive ? (
+                        <Spinner data-icon="inline-start" />
+                      ) : (
+                        <RadioGroupItem value="enabled" className="cursor-pointer" />
+                      )}
                       <Label>开启</Label>
                     </div>
                     <div className="flex items-center gap-2">
-                      <RadioGroupItem value="disabled"></RadioGroupItem>
+                      {isLoading || isTogglingActive ? (
+                        <Spinner data-icon="inline-start" />
+                      ) : (
+                        <RadioGroupItem value="disabled" className="cursor-pointer" />
+                      )}
                       <Label>关闭</Label>
                     </div>
                   </RadioGroup>
@@ -182,18 +205,24 @@ export default function AdminPanDetail() {
           <h2 className="text-lg font-medium mb-2">分享盘全局权限</h2>
           <FieldGroup className="flex flex-row">
             <Field orientation="horizontal" className="min-h-10">
-              <Checkbox
-                className="cursor-pointer"
-                checked={canDownload}
-                id="can-download"
-                disabled={isLoading || isTogglingCanDownload}
-                onCheckedChange={() => toggleCanDownload()}
-              />
+              {isLoading || isTogglingCanDownload ? (
+                <Spinner data-icon="inline-start" />
+              ) : (
+                <>
+                  <Checkbox
+                    className="cursor-pointer"
+                    checked={canDownload}
+                    id="can-download"
+                    disabled={isLoading || isTogglingCanDownload}
+                    onCheckedChange={() => toggleCanDownload()}
+                  />
+                </>
+              )}
               <FieldContent>
                 <FieldLabel className="cursor-pointer" htmlFor="can-download">
                   允许下载文件
                 </FieldLabel>
-                <FieldDescription className="text-xs text-muted-foreground">
+                <FieldDescription className="text-xs">
                   {!canDownloadPerm && '(当前为默认权限)'}
                   {canDownloadPerm &&
                     'id' in canDownloadPerm &&
@@ -202,13 +231,17 @@ export default function AdminPanDetail() {
               </FieldContent>
             </Field>
             <Field orientation="horizontal" className="min-h-10">
-              <Checkbox
-                className="cursor-pointer"
-                checked={canUpload}
-                id="can-upload"
-                disabled={isLoading || isTogglingCanUpload}
-                onCheckedChange={() => toggleCanUpload()}
-              />
+              {isLoading || isTogglingCanUpload ? (
+                <Spinner data-icon="inline-start" />
+              ) : (
+                <Checkbox
+                  className="cursor-pointer"
+                  checked={canUpload}
+                  id="can-upload"
+                  disabled={isLoading || isTogglingCanUpload}
+                  onCheckedChange={() => toggleCanUpload()}
+                />
+              )}
               <FieldContent>
                 <FieldLabel className="cursor-pointer" htmlFor="can-upload">
                   允许上传文件
@@ -222,13 +255,17 @@ export default function AdminPanDetail() {
               </FieldContent>
             </Field>
             <Field orientation="horizontal" className="min-h-10">
-              <Checkbox
-                className="cursor-pointer"
-                checked={canDelete}
-                id="can-delete"
-                disabled={isLoading || isTogglingCanDelete}
-                onCheckedChange={() => toggleCanDelete()}
-              />
+              {isLoading || isTogglingCanDelete ? (
+                <Spinner data-icon="inline-start" />
+              ) : (
+                <Checkbox
+                  className="cursor-pointer"
+                  checked={canDelete}
+                  id="can-delete"
+                  disabled={isLoading || isTogglingCanDelete}
+                  onCheckedChange={() => toggleCanDelete()}
+                />
+              )}
               <FieldContent>
                 <FieldLabel className="cursor-pointer" htmlFor="can-delete">
                   允许删除文件
@@ -244,25 +281,58 @@ export default function AdminPanDetail() {
           </FieldGroup>
         </section>
         <section>
-          <h2 className="text-lg font-medium mb-2">提取码列表</h2>
+          <div className="flex items-center justify-between mb-2">
+            <h2 className="text-lg font-medium">提取码列表</h2>
+            <Button
+              variant="outline"
+              size="sm"
+              className="cursor-pointer"
+              disabled={isCreatingCode || isLoading}
+              onClick={() => createCode()}
+            >
+              {isCreatingCode || isLoading ? <Spinner data-icon="inline-start" /> : null}
+              新增提取码
+            </Button>
+          </div>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Code 值</TableHead>
-                <TableHead>状态</TableHead>
-                <TableHead>创建时间</TableHead>
+                <TableHead>提取码</TableHead>
+                <TableHead className="w-14">状态</TableHead>
+                <TableHead className="w-22">创建时间</TableHead>
+                <TableHead className="w-14">操作</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {codes.map((code) => (
-                <TableRow
-                  key={code.id}
-                  className="hover:bg-muted cursor-pointer"
-                  onClick={() => nav(`/admin/pans/${pan_id}/codes/${code.id}`)}
-                >
+                <TableRow key={code.id} className="hover:bg-muted">
                   <TableCell>{code.value || '-'}</TableCell>
                   <TableCell>{code.active ? '启用' : '禁用'}</TableCell>
-                  <TableCell>{diffDate(code.createdAt)}</TableCell>
+                  <TableCell>
+                    <HoverCard>
+                      <HoverCardTrigger>{diffDate(code.createdAt)}</HoverCardTrigger>
+                      <HoverCardContent className="text-center">
+                        {dayjs(code.createdAt).format('YYYY/MM/DD HH:mm:ss')}
+                      </HoverCardContent>
+                    </HoverCard>
+                  </TableCell>
+                  <TableCell className="flex gap-1" onClick={(e) => e.stopPropagation()}>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="cursor-pointer"
+                      onClick={() => nav(`/admin/pans/${pan_id}/codes/${code.id}`)}
+                    >
+                      编辑
+                    </Button>
+                    <RemoveCodeButton
+                      panId={pan_id!}
+                      codeId={code.id}
+                      onSuccess={() =>
+                        queryClient.invalidateQueries({ queryKey: ['admin', 'pan-detail', pan_id] })
+                      }
+                    />
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>

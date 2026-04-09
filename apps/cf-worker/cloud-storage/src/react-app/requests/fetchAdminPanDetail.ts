@@ -1,4 +1,5 @@
 import { ApiResponse } from '../../shared/types/types'
+import { adminAxios } from '../utils/adminFetch'
 
 export interface AdminPermItem {
   id: string
@@ -26,14 +27,10 @@ interface AdminPanDetailData {
 }
 
 export async function fetchAdminPanDetail(panId: string): Promise<ApiResponse<AdminPanDetailData>> {
-  const response = await fetch(`/api/admin/pans/${panId}`, {
-    credentials: 'include',
-  })
+  const { data } = await adminAxios.get<ApiResponse<AdminPanDetailData>>(`/api/admin/pans/${panId}`)
 
-  const data: ApiResponse<AdminPanDetailData> = await response.json()
-
-  if (!response.ok || data.code !== 200) {
-    throw new Error(data.error || '获取 Pan 详情失败')
+  if (data.code !== 200) {
+    throw new Error(data.error || '获取分享盘详情失败')
   }
 
   return data

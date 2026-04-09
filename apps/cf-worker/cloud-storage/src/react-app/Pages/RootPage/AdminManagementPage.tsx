@@ -1,12 +1,22 @@
 import cc from 'classcat'
 import { Suspense } from 'react'
 import { Outlet, useNavigate, useLocation } from 'react-router'
+import { useEvent } from 'react-use'
 import Card from '@/Components/Card/Card'
 import { Button } from '@/Components/ui/button'
+import { ADMIN_SESSION_EXPIRED_EVENT } from '@/utils/adminFetch'
 
-export default function AdminPage() {
+export default function AdminManagementPage() {
   const nav = useNavigate()
   const location = useLocation()
+
+  useEvent(
+    ADMIN_SESSION_EXPIRED_EVENT,
+    () => {
+      nav('/admin/session-expired', { replace: true })
+    },
+    window,
+  )
 
   const menus = [
     {
@@ -48,7 +58,11 @@ export default function AdminPage() {
             ))}
           </div>
           <div className="border-t p-4">
-            <Button variant="link" className="text-sm hover:text-lg cursor-pointer">
+            <Button
+              variant="link"
+              className="text-sm hover:text-lg cursor-pointer"
+              onClick={() => nav('/admin/logout')}
+            >
               退出登录
             </Button>
           </div>

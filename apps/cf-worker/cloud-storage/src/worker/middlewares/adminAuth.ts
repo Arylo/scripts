@@ -11,7 +11,7 @@ function sha1Hash(input: string): string {
 
 export const COOKIE_NAME = 'user_token'
 
-const VALID_DURATION = 8 * 60 * 60 * 1000
+const VALID_DURATION = 4 * 60 * 60 * 1000
 
 export const adminAuthMiddleware = () =>
   createMiddleware<HonoEnv>(async (c, next) => {
@@ -77,8 +77,9 @@ export const adminLoginMiddleware = () =>
       })
 
       setCookie(c, COOKIE_NAME, sessionToken, {
-        path: '/',
+        path: '/api/admin',
         httpOnly: true,
+        secure: true,
         maxAge: VALID_DURATION / 1000,
       })
       return c.json({
@@ -109,7 +110,13 @@ export const adminLogoutMiddleware = () =>
       await c.env.AUTH_KV.delete(`session_${userToken}`)
       logger.info(`Deleted session data for token: ${userToken}`)
 
-      setCookie(c, COOKIE_NAME, '', { path: '/', httpOnly: true, maxAge: 0, expires: new Date(0) })
+      setCookie(c, COOKIE_NAME, '', {
+        path: '/',
+        httpOnly: true,
+        secure: true,
+        maxAge: 0,
+        expires: new Date(0),
+      })
 
       return c.json({
         code: 200,

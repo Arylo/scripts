@@ -11,7 +11,8 @@ import genLogger from '../utils/genLogger'
 
 export const COOKIE_NAME = 'share_token'
 
-const VALID_DURATION = 2 * 60 * 60 * 1000
+const SESSION_VALID_DURATION = 2 * 60 * 60 * 1000 // 2h
+const SESSION_CACHE_TTL = 5 * 60 // 5m
 
 export const panAuthMiddleware = () =>
   createMiddleware<HonoEnv>(async (c, next) => {
@@ -23,7 +24,9 @@ export const panAuthMiddleware = () =>
       return c.json({ code: 404, error: 'Not found' }, 404)
     }
 
-    const sessionDataStr = await c.env.AUTH_KV.get(`session_${sessionToken}`)
+    const sessionDataStr = await c.env.AUTH_KV.get(`session_${sessionToken}`, {
+      cacheTtl: SESSION_CACHE_TTL,
+    })
     if (!sessionDataStr) {
       logger.warn(`No session found for token ${sessionToken}`)
       return c.json({ code: 404, error: 'Not found' }, 404)
@@ -55,7 +58,9 @@ export const panPickMiddleware = () =>
     let codeId: string | undefined
 
     if (sessionToken) {
-      const sessionDataStr = await c.env.AUTH_KV.get(`session_${sessionToken}`)
+      const sessionDataStr = await c.env.AUTH_KV.get(`session_${sessionToken}`, {
+        cacheTtl: SESSION_CACHE_TTL,
+      })
       if (sessionDataStr) {
         const sessionData = JSON.parse(sessionDataStr)
         const { panId: sessionPanId, codeId: sessionCodeId, code: sessionCode } = sessionData
@@ -96,16 +101,19 @@ export const panPickMiddleware = () =>
         codeId,
         code,
         createdAt: timestamp,
-        expiresAt: timestamp + VALID_DURATION,
+        expiresAt: timestamp + SESSION_VALID_DURATION,
       }
 
-      await c.env.AUTH_KV.put(`session_${sessionToken}`, JSON.stringify(sessionData), {
-        expirationTtl: VALID_DURATION / 1000,
-      })
+      c.event.waitUntil(
+        c.env.AUTH_KV.put(`session_${sessionToken}`, JSON.stringify(sessionData), {
+          expirationTtl: SESSION_VALID_DURATION / 1000,
+        }),
+      )
       setCookie(c, COOKIE_NAME, sessionToken, {
         path: '/',
         httpOnly: true,
-        maxAge: VALID_DURATION / 1000,
+        secure: true,
+        maxAge: SESSION_VALID_DURATION / 1000,
       })
     }
 
