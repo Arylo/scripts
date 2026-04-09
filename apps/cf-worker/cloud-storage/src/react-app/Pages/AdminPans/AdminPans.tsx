@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import dayjs from 'dayjs'
 import { useNavigate } from 'react-router'
+import EditCodeButton from '@/Components/Button/EditCodeButton'
 import RemovePanButton from '@/Components/Button/RemovePanButton'
 import { Button } from '@/Components/ui/button'
 import { CardAction, CardContent, CardHeader, CardTitle } from '@/Components/ui/card'
@@ -94,14 +95,7 @@ export default function AdminPans() {
                   </HoverCard>
                 </TableCell>
                 <TableCell className="flex gap-1" onClick={(e) => e.stopPropagation()}>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="cursor-pointer"
-                    onClick={() => nav(`/admin/pans/${pan.id}`)}
-                  >
-                    编辑
-                  </Button>
+                  <EditCodeButton onClick={() => nav(`/admin/pans/${pan.id}`)} />
                   <RemovePanButton
                     panId={pan.id}
                     onSuccess={() => queryClient.invalidateQueries({ queryKey: ['admin', 'pans'] })}

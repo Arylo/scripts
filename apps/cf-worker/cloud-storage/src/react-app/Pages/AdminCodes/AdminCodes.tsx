@@ -1,8 +1,9 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import dayjs from 'dayjs'
 import { useNavigate } from 'react-router'
+import CodeAddressButton from '@/Components/Button/CodeAddressButton'
+import EditCodeButton from '@/Components/Button/EditCodeButton'
 import RemoveCodeButton from '@/Components/Button/RemoveCodeButton'
-import { Button } from '@/Components/ui/button'
 import { CardContent, CardHeader, CardTitle } from '@/Components/ui/card'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/Components/ui/hover-card'
 import {
@@ -76,15 +77,11 @@ export default function AdminCodes() {
                   </HoverCard>
                 </TableCell>
                 <TableCell className="flex gap-1" onClick={(e) => e.stopPropagation()}>
+                  {code.value && <CodeAddressButton codeValue={code.value} />}
                   {code.panId && (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="cursor-pointer"
+                    <EditCodeButton
                       onClick={() => nav(`/admin/pans/${code.panId}/codes/${code.id}`)}
-                    >
-                      编辑
-                    </Button>
+                    />
                   )}
                   {code.panId && (
                     <RemoveCodeButton

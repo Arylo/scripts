@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import { useNavigate, useParams } from 'react-router'
+import CodeAddressButton from '@/Components/Button/CodeAddressButton'
 import { Button } from '@/Components/ui/button'
 import { CardAction, CardContent, CardHeader, CardTitle } from '@/Components/ui/card'
 import { Checkbox } from '@/Components/ui/checkbox'
@@ -170,7 +171,10 @@ export default function AdminCodeDetail() {
             )}
           </h1>
         </CardTitle>
-        <CardAction>
+        <CardAction className="flex flex-row items-center gap-2">
+          {data?.data?.value && (
+            <CodeAddressButton codeValue={data.data.value} buttonProps={{ size: 'default' }} />
+          )}
           <Button
             variant="outline"
             className="cursor-pointer"

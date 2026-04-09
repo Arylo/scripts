@@ -1,6 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import dayjs from 'dayjs'
 import { useNavigate, useParams } from 'react-router'
+import CodeAddressButton from '@/Components/Button/CodeAddressButton'
+import EditCodeButton from '@/Components/Button/EditCodeButton'
 import RemoveCodeButton from '@/Components/Button/RemoveCodeButton'
 import { Button } from '@/Components/ui/button'
 import { CardAction, CardContent, CardHeader, CardTitle } from '@/Components/ui/card'
@@ -317,14 +319,8 @@ export default function AdminPanDetail() {
                     </HoverCard>
                   </TableCell>
                   <TableCell className="flex gap-1" onClick={(e) => e.stopPropagation()}>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="cursor-pointer"
-                      onClick={() => nav(`/admin/pans/${pan_id}/codes/${code.id}`)}
-                    >
-                      编辑
-                    </Button>
+                    {code.value && <CodeAddressButton codeValue={code.value} />}
+                    <EditCodeButton onClick={() => nav(`/admin/pans/${pan_id}/codes/${code.id}`)} />
                     <RemoveCodeButton
                       panId={pan_id!}
                       codeId={code.id}
