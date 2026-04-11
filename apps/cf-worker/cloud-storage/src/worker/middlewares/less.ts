@@ -1,12 +1,12 @@
 import { createMiddleware } from 'hono/factory'
 import { matchedRoutes } from 'hono/route'
-import { HonoEnv } from '../types/hono'
+import { GeneralEnv } from '../types/hono'
 
-export default function (
+export default function <E extends GeneralEnv = GeneralEnv>(
   excludeList: string[] | string = [],
-  middleware: ReturnType<typeof import('hono/factory').createMiddleware<HonoEnv>>,
+  middleware: ReturnType<typeof createMiddleware<E>>,
 ) {
-  return createMiddleware<HonoEnv>((c, next) => {
+  return createMiddleware<E>((c, next) => {
     const routes = matchedRoutes(c)
     const excludePaths = Array.isArray(excludeList) ? excludeList : [excludeList]
 

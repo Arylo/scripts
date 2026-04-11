@@ -30,6 +30,22 @@ export default function Detail() {
   }, [fileHash])
 
   const { data: files, total, isLoading } = useFileList(code!)
+  const sortedFiles = useMemo(() => {
+    if (!files) return []
+    let [isHighlightFiles, nonHighlightFiles] = files.reduce<[typeof files, typeof files]>(
+      (acc, file) => {
+        if (file.highlight) acc[0].push(file)
+        else acc[1].push(file)
+        return acc
+      },
+      [[], []],
+    )
+    ;[isHighlightFiles, nonHighlightFiles] = [isHighlightFiles, nonHighlightFiles].map((fileList) =>
+      fileList.sort((a, b) => b.updatedAt - a.updatedAt),
+    )
+    return [...isHighlightFiles, ...nonHighlightFiles]
+  }, [files])
+
   const { data: perms } = usePanPerms(code!)
 
   const nav = useNavigate()
@@ -50,7 +66,7 @@ export default function Detail() {
   const handleDownload = () => {
     if (!fileInfo || !perms.canDownload) return
     const link = document.createElement('a')
-    link.href = `/api/raw/${fileInfo.hash}`
+    link.href = `/api/raw/${encodeURIComponent(fileInfo.originalName)}`
     link.download = fileInfo.originalName
     document.body.appendChild(link)
     link.click()
@@ -66,9 +82,10 @@ export default function Detail() {
       <div className="flex flex-1 min-h-0 gap-4">
         <Card
           className={cc([
-            'overflow-hidden flex flex-col gap-2 grow-1',
+            'overflow-hidden flex flex-col gap-2',
             {
-              'max-w-[320px]': mode !== MODE.LIST,
+              'w-[320px] shrink-0': mode !== MODE.LIST,
+              'grow-1': mode === MODE.LIST,
             },
           ])}
         >
@@ -87,32 +104,28 @@ export default function Detail() {
             <TableHeader>
               <TableRow>
                 <TableHead>文件名</TableHead>
-                <TableHead
-                  className={cc(['w-[120px] text-center', { hidden: mode !== MODE.LIST }])}
-                >
-                  文件大小
-                </TableHead>
-                <TableHead
-                  className={cc(['w-[120px] text-center', { hidden: mode !== MODE.LIST }])}
-                >
-                  最后修改时间
-                </TableHead>
+                {mode === MODE.LIST && (
+                  <>
+                    <TableHead className={cc(['w-[120px]'])}>文件大小</TableHead>
+                    <TableHead className={cc(['w-[120px]'])}>上传时间</TableHead>
+                  </>
+                )}
               </TableRow>
             </TableHeader>
             <TableBody>
-              {files?.map((file) => (
+              {sortedFiles?.map((file) => (
                 <TableRow key={file.hash} onClick={() => goDetail(file.hash)}>
                   <TableCell>{file.originalName}</TableCell>
-                  <TableCell className={cc([{ hidden: mode !== MODE.LIST }])}>
-                    {formatFileSize(file.size)}
-                  </TableCell>
-                  <TableCell className={cc([{ hidden: mode !== MODE.LIST }])}>
-                    {diffDate(file.updatedAt)}
-                  </TableCell>
+                  {mode === MODE.LIST && (
+                    <>
+                      <TableCell>{formatFileSize(file.size)}</TableCell>
+                      <TableCell>{diffDate(file.createdAt)}</TableCell>
+                    </>
+                  )}
                 </TableRow>
               ))}
             </TableBody>
-            <TableCaption>共 {total} 个文件</TableCaption>
+            {mode === MODE.LIST && <TableCaption>共 {total} 个文件</TableCaption>}
           </Table>
         </Card>
         <Card
@@ -123,22 +136,25 @@ export default function Detail() {
             },
           ])}
         >
-          <div className="flex flex-row justify-between">
+          <div className="grid grid-cols-[120px_auto_120px] items-center">
             <Button variant="outline" size="lg" className="cursor-pointer" onClick={() => goList()}>
               <span className="text-lg">←</span>
               <span>返回列表</span>
             </Button>
             {mode === MODE.DETAIL && (
-              <Button
-                variant="outline"
-                size="lg"
-                className="cursor-pointer"
-                onClick={() => handleDownload()}
-                disabled={!perms.canDownload}
-              >
-                <span className="text-lg">↓</span>
-                <span>下载</span>
-              </Button>
+              <>
+                <div className="text-sm text-center truncate">{fileInfo?.originalName}</div>
+                <Button
+                  variant="outline"
+                  size="lg"
+                  className="cursor-pointer"
+                  onClick={() => handleDownload()}
+                  disabled={!perms.canDownload}
+                >
+                  <span className="text-lg">↓</span>
+                  <span>下载</span>
+                </Button>
+              </>
             )}
           </div>
           <React.Suspense fallback={'正在加载组件中...'}>

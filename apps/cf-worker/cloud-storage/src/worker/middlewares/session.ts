@@ -1,5 +1,5 @@
 import { createMiddleware } from 'hono/factory'
-import { HonoEnv } from '../types/hono'
+import { GeneralEnv } from '../types/hono'
 
 /**
  * 生成8位大写十六进制随机值
@@ -14,7 +14,7 @@ function generateRandomHex(): string {
 }
 
 export const sessionMiddleware = () =>
-  createMiddleware<HonoEnv>(async (c, next) => {
+  createMiddleware<GeneralEnv>(async (c, next) => {
     // 生成session值和request值
     const sessionValue = generateRandomHex()
     const requestValue = generateRandomHex()

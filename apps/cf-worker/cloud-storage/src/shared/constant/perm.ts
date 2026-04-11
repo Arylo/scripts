@@ -6,7 +6,7 @@ export const PAN_PERM_TYPE = {
 export type PAN_PERM_TYPE = (typeof PAN_PERM_TYPE)[keyof typeof PAN_PERM_TYPE]
 
 export const PAN_PERM_DEFAULT_VALUE = {
-  [PAN_PERM_TYPE.canDownload]: true,
+  [PAN_PERM_TYPE.canDownload]: false,
   [PAN_PERM_TYPE.canUpload]: false,
   [PAN_PERM_TYPE.canDelete]: false,
 } as const

@@ -4,10 +4,10 @@ import {
   PAN_PERM_DEFAULT_VALUE,
   PAN_PERM_TYPE,
 } from '../../../shared/constant/perm'
-import getDb from '../../db'
 import { CodePerm } from '../../models/CodePerm'
 import { PanPerm } from '../../models/PanPerm'
 import { Perm } from '../../models/Perm'
+import getDb from '../../utils/getDb'
 
 export default async function getPerms(panId: string, codeId: string) {
   const db = getDb()

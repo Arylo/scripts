@@ -1,14 +1,14 @@
 import { eq, getTableColumns } from 'drizzle-orm'
 import { Hono } from 'hono'
-import getDb from '../../db'
 import { panAuthMiddleware, panPickMiddleware } from '../../middlewares/panAuth'
 import { Doc } from '../../models/Doc'
 import { PanDoc } from '../../models/PanDoc'
-import { HonoEnv } from '../../types/hono'
+import { GuestEnv } from '../../types/hono'
+import getDb from '../../utils/getDb'
 import getPerms from '../utils/getPerms'
 
 export default {
-  bind: (app: Hono<HonoEnv>) => {
+  bind: (app: Hono<GuestEnv>) => {
     app.get('/list', async (c) => {
       const code = c.req.query('code')
       if (code) {

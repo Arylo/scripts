@@ -1,9 +1,9 @@
 import { and, eq, getTableColumns } from 'drizzle-orm'
 import { getContext } from 'hono/context-storage'
-import getDb from '../../db'
 import { Code } from '../../models/Code'
 import { PanCode } from '../../models/PanCode'
-import { HonoEnv } from '../../types/hono'
+import { GeneralEnv } from '../../types/hono'
+import getDb from '../../utils/getDb'
 
 async function checkCodeExists(panId: string, codeId: string) {
   const db = getDb()
@@ -16,7 +16,7 @@ async function checkCodeExists(panId: string, codeId: string) {
 
   if (code) return [true, code] as const
 
-  getContext<HonoEnv>().json(
+  getContext<GeneralEnv>().json(
     {
       code: 404,
       message: 'Code not found',

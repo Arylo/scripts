@@ -1,14 +1,14 @@
-import { eq } from 'drizzle-orm'
+import { and, eq } from 'drizzle-orm'
 import { Hono } from 'hono'
-import getDb from '../../db'
-import { Doc } from '../../models/Doc'
-import { HonoEnv } from '../../types/hono'
+import { PanDoc } from '../../models/PanDoc'
+import { GuestEnv } from '../../types/hono'
+import getDb from '../../utils/getDb'
 import checkPanDocExists from '../utils/checkPanDocExists'
 import getPerms from '../utils/getPerms'
 
 export default {
-  bind: (app: Hono<HonoEnv>) => {
-    app.get('/raw/:file_hash', async (c) => {
+  bind: (app: Hono<GuestEnv>) => {
+    app.get('/raw/:file_name', async (c) => {
       const panId = c.get('panId')
       const codeId = c.get('codeId')
 
@@ -23,14 +23,25 @@ export default {
         )
       }
 
-      const fileHash = c.req.param('file_hash')
+      const fileName = c.req.param('file_name')
       const db = getDb()
 
       const [existsPanDoc, panDoc] = await checkPanDocExists(
         panId,
-        db.select({ data: Doc.id }).from(Doc).where(eq(Doc.hash, fileHash)),
+        db
+          .select({ data: PanDoc.docId })
+          .from(PanDoc)
+          .where(and(eq(PanDoc.panId, panId), eq(PanDoc.originalName, fileName))),
       )
-      if (!existsPanDoc) return
+      if (!existsPanDoc) {
+        return c.json(
+          {
+            code: 404,
+            message: 'File not found',
+          },
+          404,
+        )
+      }
 
       const object = await c.env.STORAGE_BUCKET.get(panDoc.doc.hash)
 

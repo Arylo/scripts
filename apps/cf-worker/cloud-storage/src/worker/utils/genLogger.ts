@@ -1,10 +1,10 @@
 import { getContext } from 'hono/context-storage'
-import { HonoEnv } from '../types/hono'
+import { GeneralEnv } from '../types/hono'
 
 const getPrefix = () => {
-  const sessionValue = getContext<HonoEnv>().var.sessionValue
-  const requestValue = getContext<HonoEnv>().var.requestValue
-  const startTime = getContext<HonoEnv>().var.startTime
+  const sessionValue = getContext<GeneralEnv>().var.sessionValue
+  const requestValue = getContext<GeneralEnv>().var.requestValue
+  const startTime = getContext<GeneralEnv>().var.startTime
 
   return [
     new Date().toISOString(),

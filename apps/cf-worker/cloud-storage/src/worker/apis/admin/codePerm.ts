@@ -1,16 +1,16 @@
 import { and, eq } from 'drizzle-orm'
 import { Hono } from 'hono'
 import { CODE_PERM_TYPE } from '../../../shared/constant/perm'
-import getDb from '../../db'
 import { CodePerm } from '../../models/CodePerm'
 import { Perm } from '../../models/Perm'
-import { HonoEnv } from '../../types/hono'
+import { AdminEnv } from '../../types/hono'
+import getDb from '../../utils/getDb'
 import checkCodeExists from '../utils/checkCodeExists'
 import checkPermExistsFromCode from '../utils/checkPermExistsFromCode'
 import checkPermType from '../utils/checkPermType'
 
 export default {
-  bind: (app: Hono<HonoEnv>) => {
+  bind: (app: Hono<AdminEnv>) => {
     app.post('/pans/:pan_id/codes/:code_id/perms', async (c) => {
       const db = getDb()
       const panId = c.req.param('pan_id')

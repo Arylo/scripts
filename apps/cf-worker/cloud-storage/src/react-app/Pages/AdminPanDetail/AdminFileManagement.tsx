@@ -61,7 +61,7 @@ export default function AdminFileManagement({ panId, docs, isLoading }: AdminFil
       const formData = new FormData()
       formData.append('file', file)
 
-      const { data } = await adminAxios.post<{
+      const { data, status } = await adminAxios.post<{
         code: number
         data: {
           hash: string
@@ -74,7 +74,7 @@ export default function AdminFileManagement({ panId, docs, isLoading }: AdminFil
         headers: { 'Content-Type': 'multipart/form-data' },
       })
 
-      if (data.code !== 200) {
+      if (status >= 300) {
         throw new Error(data.message || '上传文件失败')
       }
 
@@ -153,7 +153,7 @@ export default function AdminFileManagement({ panId, docs, isLoading }: AdminFil
 
   const uploadProgress =
     uploadQueue.length > 0 && currentUploadingIndex !== null
-      ? `${currentUploadingIndex} / ${uploadQueue.length}`
+      ? `正在上传第${currentUploadingIndex}个(还有${uploadQueue.length}个)`
       : null
 
   return (
@@ -163,6 +163,7 @@ export default function AdminFileManagement({ panId, docs, isLoading }: AdminFil
 
         {/* 上传区域 */}
         <Empty
+          {...bond}
           className={cc([
             'border-2 transition-colors',
             isUploading || uploadProgress
@@ -193,7 +194,7 @@ export default function AdminFileManagement({ panId, docs, isLoading }: AdminFil
             <EmptyTitle>
               {isUploading || uploadProgress ? `正在上传...` : `拖拽文件到此或点击选择`}
             </EmptyTitle>
-            {uploadProgress && <EmptyDescription>(${uploadProgress})</EmptyDescription>}
+            {uploadProgress && <EmptyDescription>{uploadProgress}</EmptyDescription>}
           </EmptyHeader>
           <EmptyContent>
             <input

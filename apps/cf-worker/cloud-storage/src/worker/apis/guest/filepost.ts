@@ -1,14 +1,15 @@
 import { and, eq } from 'drizzle-orm'
 import { Hono } from 'hono'
-import getDb from '../../db'
 import { Doc } from '../../models/Doc'
 import { PanDoc } from '../../models/PanDoc'
-import { HonoEnv } from '../../types/hono'
+import { GuestEnv } from '../../types/hono'
+import getDb from '../../utils/getDb'
+import { postFileToPanByPanId } from '../admin/file'
 import checkPanDocExists from '../utils/checkPanDocExists'
 import getPerms from '../utils/getPerms'
 
 export default {
-  bind: (app: Hono<HonoEnv>) => {
+  bind: (app: Hono<GuestEnv>) => {
     app.post('/upload/:file_hash/:file_name', async (c) => {
       const panId = c.get('panId')
       const codeId = c.get('codeId')
@@ -56,50 +57,8 @@ export default {
     })
     app.post('/upload/:file_hash', async (c) => {
       const panId = c.get('panId')
-      const db = getDb()
 
-      const formData = await c.req.formData()
-      const file = formData.get('file') as File
-      if (!file) {
-        return c.json(
-          {
-            code: 400,
-            message: 'No file uploaded',
-          },
-          400,
-        )
-      }
-
-      const arrayBuffer = await file.arrayBuffer()
-      const hashBuffer = await crypto.subtle.digest('MD5', arrayBuffer)
-      const hashArray = Array.from(new Uint8Array(hashBuffer))
-      const fileHash = hashArray.map((b) => b.toString(16).padStart(2, '0')).join('')
-
-      await c.env.STORAGE_BUCKET.put(fileHash, file.stream())
-      const [doc] = await db
-        .insert(Doc)
-        .values({
-          hash: fileHash,
-          mimetype: file.type,
-          size: file.size,
-        })
-        .returning()
-      await db.insert(PanDoc).values({
-        panId,
-        docId: doc.id,
-        originalName: file.name,
-      })
-
-      return c.json({
-        code: 200,
-        data: {
-          hash: fileHash,
-          filename: file.name,
-          mimetype: file.type,
-          size: file.size,
-        },
-        message: 'File uploaded successfully',
-      })
+      return postFileToPanByPanId(panId)
     })
   },
 }

@@ -2,7 +2,7 @@ import SHA1 from 'crypto-js/sha1'
 import { getCookie, setCookie } from 'hono/cookie'
 import { createMiddleware } from 'hono/factory'
 import { ulid } from 'ulid'
-import { HonoEnv } from '../types/hono'
+import { AdminEnv } from '../types/hono'
 import genLogger from '../utils/genLogger'
 
 function sha1Hash(input: string): string {
@@ -14,7 +14,7 @@ export const COOKIE_NAME = 'user_token'
 const VALID_DURATION = 4 * 60 * 60 * 1000
 
 export const adminAuthMiddleware = () =>
-  createMiddleware<HonoEnv>(async (c, next) => {
+  createMiddleware<AdminEnv>(async (c, next) => {
     const logger = genLogger()
 
     const userToken = getCookie(c, COOKIE_NAME)
@@ -38,7 +38,7 @@ export const adminAuthMiddleware = () =>
   })
 
 export const adminLoginMiddleware = () =>
-  createMiddleware<HonoEnv>(async (c) => {
+  createMiddleware<AdminEnv>(async (c) => {
     const logger = genLogger()
     try {
       const body = await c.req.json<{ username?: string; password?: string }>()
@@ -97,7 +97,7 @@ export const adminLoginMiddleware = () =>
   })
 
 export const adminLogoutMiddleware = () =>
-  createMiddleware<HonoEnv>(async (c) => {
+  createMiddleware<AdminEnv>(async (c) => {
     const logger = genLogger()
     const userToken = c.get('userToken')
 

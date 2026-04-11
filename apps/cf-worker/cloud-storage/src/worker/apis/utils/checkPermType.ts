@@ -1,8 +1,8 @@
 import { getContext } from 'hono/context-storage'
-import { HonoEnv } from '../../types/hono'
+import { GeneralEnv } from '../../types/hono'
 
 function checkPermType(type: string, typeMap: Record<string, string>) {
-  const c = getContext<HonoEnv>()
+  const c = getContext<GeneralEnv>()
   if (!type) {
     c.json(
       {

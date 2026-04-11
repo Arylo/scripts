@@ -1,7 +1,7 @@
 import { Hono } from 'hono'
 import { adminAuthMiddleware } from '../../middlewares/adminAuth'
 import less from '../../middlewares/less'
-import { HonoEnv } from '../../types/hono'
+import { AdminEnv, GeneralEnv } from '../../types/hono'
 import AuthController from './auth'
 import CodeController from './code'
 import CodePermController from './codePerm'
@@ -9,8 +9,8 @@ import FileController from './file'
 import PanController from './pan'
 import PanPermController from './panPerm'
 
-export const route = (app: Hono<HonoEnv>) => {
-  const controllers = new Hono<HonoEnv>()
+export const route = (app: Hono<GeneralEnv>) => {
+  const controllers = new Hono<AdminEnv>()
 
   controllers.use(less(['/login'], adminAuthMiddleware()))
 

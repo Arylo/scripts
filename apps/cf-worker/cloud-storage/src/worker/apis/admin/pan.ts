@@ -1,7 +1,6 @@
 import { and, eq, exists, getTableColumns, inArray, not, SQLWrapper } from 'drizzle-orm'
 import { Hono } from 'hono'
 import { getContext } from 'hono/context-storage'
-import getDb from '../../db'
 import { Code } from '../../models/Code'
 import { CodePerm } from '../../models/CodePerm'
 import { Doc } from '../../models/Doc'
@@ -10,7 +9,8 @@ import { PanCode } from '../../models/PanCode'
 import { PanDoc } from '../../models/PanDoc'
 import { PanPerm } from '../../models/PanPerm'
 import { Perm } from '../../models/Perm'
-import { HonoEnv } from '../../types/hono'
+import { AdminEnv } from '../../types/hono'
+import getDb from '../../utils/getDb'
 import checkPanExists from '../utils/checkPanExists'
 
 export async function removeCodeFromPan(panId: string, codeIds: string[] | string | SQLWrapper) {
@@ -64,13 +64,13 @@ export async function removeDocFromPan(panId: string, docIds: string[] | string 
     await db.delete(Doc).where(inArray(Doc.id, currentDocIds))
     const docs = await db.select({ hash: Doc.hash }).from(Doc).where(inArray(Doc.id, currentDocIds))
     for (const { hash } of docs) {
-      await getContext<HonoEnv>().env.STORAGE_BUCKET.delete(hash)
+      await getContext<AdminEnv>().env.STORAGE_BUCKET.delete(hash)
     }
   }
 }
 
 export default {
-  bind: (app: Hono<HonoEnv>) => {
+  bind: (app: Hono<AdminEnv>) => {
     app.get('/pans', async (c) => {
       const db = getDb()
       const pans = await db.select().from(Pan)

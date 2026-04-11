@@ -1,19 +1,12 @@
-import '@videojs/react/video/skin.css'
-import { createPlayer, videoFeatures } from '@videojs/react'
-import { VideoSkin, Video } from '@videojs/react/video'
 import { useMemo } from 'react'
 import { FileInfo } from '../../../../shared/types/types'
 
-const Player = createPlayer({ features: videoFeatures })
-
 export default function VideoContent(props: { fileInfo: FileInfo }) {
   const { fileInfo } = props
-  const rawUrl = useMemo(() => `/api/files/file/${fileInfo.name}`, [fileInfo])
+  const rawUrl = useMemo(() => `/api/raw/${encodeURIComponent(fileInfo.originalName)}`, [fileInfo])
   return (
-    <Player.Provider>
-      <VideoSkin>
-        <Video src={rawUrl} playsInline />
-      </VideoSkin>
-    </Player.Provider>
+    <video className="size-full" controls crossOrigin="use-credentials">
+      <source src={rawUrl} type={fileInfo.mimetype} />
+    </video>
   )
 }

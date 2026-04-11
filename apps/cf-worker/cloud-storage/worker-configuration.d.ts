@@ -11,6 +11,7 @@ declare namespace Cloudflare {
     db: D1Database
     USERNAME: string
     PASSWORD: string
+    DEBUG: string
   }
 }
 interface Env extends Cloudflare.Env {}

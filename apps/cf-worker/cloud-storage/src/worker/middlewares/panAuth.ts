@@ -3,12 +3,12 @@ import { deleteCookie, getCookie, setCookie } from 'hono/cookie'
 import { createMiddleware } from 'hono/factory'
 import { ulid } from 'ulid'
 import { STATUS_CODE, STATUS_MAP } from '../../shared/constant/guest'
-import getDb from '../db'
 import { Code } from '../models/Code'
 import { Pan } from '../models/Pan'
 import { PanCode } from '../models/PanCode'
-import { HonoEnv } from '../types/hono'
+import { GuestEnv } from '../types/hono'
 import genLogger from '../utils/genLogger'
+import getDb from '../utils/getDb'
 
 export const COOKIE_NAME = 'share_token'
 
@@ -16,7 +16,7 @@ const SESSION_VALID_DURATION = 2 * 60 * 60 * 1000 // 2h
 const SESSION_CACHE_TTL = 5 * 60 // 5m
 
 export const panAuthMiddleware = () =>
-  createMiddleware<HonoEnv>(async (c, next) => {
+  createMiddleware<GuestEnv>(async (c, next) => {
     const logger = genLogger()
 
     const sessionToken = getCookie(c, COOKIE_NAME)
@@ -44,15 +44,22 @@ export const panAuthMiddleware = () =>
   })
 
 export const panPickMiddleware = () =>
-  createMiddleware<HonoEnv>(async (c, next) => {
+  createMiddleware<GuestEnv>(async (c, next) => {
     const logger = genLogger()
     const code = c.req.query('code')
 
     if (!code) {
       return c.json({ code: STATUS_CODE.MISS_CODE, error: STATUS_MAP[STATUS_CODE.MISS_CODE] }, 400)
-    } else {
-      logger.info('Received key code', code)
+    } else if (code.length < 6) {
+      return c.json(
+        {
+          code: 404,
+          error: 'Code not found',
+        },
+        404,
+      )
     }
+    logger.info('Received key code', code)
 
     let sessionToken = getCookie(c, COOKIE_NAME)
     let panId: string | undefined

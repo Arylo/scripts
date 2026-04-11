@@ -1,8 +1,8 @@
 import { eq } from 'drizzle-orm'
 import { getContext } from 'hono/context-storage'
-import getDb from '../../db'
 import { Pan } from '../../models/Pan'
-import { HonoEnv } from '../../types/hono'
+import { GeneralEnv } from '../../types/hono'
+import getDb from '../../utils/getDb'
 
 async function checkPanExists(panId: string) {
   const db = getDb()
@@ -10,7 +10,7 @@ async function checkPanExists(panId: string) {
 
   if (pan) return [true, pan] as const
 
-  getContext<HonoEnv>().json(
+  getContext<GeneralEnv>().json(
     {
       code: 404,
       message: 'Pan not found',

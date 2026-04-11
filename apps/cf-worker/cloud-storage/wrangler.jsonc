@@ -6,7 +6,7 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "cloud-storage",
   "main": "./src/worker/index.ts",
-  "compatibility_date": "2025-10-08",
+  "compatibility_date": "2026-04-07",
   "compatibility_flags": ["nodejs_compat"],
   "observability": {
     "enabled": true,
@@ -38,6 +38,7 @@
   "vars": {
     "USERNAME": "admin",
     "PASSWORD": "admin",
+    "DEBUG": "false",
   },
   /**
    * Smart Placement

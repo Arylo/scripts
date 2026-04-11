@@ -1,9 +1,9 @@
 import { and, eq, getTableColumns, inArray, SQLWrapper } from 'drizzle-orm'
 import { getContext } from 'hono/context-storage'
-import getDb from '../../db'
 import { PanPerm } from '../../models/PanPerm'
 import { Perm } from '../../models/Perm'
-import { HonoEnv } from '../../types/hono'
+import { GeneralEnv } from '../../types/hono'
+import getDb from '../../utils/getDb'
 
 async function checkPermExistsFromPan(panId: string, permId: string | SQLWrapper) {
   const db = getDb()
@@ -17,7 +17,7 @@ async function checkPermExistsFromPan(panId: string, permId: string | SQLWrapper
 
   if (perms.length > 0) return [true, perms] as const
 
-  getContext<HonoEnv>().json(
+  getContext<GeneralEnv>().json(
     {
       code: 404,
       message: 'Perm not found for this Pan',

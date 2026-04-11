@@ -1,12 +1,12 @@
 import { and, eq, exists, getTableColumns } from 'drizzle-orm'
 import { Hono } from 'hono'
 import { customAlphabet } from 'nanoid'
-import getDb from '../../db'
 import { Code } from '../../models/Code'
 import { CodePerm } from '../../models/CodePerm'
 import { PanCode } from '../../models/PanCode'
 import { Perm } from '../../models/Perm'
-import { HonoEnv } from '../../types/hono'
+import { AdminEnv } from '../../types/hono'
+import getDb from '../../utils/getDb'
 import checkCodeExists from '../utils/checkCodeExists'
 import checkPanExists from '../utils/checkPanExists'
 import { removeCodeFromPan } from './pan'
@@ -14,7 +14,7 @@ import { removeCodeFromPan } from './pan'
 export const generateNewCode = customAlphabet('abcdefghijklmnopqrstuvwxyz0123456789', 8)
 
 export default {
-  bind: (app: Hono<HonoEnv>) => {
+  bind: (app: Hono<AdminEnv>) => {
     app.get('/codes', async (c) => {
       const db = getDb()
       const codes = await db
