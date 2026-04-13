@@ -1,3 +1,4 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import cc from 'classcat'
 import React, { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router'
@@ -15,6 +16,7 @@ import {
 import diffDate from '@/utils/diffDate'
 import useFileList from '../../hooks/useFileList'
 import usePanPerms from '../../hooks/usePanPerms'
+import { deleteFileGuest } from '../../requests/deleteFileGuest'
 import { formatFileSize } from '../../utils/formatFileSize'
 import UploadFiles from './Components/UploadFiles'
 import { MODE } from './constant'
@@ -47,6 +49,15 @@ export default function Detail() {
   }, [files])
 
   const { data: perms } = usePanPerms(code!)
+  const queryClient = useQueryClient()
+
+  const { mutate: deleteFile, isPending: isDeleting } = useMutation({
+    mutationFn: (originalName: string) => deleteFileGuest(originalName),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['pan', code] })
+      goList()
+    },
+  })
 
   const nav = useNavigate()
   const goList = () => {
@@ -108,18 +119,40 @@ export default function Detail() {
                   <>
                     <TableHead className={cc(['w-[120px]'])}>文件大小</TableHead>
                     <TableHead className={cc(['w-[120px]'])}>上传时间</TableHead>
+                    {perms.canDelete && <TableHead className="w-[80px]" />}
                   </>
                 )}
               </TableRow>
             </TableHeader>
             <TableBody>
               {sortedFiles?.map((file) => (
-                <TableRow key={file.hash} onClick={() => goDetail(file.hash)}>
+                <TableRow
+                  key={file.hash}
+                  className={cc([{ 'cursor-pointer': perms.canDownload }])}
+                  onClick={() => perms.canDownload && goDetail(file.hash)}
+                >
                   <TableCell>{file.originalName}</TableCell>
                   {mode === MODE.LIST && (
                     <>
                       <TableCell>{formatFileSize(file.size)}</TableCell>
                       <TableCell>{diffDate(file.createdAt)}</TableCell>
+                      {perms.canDelete && (
+                        <TableCell
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            deleteFile(file.originalName)
+                          }}
+                        >
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="cursor-pointer text-destructive hover:text-destructive"
+                            disabled={isDeleting}
+                          >
+                            删除
+                          </Button>
+                        </TableCell>
+                      )}
                     </>
                   )}
                 </TableRow>

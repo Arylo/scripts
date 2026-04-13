@@ -130,9 +130,6 @@ export default function AdminPanDetail() {
       adminAxios.post<{ code: number; data: { code: { id: string } } }>(
         `/api/admin/pans/${pan_id}/codes`,
       ),
-    onSuccess: (res) => {
-      nav(`/admin/pans/${pan_id}/codes/${res.data.data.code.id}`)
-    },
   })
 
   const { mutate: toggleActive, isPending: isTogglingActive } = useMutation({

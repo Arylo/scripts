@@ -30,6 +30,7 @@
     "crypto-js": "^4.2.0",
     "dayjs": "^1.11.20",
     "drizzle-orm": "^0.45.2",
+    "hls.js": "^1.6.15",
     "hono": "4.11.1",
     "lucide-react": "^1.8.0",
     "mime-types": "^2.1.35",

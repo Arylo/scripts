@@ -22,6 +22,6 @@ export interface ListFilesRequestBody {
 }
 
 export type PanInfoResponseBody = ApiResponse<FileInfo[]> & {
-  perms: { canDownload: boolean; canUpload: boolean }
+  perms: { canDownload: boolean; canUpload: boolean; canDelete: boolean }
   total: number
 }

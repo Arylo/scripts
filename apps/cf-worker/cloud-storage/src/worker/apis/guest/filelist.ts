@@ -23,7 +23,7 @@ export default {
 
       const db = getDb()
 
-      const [{ canDownload, canUpload }] = await getPerms(panId, codeId)
+      const [{ canDownload, canUpload, canDelete }] = await getPerms(panId, codeId)
 
       const list = await db
         .select({
@@ -40,6 +40,7 @@ export default {
         perms: {
           canDownload,
           canUpload,
+          canDelete,
         },
         data: list,
         total: list.length,
