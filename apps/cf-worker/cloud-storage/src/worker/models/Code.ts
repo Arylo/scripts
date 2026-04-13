@@ -3,6 +3,6 @@ import { DEFAULT_COLUMNS } from './base'
 
 export const Code = sqliteTable('code', {
   ...DEFAULT_COLUMNS,
-  value: text(),
+  value: text().unique(),
   active: integer({ mode: 'boolean' }).$defaultFn(() => true),
 })

@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS pan (
 DROP TABLE IF EXISTS code;
 CREATE TABLE IF NOT EXISTS code (
   `id` VARCHAR(128) PRIMARY KEY,
-  `value` TEXT,
+  `value` TEXT UNIQUE,
   `active` INTEGER DEFAULT 1,
   `createdAt` DATETIME,
   `updatedAt` DATETIME

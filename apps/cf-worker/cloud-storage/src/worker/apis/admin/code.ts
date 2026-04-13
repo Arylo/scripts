@@ -57,12 +57,19 @@ export default {
     app.post('/pans/:pan_id/codes', async (c) => {
       const db = getDb()
       const panId = c.req.param('pan_id')
-      const value = generateNewCode()
 
       const [existsPan] = await checkPanExists(panId)
       if (!existsPan) return
 
-      const [code] = await db.insert(Code).values({ value }).returning()
+      let code: typeof Code.$inferSelect | undefined
+      for (let attempts = 0; attempts < 5; attempts++) {
+        const value = generateNewCode()
+        const [duplicate] = await db.select().from(Code).where(eq(Code.value, value)).limit(1)
+        if (duplicate) continue
+        ;[code] = await db.insert(Code).values({ value }).returning()
+        break
+      }
+      if (!code) return c.json({ code: 500, message: 'Failed to generate unique code' }, 500)
 
       await db.insert(PanCode).values({ panId, codeId: code.id })
 
