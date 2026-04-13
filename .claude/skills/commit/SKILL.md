@@ -21,9 +21,10 @@ user-invocable: true
 4. 检查当前 staged 变更。
 5. 如果没有 staged 变更，先将当前工作区改动加入暂存区。
 6. 如果 staged 或当前工作区改动中包含 `package.json` 或 `package-lock.json`，需要检查变更内容：
-   - 如果 `package-lock.json` 有修改 **或者** `package.json` 的 `dependencies` 或 `devDependencies` 部分有修改，必须先执行 `/native-binding-repair`，确认不存在 Linux native binding、optionalDependencies 或 lockfile 跨平台漂移问题。
-   - 如果只有 `package.json` 的其他部分（如 scripts、workspaces 等）修改，且 `package-lock.json` 没有修改，则不需要执行 `/native-binding-repair`。
+  - 如果 `package-lock.json` 有修改 **或者** `package.json` 的 `dependencies` 或 `devDependencies` 部分有修改，必须先执行 `/install-native-binding`。
+  - 如果只有 `package.json` 的其他部分（如 scripts、workspaces 等）修改，且 `package-lock.json` 没有修改，则不需要执行 `/install-native-binding`。
 7. 基于暂存区差异生成 commit message，格式必须是 `<type>(<scope>): <subject>`。
+  - 如果 staged 文件数量 **> 8**，在 subject 行之后追加 commit message body，列出各核心改动摘要（每行一条，格式 `- <summary>`）。
 8. 如果用户传入参数，将其作为 subject，仍需自动补全 type 和 scope。
 9. 执行 git 提交。
 10. 返回以下结果：
