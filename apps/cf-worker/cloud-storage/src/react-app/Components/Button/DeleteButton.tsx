@@ -56,7 +56,7 @@ export default function DeleteButton({
         disabled={disabled || isPending}
         onClick={() => setOpen(true)}
       >
-        {isPending ? <Spinner data-icon="inline-start" /> : <Suspense><Trash className='.5' /></Suspense>}
+        {isPending ? <Spinner data-icon="inline-start" /> : <Suspense><Trash className='size-3.5' /></Suspense>}
         {triggerLabel}
       </Button>
       <AlertDialog open={open} onOpenChange={setOpen}>

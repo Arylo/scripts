@@ -16,7 +16,7 @@ interface FileWithStatus {
 }
 
 export default function UploadFiles({ onUploadSuccess, onCancel }: UploadFilesProps) {
-  const { keyId } = useParams<{ keyId: string }>()
+  const { code } = useParams<{ code: string }>()
   const [selectedFiles, setSelectedFiles] = useState<FileWithStatus[]>([])
   const [dragActive, setDragActive] = useState(false)
   const [isUploading, setIsUploading] = useState(false)
@@ -114,14 +114,14 @@ export default function UploadFiles({ onUploadSuccess, onCancel }: UploadFilesPr
       }
 
       // 所有文件上传完成
-      queryClient.invalidateQueries({ queryKey: ['files', keyId] })
+      queryClient.invalidateQueries({ queryKey: ['files', code] })
       onUploadSuccess?.()
     } catch (error) {
       setUploadError(error instanceof Error ? error.message : '上传过程中发生错误')
     } finally {
       setIsUploading(false)
     }
-  }, [selectedFiles, uploadSingleFileMutation, queryClient, keyId, onUploadSuccess])
+  }, [selectedFiles, uploadSingleFileMutation, queryClient, code, onUploadSuccess])
 
   const handleCancel = useCallback(() => {
     setSelectedFiles([])

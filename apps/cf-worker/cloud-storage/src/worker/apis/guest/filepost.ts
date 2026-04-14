@@ -1,5 +1,6 @@
 import { and, eq } from 'drizzle-orm'
 import { Hono } from 'hono'
+import { createMiddleware } from 'hono/factory'
 import { Doc } from '../../models/Doc'
 import { PanDoc } from '../../models/PanDoc'
 import { GuestEnv } from '../../types/hono'
@@ -8,24 +9,29 @@ import { postFileToPanByPanId } from '../admin/file'
 import checkPanDocExists from '../utils/checkPanDocExists'
 import getPerms from '../utils/getPerms'
 
+const checkUploadPerm = () =>
+  createMiddleware<GuestEnv>(async (c, next) => {
+    const panId = c.get('panId')
+    const codeId = c.get('codeId')
+    const [{ canUpload }] = await getPerms(panId, codeId)
+    if (!canUpload) {
+      return c.json(
+        {
+          code: 403,
+          message: 'No permission',
+        },
+        403,
+      )
+    }
+    await next()
+  })
+
 export default {
   bind: (app: Hono<GuestEnv>) => {
-    app.post('/upload/:file_hash/:file_name', async (c) => {
+    app.post('/upload/:file_hash/:file_name', checkUploadPerm(), async (c) => {
       const panId = c.get('panId')
-      const codeId = c.get('codeId')
       const fileHash = c.req.param('file_hash')
       const fileName = c.req.param('file_name')
-
-      const [{ canUpload }] = await getPerms(panId, codeId)
-      if (!canUpload) {
-        return c.json(
-          {
-            code: 403,
-            message: 'No permission',
-          },
-          403,
-        )
-      }
 
       const db = getDb()
       const [doc] = await db.select().from(Doc).where(eq(Doc.hash, fileHash)).limit(1)
@@ -55,7 +61,7 @@ export default {
         message: 'File added to Pan successfully',
       })
     })
-    app.post('/upload/:file_hash', async (c) => {
+    app.post('/upload/:file_hash', checkUploadPerm(), async (c) => {
       const panId = c.get('panId')
 
       return postFileToPanByPanId(panId)

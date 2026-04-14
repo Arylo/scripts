@@ -1,4 +1,5 @@
 import { eq, getTableColumns } from 'drizzle-orm'
+import yn from 'yn'
 import {
   CODE_PERM_TYPE,
   PAN_PERM_DEFAULT_VALUE,
@@ -25,7 +26,7 @@ export default async function getPerms(panId: string, codeId: string) {
   return [
     {
       get canUpload() {
-        return Boolean(
+        return yn(
           (
             codePerms.find((perm) => perm.value && perm.type === CODE_PERM_TYPE.canUpload) ??
             panPerms.find((perm) => perm.value && perm.type === PAN_PERM_TYPE.canUpload) ?? {
@@ -35,7 +36,7 @@ export default async function getPerms(panId: string, codeId: string) {
         )
       },
       get canDownload() {
-        return Boolean(
+        return yn(
           (
             codePerms.find((perm) => perm.value && perm.type === CODE_PERM_TYPE.canDownload) ??
             panPerms.find((perm) => perm.value && perm.type === PAN_PERM_TYPE.canDownload) ?? {
@@ -45,7 +46,7 @@ export default async function getPerms(panId: string, codeId: string) {
         )
       },
       get canDelete() {
-        return Boolean(
+        return yn(
           (
             codePerms.find((perm) => perm.value && perm.type === CODE_PERM_TYPE.canDelete) ??
             panPerms.find((perm) => perm.value && perm.type === PAN_PERM_TYPE.canDelete) ?? {
