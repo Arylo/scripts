@@ -1,0 +1,21 @@
+export const STATUS_CODE = {
+  FILE_LINK_SUCCESS: 200000,
+  FILE_REMOVE_SUCCESS: 200001,
+  FILE_UPDATE_SUCCESS: 200002,
+  FILE_UPLOAD_SUCCESS: 201000,
+  STATUS_CODE_FAIL: 500000,
+  FORMDATA_NO_FILE: 500001,
+  NON_FOUND_FILE: 404000,
+  NON_FOUND_FILE_IN_STORAGE: 404001,
+} as const
+
+export const STATUS_MAP = {
+  [STATUS_CODE.STATUS_CODE_FAIL]: 'Invalid custom status code',
+  [STATUS_CODE.FILE_REMOVE_SUCCESS]: 'Remove File success',
+  [STATUS_CODE.FILE_UPDATE_SUCCESS]: 'Update File success',
+  [STATUS_CODE.FILE_LINK_SUCCESS]: 'File uploaded successfully',
+  [STATUS_CODE.FILE_UPLOAD_SUCCESS]: 'File uploaded successfully',
+  [STATUS_CODE.FORMDATA_NO_FILE]: 'No file uploaded',
+  [STATUS_CODE.NON_FOUND_FILE]: 'File not found',
+  [STATUS_CODE.NON_FOUND_FILE_IN_STORAGE]: 'File not found in storage',
+} as const

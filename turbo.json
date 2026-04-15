@@ -20,7 +20,7 @@
     },
     "fix:formatter": {
       "dependsOn": ["^fix:formatter"],
-      "outputs": []
+      "cache": false
     }
   }
 }

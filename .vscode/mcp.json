@@ -1,11 +1,25 @@
 {
-	"servers": {
-		"git": {
-			"command": "bash",
-			"args": [
-        "-c",
-        "(nvm -h || source $HOME/.nvm/nvm.sh) && (nvm use 20 || nvm install 20) && nvm exec 20 npx -y @cyanheads/git-mcp-server"
-			]
-		}
-	}
+  "servers": {
+    "git": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@cyanheads/git-mcp-server"
+      ]
+    },
+    "chrome-devtools": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "chrome-devtools-mcp"
+      ]
+    },
+    "shadcn": {
+      "command": "npx",
+      "args": [
+        "shadcn@latest",
+        "mcp"
+      ]
+    }
+  }
 }

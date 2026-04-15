@@ -36,6 +36,7 @@ If there are changes in directories under `apps/`, add the folder name to the sc
 - `apps/monkey/` → `monkey`
 - `apps/raspberry_pi/` → `pi`
 - `apps/caddyfile-sdk` → `caddyfile`
+- `apps/cf-worker/cloud-storage` → `cloud-storage`
 
 ### Examples
 

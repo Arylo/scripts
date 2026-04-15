@@ -1,8 +1,13 @@
 {
   "cSpell.words": [
-    "arylo"
+    "arylo",
+    "qinglong",
+    "syncpack"
   ],
   "files.associations": {
 		"wrangler.json": "jsonc"
-	}
+  },
+  "chat.tools.terminal.autoApprove": {
+    "command": true
+  }
 }
