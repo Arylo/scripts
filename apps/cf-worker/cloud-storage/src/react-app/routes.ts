@@ -1,19 +1,19 @@
 import React from 'react'
 import { createBrowserRouter } from 'react-router'
-import AdminPage from './Pages/RootPage/AdminPage'
-import App from './Pages/RootPage/App'
-import GuestPage from './Pages/RootPage/GuestPage'
+import AdminPage from './pages/RootPage/AdminPage'
+import App from './pages/RootPage/App'
+import GuestPage from './pages/RootPage/GuestPage'
 
-const Home = React.lazy(() => import('./Pages/Home/Home'))
-const Detail = React.lazy(() => import('./Pages/Detail/Detail'))
-const Login = React.lazy(() => import('./Pages/Login/Login'))
-const Logout = React.lazy(() => import('./Pages/Logout/Logout'))
-const SessionExpired = React.lazy(() => import('./Pages/SessionExpired/SessionExpired'))
-const AdminManagementPage = React.lazy(() => import('./Pages/RootPage/AdminManagementPage'))
-const AdminPans = React.lazy(() => import('./Pages/AdminPans/AdminPans'))
-const AdminPanDetail = React.lazy(() => import('./Pages/AdminPanDetail/AdminPanDetail'))
-const AdminCodes = React.lazy(() => import('./Pages/AdminCodes/AdminCodes'))
-const AdminCodeDetail = React.lazy(() => import('./Pages/AdminCodeDetail/AdminCodeDetail'))
+const Home = React.lazy(() => import('./pages/Home/Home'))
+const Detail = React.lazy(() => import('./pages/Detail/Detail'))
+const Login = React.lazy(() => import('./pages/Login/Login'))
+const Logout = React.lazy(() => import('./pages/Logout/Logout'))
+const SessionExpired = React.lazy(() => import('./pages/SessionExpired/SessionExpired'))
+const AdminManagementPage = React.lazy(() => import('./pages/RootPage/AdminManagementPage'))
+const AdminPans = React.lazy(() => import('./pages/AdminPans/AdminPans'))
+const AdminPanDetail = React.lazy(() => import('./pages/AdminPanDetail/AdminPanDetail'))
+const AdminCodes = React.lazy(() => import('./pages/AdminCodes/AdminCodes'))
+const AdminCodeDetail = React.lazy(() => import('./pages/AdminCodeDetail/AdminCodeDetail'))
 
 export const router = createBrowserRouter([
   {

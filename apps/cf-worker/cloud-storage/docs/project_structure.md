@@ -8,8 +8,8 @@
   |- |- types/ // 存放共用Typescript 类型文件
   |- react-app/ // 存放前端文件, 使用React 框架
   |  |- main.tsx // React 入口文件
-  |  |- Pages/ // 存放页面文件
-  |  |- Components/ // 存放组件文件
+  |  |- pages/ // 存放页面文件
+  |  |- components/ // 存放组件文件
   |  |- utils/ // 存放工具类文件
   |  |- hooks/ // 存放React Hook 类文件
   |  |- requests/ // 存放请求类文件

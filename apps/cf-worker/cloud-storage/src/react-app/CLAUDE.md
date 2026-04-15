@@ -24,8 +24,8 @@
 
 | 目录 | 说明 |
 |------|------|
-| `Pages/` | 页面组件，按功能分目录 |
-| `Components/` | 通用组件（Button、Card、TableCell、shadcn/ui） |
+| `pages/` | 页面组件，按功能分目录 |
+| `components/` | 通用组件（Button、Card、TableCell、shadcn/ui） |
 | `requests/` | API 请求函数（每个操作独立文件） |
 | `hooks/` | 数据获取 hooks（useFileList、usePanInfo、usePanPerms 等） |
 | `utils/` | adminFetch / guestFetch 封装、工具函数 |
