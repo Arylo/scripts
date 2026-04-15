@@ -56,6 +56,6 @@
     "typescript": "~5.9.3"
   },
   "peerDependencies": {
-    "esbuild": "^0.21.5"
+    "esbuild": "^0.28.0"
   }
 }

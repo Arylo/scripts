@@ -26,7 +26,7 @@ user-invocable: true
 直接在当前环境运行：
 
 ```bash
-npm i --include-workspace-root -ws
+npm i --include-workspace-root --workspaces
 ```
 
 完成后跳至**步骤 5**。
@@ -58,7 +58,7 @@ command -v podman
   -v "$PWD":/src \
   --tmpfs /src/node_modules:exec \
   node:<version> \
-  bash -lc 'cd /src && npm i --include-workspace-root -ws'
+  bash -lc 'cd /src && npm i --include-workspace-root --workspaces'
 ```
 
 - 挂载当前工作目录为 `/src`（读写，不加 `:ro`），使安装结果（`node_modules`、`package-lock.json`）直接写回宿主机。

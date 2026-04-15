@@ -18,7 +18,7 @@
   "dependencies": {
     "@scripts/build-fs": "1.0.0",
     "@scripts/logger": "1.0.0",
-    "esbuild": "^0.21.5"
+    "esbuild": "^0.28.0"
   },
   "devDependencies": {
     "concurrently": "^8.2.2",
