@@ -21,34 +21,12 @@
 // @description:zh-TW 對開佈局、支持帶魚屏、自適應圖片高度、快捷翻頁、支持鍵盤操作
 // @description:zh-SG 对开布局、支持带鱼屏、自适应图片高度、快捷翻页、支持键盘操作
 // @description:zh-MY 对开布局、支持带鱼屏、自适应图片高度、快捷翻页、支持键盘操作
-// @version 55
+// @version 56
 // @author Arylo
 // @connect unpkg.com
+// @include /^https:\/\/(.+\.)?(copymanga.com|copymanga.org|copymanga.net|copymanga.info|copymanga.site|copymanga.tv|mangacopy.com|copy-manga.com|copy20.com|copy2000.com|2025copy.com|2026copy.com)\/comic\/.*/
+// @include /^https:\/\/(.+\.)?(copymanga.com|copymanga.org|copymanga.net|copymanga.info|copymanga.site|copymanga.tv|mangacopy.com|copy-manga.com|copy20.com|copy2000.com|2025copy.com|2026copy.com)\/comics\b/
 // @license MIT
-// @match https://copymanga.com/comic/*
-// @match https://*.copymanga.com/comic/*
-// @match https://copymanga.org/comic/*
-// @match https://*.copymanga.org/comic/*
-// @match https://copymanga.net/comic/*
-// @match https://*.copymanga.net/comic/*
-// @match https://copymanga.info/comic/*
-// @match https://*.copymanga.info/comic/*
-// @match https://copymanga.site/comic/*
-// @match https://*.copymanga.site/comic/*
-// @match https://copymanga.tv/comic/*
-// @match https://*.copymanga.tv/comic/*
-// @match https://mangacopy.com/comic/*
-// @match https://*.mangacopy.com/comic/*
-// @match https://copy-manga.com/comic/*
-// @match https://*.copy-manga.com/comic/*
-// @match https://copy20.com/comic/*
-// @match https://*.copy20.com/comic/*
-// @match https://copy2000.site/comic/*
-// @match https://*.copy2000.site/comic/*
-// @match https://2025copy.com/comic/*
-// @match https://*.2025copy.com/comic/*
-// @match https://2026copy.com/comic/*
-// @match https://*.2026copy.com/comic/*
 // @require https://unpkg.com/vue@3/dist/vue.global.prod.js
 // @resource vue https://unpkg.com/vue@3/dist/vue.global.prod.js
 // @homepage https://github.com/Arylo/scripts#readme
@@ -1332,9 +1310,9 @@
     }, 25);
   };
 
-  // scripts/table/index.ts
+  // scripts/info/index.ts
   var hasJapanese = (text) => /[\u0800-\u4e00]/.test(text);
-  var table_default = () => {
+  var info_default = () => {
     const directionModeKey = getDirectionModeKey();
     const directionMode = directionModeStorage.get(directionModeKey);
     if (directionMode) return;
@@ -1363,13 +1341,121 @@
     }
   };
 
+  // scripts/list/storage.ts
+  var STORAGE_KEY = "copymanga.list.records";
+  var getTodayDate = () => {
+    const d = /* @__PURE__ */ new Date();
+    const yyyy = d.getFullYear();
+    const mm = String(d.getMonth() + 1).padStart(2, "0");
+    const dd = String(d.getDate()).padStart(2, "0");
+    return `${yyyy}-${mm}-${dd}`;
+  };
+  var loadRecords = () => {
+    return GM_getValue(STORAGE_KEY, null) || {};
+  };
+  var saveRecords = (records) => {
+    GM_setValue(STORAGE_KEY, records);
+  };
+  var findMatchingRecord = (records, ids) => {
+    for (const [date, record] of Object.entries(records)) {
+      const expected = [record.latest, ...record.after];
+      if (expected.length !== ids.length) continue;
+      if (expected.every((id, idx) => id === ids[idx])) {
+        return { date, record };
+      }
+    }
+    return null;
+  };
+  var findRecordByBefore = (records, comicId) => {
+    for (const [date, record] of Object.entries(records)) {
+      if (record.before.includes(comicId)) {
+        return { date, record };
+      }
+    }
+    return null;
+  };
+
+  // scripts/list/index.ts
+  var list_default = () => {
+    const url = new URL(location.href);
+    const ordering = url.searchParams.get("ordering");
+    if (ordering !== null && ordering !== "-datetime_updated") return;
+    const theme = url.searchParams.get("theme");
+    const activeSortLink = document.querySelector(".classify-right a:has(dd:first-child.active)");
+    if (!activeSortLink) return;
+    const links = document.querySelectorAll(
+      ".exemptComic-box > .exemptComic_Item > .exemptComicItem-txt a"
+    );
+    const { comicIds, items } = Array.from(links).reduce(
+      (acc, a) => {
+        const { comic: comic2 } = parseConstant_default(a.getAttribute("href") || "");
+        if (comic2) {
+          acc.comicIds.push(comic2);
+          acc.items.push(a.closest(".exemptComic_Item"));
+        }
+        return acc;
+      },
+      { comicIds: [], items: [] }
+    );
+    if (comicIds.length === 0) return;
+    const records = loadRecords();
+    const today = getTodayDate();
+    const recordsKey = theme ? `${today}|${theme}` : today;
+    const offset = new URL(location.href).searchParams.get("offset");
+    if (offset === null || offset === "0") {
+      const latest = comicIds[0];
+      const after = comicIds.slice(1, 4);
+      const matchIds = [latest, ...after];
+      if (!findMatchingRecord(records, matchIds)) {
+        records[recordsKey] = { latest, after, before: [] };
+      }
+    }
+    for (let i = 0; i < comicIds.length; i++) {
+      const item = items[i];
+      if (i + 3 < comicIds.length) {
+        const ids = [
+          comicIds[i],
+          comicIds[i + 1],
+          comicIds[i + 2],
+          comicIds[i + 3]
+        ];
+        const match = findMatchingRecord(records, ids);
+        if (match) {
+          appendTag(item, match.date);
+          const beforeStart = Math.max(0, i - 3);
+          const newBefore = comicIds.slice(beforeStart, i);
+          if (newBefore.length !== match.record.before.length || !newBefore.every((id, idx) => id === match.record.before[idx])) {
+            match.record.before = newBefore;
+          }
+        }
+      } else {
+        const match = findRecordByBefore(records, comicIds[i]);
+        if (match) {
+          appendTag(item, match.date);
+        }
+      }
+    }
+    saveRecords(records);
+  };
+  function appendTag(item, date) {
+    if (item.querySelector(".copymanga-list-record-tag")) return;
+    const tag = document.createElement("div");
+    tag.style.cssText = `text-align: center; font-size: 12px; color: #888; line-height: 12px;`;
+    tag.className = "copymanga-list-record-tag";
+    tag.textContent = `--${date}\u6536\u5F55\u5230\u8FD9\u91CC--`;
+    item.appendChild(tag);
+  }
+
   // index.ts
   var { comic, chapter } = parseConstant_default(location?.pathname);
   if (comic && chapter) {
     console.log("start detail mode");
     detail_default();
   } else if (comic) {
-    console.log("start table mode");
-    table_default();
+    console.log("start info mode");
+    info_default();
+  } else {
+    console.log("start list mode");
+    list_default();
   }
 })();
