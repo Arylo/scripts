@@ -22,7 +22,7 @@
 // @description:zh-TW 對開佈局、支持帶魚屏、自適應圖片高度、快捷翻頁、支持鍵盤操作
 // @description:zh-SG 对开布局、支持带鱼屏、自适应图片高度、快捷翻页、支持键盘操作
 // @description:zh-MY 对开布局、支持带鱼屏、自适应图片高度、快捷翻页、支持键盘操作
-// @version 57
+// @version 58
 // @author Arylo
 // @connect unpkg.com
 // @include /^https:\/\/(.+\.)?(copymanga.com|copymanga.org|copymanga.net|copymanga.info|copymanga.site|copymanga.tv|mangacopy.com|copy-manga.com|copy20.com|copy2000.com|2025copy.com|2026copy.com)\/comic\/.*/
@@ -725,6 +725,11 @@
     }
   });
 
+  // scripts/detail/newPage/hooks/dedupAdjacentUrls.ts
+  function dedupAdjacentUrls(urls = []) {
+    return urls.filter((url, index) => index === 0 || url !== urls[index - 1]);
+  }
+
   // scripts/detail/newPage/hooks/utils/injectDataIndex.ts
   function injectDataIndexInternal(list, directionMode) {
     const newList = list.map((item, index) => {
@@ -872,6 +877,7 @@
     function refresh() {
       const list = flow(
         unref(rawImageListRef),
+        dedupAdjacentUrls,
         parseImages,
         addFirstWhitePage,
         injectWhitePages,
