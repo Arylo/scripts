@@ -3,6 +3,7 @@ import { onMounted, readonly, ref, unref, watch } from '@scripts/gm-vue'
 import Image from '../component/Image'
 import WhitePage from '../component/WhitePage'
 import { DirectionMode, PageType } from '../constant'
+import dedupAdjacentUrls from './dedupAdjacentUrls'
 import useDirectionMode from './useDirectionMode'
 import useImageInfoMap from './useImageInfoMap'
 import useRawImageList from './useRawImageList'
@@ -119,6 +120,7 @@ export default function useImageList() {
   function refresh() {
     const list = flow(
       unref(rawImageListRef),
+      dedupAdjacentUrls,
       parseImages,
       addFirstWhitePage,
       injectWhitePages,
