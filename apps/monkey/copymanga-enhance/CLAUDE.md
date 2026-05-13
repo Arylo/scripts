@@ -8,18 +8,12 @@
 
 ## 修改约束与目录说明
 
-本油猴脚本分开三部分相应
+本油猴脚本分开两部分响应
 
 1. 介绍页 `./scripts/info/**`
-2. 列表页 `./scripts/list/**`
-3. 详细页 `./scripts/detail/**`
+2. 详细页 `./scripts/detail/**`
 
 ### 介绍页修改规范
-
-1. 本页面只能使用原生JS API, 浏览器自带的JS API 和油猴脚本自带的API, 不含任何第三方框架
-2. 油猴脚本自带的API应使用私有包`@scripts/gm-polyfill`
-
-### 列表页修改规范
 
 1. 本页面只能使用原生JS API, 浏览器自带的JS API 和油猴脚本自带的API, 不含任何第三方框架
 2. 油猴脚本自带的API应使用私有包`@scripts/gm-polyfill`

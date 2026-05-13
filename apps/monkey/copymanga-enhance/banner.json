@@ -22,8 +22,7 @@
   "description:zh-SG": "对开布局、支持带鱼屏、自适应图片高度、快捷翻页、支持键盘操作",
   "description:zh-MY": "对开布局、支持带鱼屏、自适应图片高度、快捷翻页、支持键盘操作",
   "include": [
-    "/^https:\\/\\/(.+\\.)?(copymanga.com|copymanga.org|copymanga.net|copymanga.info|copymanga.site|copymanga.tv|mangacopy.com|copy-manga.com|copy20.com|copy2000.com|2025copy.com|2026copy.com)\\/comic\\/.*/",
-    "/^https:\\/\\/(.+\\.)?(copymanga.com|copymanga.org|copymanga.net|copymanga.info|copymanga.site|copymanga.tv|mangacopy.com|copy-manga.com|copy20.com|copy2000.com|2025copy.com|2026copy.com)\\/comics\\b/"
+    "/^https:\\/\\/(.+\\.)?(copymanga.com|copymanga.org|copymanga.net|copymanga.info|copymanga.site|copymanga.tv|mangacopy.com|copy-manga.com|copy20.com|copy2000.com|2025copy.com|2026copy.com)\\/comic\\/.*/"
   ],
   "connect": "unpkg.com",
   "require": "https://unpkg.com/vue@3/dist/vue.global.prod.js",

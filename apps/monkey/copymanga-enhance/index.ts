@@ -1,6 +1,5 @@
 import startDetail from './scripts/detail'
 import startInfo from './scripts/info'
-import startList from './scripts/list'
 import parseConstant from './scripts/utils/parseConstant'
 
 const { comic, chapter } = parseConstant(location?.pathname)
@@ -11,7 +10,4 @@ if (comic && chapter) {
 } else if (comic) {
   console.log('start info mode')
   startInfo()
-} else {
-  console.log('start list mode')
-  startList()
 }
